@@ -1,0 +1,45 @@
+---
+---
+
+@import "minima";
+
+/* Brand & layout */
+:root {
+  --brand: #2563eb;     /* blue */
+  --brand-2: #0ea5e9;   /* accent */
+  --radius: 16px;
+}
+
+.hero {
+  display: grid; gap: 1rem; align-items: center;
+  grid-template-columns: 96px 1fr;
+  padding: 1.5rem; border-radius: var(--radius);
+  background: linear-gradient(90deg, rgba(37,99,235,.08), rgba(14,165,233,.08));
+  margin-bottom: 2rem;
+}
+.hero-avatar {
+  width: 96px; height: 96px; border-radius: 9999px; object-fit: cover;
+  border: 2px solid var(--brand);
+}
+.btn { 
+  display:inline-block; padding:.55rem .9rem; border-radius:12px; 
+  text-decoration:none; border:1px solid var(--brand); 
+}
+.btn { background: var(--brand); color:white; }
+.btn-secondary { background:white; color:var(--brand); }
+.btn-ghost { background:transparent; color:var(--brand); border-color:transparent; }
+
+.card-grid {
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+.card {
+  display:block; padding:1rem; border:1px solid #e5e7eb; border-radius: var(--radius);
+  background:white; transition: transform .06s ease, box-shadow .06s ease;
+}
+.card:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+.meta { color:#6b7280; font-size:.9rem; margin-top:.25rem; }
+
+/* Typography tweaks */
+.site-title { font-weight: 800; letter-spacing: .2px; }
+.page-content { font-size: 1.04rem; }
