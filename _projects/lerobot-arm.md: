@@ -2,6 +2,9 @@
 layout: page
 title: "LeRobot Arm: Leader–Follower & Grasping"
 year: 2025
+featured: true
+summary: "3D-printed arm, teleop dataset, and grasping policy trained on demonstrations."
+
 ---
 
 - Built a 3D-printed arm; leader–follower teleop; dataset for grasping carrots 🥕  
