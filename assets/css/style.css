@@ -24,9 +24,13 @@ body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetic
   margin-bottom: 2rem;
 }
 .hero-avatar {
-  width: 96px; height: 96px; border-radius: 9999px; object-fit: cover;
+  width: 120px;        /* or 96px if you want smaller */
+  height: 120px;
+  border-radius: 9999px;
+  object-fit: cover;   /* keeps proportions, crops nicely */
   border: 2px solid var(--brand);
 }
+
 .hero-copy h1 { margin: 0 0 .35rem 0; }
 .hero-ctas .btn { margin-right: .5rem; }
 
