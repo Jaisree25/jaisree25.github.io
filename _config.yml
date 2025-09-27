@@ -1,3 +1,53 @@
-theme: jekyll-theme-minimal
-title: Jaisree's homepage
-description: My AI journey updates!
+title: Ravi Kumar — Research
+description: AI • Robotics • Systems — notes, papers, projects
+url: "https://jaisree25.github.io"   # change username
+theme: minima                       # simple, clean; easy to start
+author:
+  name: Jaisree David Ravikumar
+  email: your@email.com
+  links:
+    - label: Google Scholar
+      url: https://scholar.google.com/citations?user=XXXX
+    - label: ORCID
+      url: https://orcid.org/XXXX-XXXX-XXXX-XXXX
+    - label: GitHub
+      url: https://github.com/jaisree25
+    - label: LinkedIn
+      url: https://www.linkedin.com/in/jaisree25/
+
+# Enable categories/tags in minima
+minima:
+  skin: auto
+  social_links:
+    - { platform: github,  user_url: "https://github.com/jaisree25" }
+    - { platform: linkedin, user_url: "https://www.linkedin.com/in/jaisree25/" }
+
+# Collections for research
+collections:
+  projects:
+    output: true
+    permalink: /projects/:name/
+  publications:
+    output: true
+    permalink: /pubs/:name/
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-seo-tag
+
+# Markdown & math
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+  input: GFM
+
+# Navigation
+header_pages:
+  - about.md
+  - projects.md
+  - publications.md
+  - posts.md
+
+# Build
+exclude: [README.md]
