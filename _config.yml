@@ -25,6 +25,7 @@ collections:
   competitions:
     output: true
     permalink: /competitions/:name/
+    
 plugins:
   - jekyll-feed
   - jekyll-sitemap
