@@ -22,7 +22,9 @@ collections:
   publications:
     output: true
     permalink: /pubs/:name/
-
+  competitions:
+    output: true
+    permalink: /competitions/:name/
 plugins:
   - jekyll-feed
   - jekyll-sitemap
