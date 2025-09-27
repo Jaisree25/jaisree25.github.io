@@ -1,0 +1,9 @@
+---
+layout: page
+title: "LeRobot Arm: Leader–Follower & Grasping"
+year: 2025
+---
+
+- Built a 3D-printed arm; leader–follower teleop; dataset for grasping carrots 🥕  
+- Tech: PyTorch, LeRobot, ROS2.  
+- Demos: [Video](#) • [Code](#)
