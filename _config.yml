@@ -38,6 +38,7 @@ header_pages:
   - projects.md
   - publications.md
   - posts.md
-
+ - competitions.md 
+ 
 exclude:
   - README.md
