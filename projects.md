@@ -4,9 +4,13 @@ title: Projects
 permalink: /projects/
 ---
 
+<div class="card-grid">
 {% assign items = site.projects | sort: 'year' | reverse %}
-<ul>
 {% for p in items %}
-  <li><a href="{{ p.url | relative_url }}">{{ p.title }}</a>{% if p.year %} — {{ p.year }}{% endif %}</li>
+  <a class="card" href="{{ p.url | relative_url }}">
+    <h3>{{ p.title }}</h3>
+    {% if p.year %}<div class="meta">{{ p.year }}</div>{% endif %}
+    {% if p.summary %}<p>{{ p.summary }}</p>{% endif %}
+  </a>
 {% endfor %}
-</ul>
+</div>
