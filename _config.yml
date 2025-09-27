@@ -45,3 +45,8 @@ header_pages:
  
 exclude:
   - README.md
+
+logo: /assets/images/profile.webp
+
+social:
+  image: /assets/images/profile.webp
