@@ -3,70 +3,17 @@ description: "AI • Robotics • Systems — notes, papers, projects"
 url: "https://jaisree25.github.io"
 theme: minima
 
-author:
-  name: "Jaisree David Ravikumar"
-  email: "your@email.com"
-  links:
-    - label: Google Scholar
-      url: https://scholar.google.com/citations?user=XXXX
-    - label: ORCID
-      url: https://orcid.org/XXXX-XXXX-XXXX-XXXX
-    - label: GitHub
-      url: https://github.com/jaisree25
-    - label: LinkedIn
-      url: https://www.linkedin.com/in/jaisree25/title: "Jaisree’s — Research"
-description: "AI • Robotics • Systems — notes, papers, projects"
-url: "https://jaisree25.github.io"
-theme: minima
-
-author:
-  name: "Jaisree David Ravikumar"
-  email: "your@email.com"
+# Author info (string, not object → no hash dump)
+author: "Jaisree David Ravikumar"
+email: "your@email.com"
 
 minima:
   skin: auto
   social_links:
     - { platform: github,   user_url: "https://github.com/jaisree25" }
     - { platform: linkedin, user_url: "https://www.linkedin.com/in/jaisree25/" }
-    # Optional: these may not render as icons on older minima, keep as plain links above
-    # - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=XXXX" }
-    # - { platform: orcid,          user_url: "https://orcid.org/XXXX-XXXX-XXXX-XXXX" }
-
-collections:
-  projects:
-    output: true
-    permalink: /projects/:name/
-  publications:
-    output: true
-    permalink: /pubs/:name/
-
-plugins:
-  - jekyll-feed
-  - jekyll-sitemap
-  - jekyll-seo-tag
-
-markdown: kramdown
-kramdown:
-  math_engine: mathjax
-  input: GFM
-
-header_pages:
-  - about.md
-  - projects.md
-  - publications.md
-  - posts.md
-
-exclude:
-  - README.md
-
-minima:
-  skin: auto
-  social_links:
-    - { platform: github,   user_url: "https://github.com/jaisree25" }
-    - { platform: linkedin, user_url: "https://www.linkedin.com/in/jaisree25/" }
-    # Optional: these may not render as icons on older minima, keep as plain links above
-    # - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=XXXX" }
-    # - { platform: orcid,          user_url: "https://orcid.org/XXXX-XXXX-XXXX-XXXX" }
+    - { platform: google_scholar, user_url: "https://scholar.google.com/citations?user=XXXX" }
+    - { platform: orcid,    user_url: "https://orcid.org/XXXX-XXXX-XXXX-XXXX" }
 
 collections:
   projects:
