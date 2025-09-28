@@ -5,7 +5,7 @@ theme: minima
 
 # Author info (string, not object → no hash dump)
 author: "Jaisree David Ravikumar"
-#email: "your@email.com"
+# email: "your@email.com"
 
 minima:
   skin: auto
