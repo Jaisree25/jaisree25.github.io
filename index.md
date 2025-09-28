@@ -10,55 +10,32 @@ title: "Jaisree’s — Research"
     <h1>AI • Robotics • Systems</h1>
     <p>I build and write about embodied AI, robot learning, and reliable systems.</p>
     <p class="hero-ctas">
-      <a class="btn" href="{{ '/projects/' | relative_url }}">Projects</a>
-      <a class="btn btn-secondary" href="{{ '/competitions/' | relative_url }}">Competitions</a>
-      <a class="btn btn-ghost" href="{{ '/posts/' | relative_url }}">Notes</a>
+      <a class="btn" href="{{ '/posts/' | relative_url }}">Browse all Notes</a>
     </p>
   </div>
 </div>
 
-<!-- THREE CARDS -->
-<div class="home-cards">
-  <!-- Projects -->
-  <a class="home-card" href="{{ '/projects/' | relative_url }}">
-    <h3>🧪 Projects</h3>
-    <p class="muted">
-      {% assign items = site.projects %}
-      {% if items and items.size > 0 %}
-        {{ items.size }} project{% if items.size != 1 %}s{% endif %} • latest:
-        {% assign latest = items | sort: 'year' | last %}
-        {% if latest %} {{ latest.title }} {% if latest.year %}({{ latest.year }}){% endif %}{% endif %}
-      {% else %}
-        Add items under <code>_projects/</code>.
-      {% endif %}
-    </p>
-  </a>
-
-  <!-- Competitions -->
-  <a class="home-card" href="{{ '/competitions/' | relative_url }}">
-    <h3>🏆 Competitions</h3>
-    <p class="muted">
-      {% assign comps = site.competitions %}
-      {% if comps and comps.size > 0 %}
-        {{ comps.size }} entr{% if comps.size == 1 %}y{% else %}ies{% endif %} • latest:
-        {% assign latestc = comps | sort: 'year' | last %}
-        {% if latestc %} {{ latestc.title }} {% if latestc.year %}({{ latestc.year }}){% endif %}{% endif %}
-      {% else %}
-        Add items under <code>_competitions/</code>.
-      {% endif %}
-    </p>
-  </a>
-
-  <!-- Posts -->
-  <a class="home-card" href="{{ '/posts/' | relative_url }}">
-    <h3>📝 Notes & Posts</h3>
-    <p class="muted">
-      {% if site.posts and site.posts.size > 0 %}
-        {{ site.posts.size }} post{% if site.posts.size != 1 %}s{% endif %} • latest:
-        {{ site.posts[0].title }} ({{ site.posts[0].date | date: "%b %d, %Y" }})
-      {% else %}
-        Create files in <code>_posts/YYYY-MM-DD-title.md</code>.
-      {% endif %}
-    </p>
-  </a>
+<!-- LATEST POSTS (3 cards) -->
+<h2>Latest Posts</h2>
+<div class="post-cards">
+  {% if site.posts and site.posts.size > 0 %}
+    {% for post in site.posts limit:3 %}
+      <a class="post-card" href="{{ post.url | relative_url }}">
+        <h3 class="post-card__title">{{ post.title }}</h3>
+        <div class="post-card__meta">{{ post.date | date: "%b %d, %Y" }}{% if post.tags and post.tags.size > 0 %} • {{ post.tags | join: ", " }}{% endif %}</div>
+        <p class="post-card__excerpt">
+          {%- if post.excerpt -%}
+            {{ post.excerpt | strip_html | truncate: 160 }}
+          {%- else -%}
+            {{ post.content | strip_html | truncate: 160 }}
+          {%- endif -%}
+        </p>
+        <span class="post-card__more">Read more →</span>
+      </a>
+    {% endfor %}
+  {% else %}
+    <p>No posts yet. Add files under <code>_posts/YYYY-MM-DD-title.md</code>.</p>
+  {% endif %}
 </div>
+
+<p><a class="link-more" href="{{ '/posts/' | relative_url }}">See all posts →</a></p>
