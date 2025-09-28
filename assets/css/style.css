@@ -79,3 +79,65 @@ body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetic
   .home-card:hover { border-color: #374151; background: linear-gradient(180deg, rgba(37,99,235,.09), rgba(14,165,233,.06)); }
   .muted { color: #9ca3af; }
 }
+
+/* === Post cards === */
+.post-cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  margin: 0 0 2rem;
+}
+
+.post-card {
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1.5px solid #d1d5db;     /* visible border */
+  border-radius: 14px;
+  background: #fff;
+  text-decoration: none;
+  transition: transform .08s ease, box-shadow .08s ease, border-color .08s ease, background .08s ease;
+}
+
+.post-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  border-color: #9ca3af;
+  background: linear-gradient(180deg, rgba(37,99,235,.03), rgba(14,165,233,.02));
+}
+
+.post-card__title {
+  margin: 0 0 .35rem 0;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.post-card__meta {
+  color: #6b7280;
+  font-size: .9rem;
+  margin-bottom: .4rem;
+}
+
+.post-card__excerpt {
+  color: #374151;
+  margin: 0 0 .6rem 0;
+}
+
+.post-card__more {
+  font-weight: 600;
+  color: var(--brand, #2563eb);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .post-card {
+    background: #0b0b0c;
+    border-color: #2b2f36;
+  }
+  .post-card:hover {
+    border-color: #3b4250;
+    background: linear-gradient(180deg, rgba(37,99,235,.10), rgba(14,165,233,.06));
+    box-shadow: 0 10px 28px rgba(0,0,0,.35);
+  }
+  .post-card__meta { color: #9ca3af; }
+  .post-card__excerpt { color: #e5e7eb; }
+}
