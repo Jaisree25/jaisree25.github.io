@@ -1,6 +1,5 @@
 ---
 layout: page
-title: Notes & Posts
 permalink: /posts/
 ---
 
