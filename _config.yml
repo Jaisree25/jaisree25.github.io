@@ -19,9 +19,9 @@ collections:
   projects:
     output: true
     permalink: /projects/:name/
-#  publications:
-#    output: true
-#    permalink: /pubs/:name/
+  publications:
+    output: true
+    permalink: /pubs/:name/
   competitions:
     output: true
     permalink: /competitions/:name/
@@ -39,7 +39,6 @@ kramdown:
 header_pages:
   - about.md
   - projects.md
-#  - publications.md
   - posts.md
   - competitions.md 
  
