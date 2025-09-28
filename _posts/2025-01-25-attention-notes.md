@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Attention Is All You Need — Notes"
+title: "Attention Is All You Need — Explained"
 tags: [transformers, paper-notes]
 ---
 
