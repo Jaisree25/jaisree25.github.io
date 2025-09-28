@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Action chunking transformer — Notes"
+title: "Action chunking transformer — Explained"
 tags: [ACT transformers, paper-notes]
 ---
 The focus of this blog is ACT which stands for Action Chunking Transformer. But before that, let’s refresh our knowledge of transformers. Transformers is a type of neural network that can process and output sequences of information. A transformer is typically made up of three main layers which is the embedding layer, attention layer, and a mlp layer (where the attention and mlp layer are repeated multiple times). The transformer model is so unique because of its attention concept which, in short, allows the model to learn context from the sequences of input.
