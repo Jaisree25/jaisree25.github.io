@@ -11,15 +11,6 @@ permalink: /posts/
   <li>
     <a href="{{ post.url | relative_url }}">{{ post.title }}</a>  
     <span style="color: gray;">— {{ post.date | date: "%B %d, %Y" }}</span>
-    {% if post.tags %}
-      <br/>
-      <small>
-        Tags:
-        {% for tag in post.tags %}
-          <a href="#{{ tag | slugify }}">{{ tag }}</a>{% unless forloop.last %}, {% endunless %}
-        {% endfor %}
-      </small>
-    {% endif %}
   </li>
 {% endfor %}
 </ul>
