@@ -8,10 +8,10 @@ permalink: /competitions/
 <ul>
 {% for p in pubs %}
   <li>
-    <strong>{{ p.title }}</strong> ({{ p.year }})  
+    <a href="{{ p.url | relative_url }}">{{ p.title }}</a> ({{ p.year }})  
     {{ p.authors }} — <em>{{ p.venue }}</em>  
-    {% if p.paper_url %}[PDF]({{ p.paper_url }}){% endif %}
-    {% if p.code_url %} • [Code]({{ p.code_url }}){% endif %}
   </li>
 {% endfor %}
 </ul>
+
+
