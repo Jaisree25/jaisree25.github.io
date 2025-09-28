@@ -5,8 +5,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap");
 
 :root {
-  --brand: #2563eb;     /* blue */
-  --brand-2: #0ea5e9;   /* accent */
+  --brand: #2563eb;
+  --brand-2: #0ea5e9;
   --radius: 18px;
 }
 
@@ -15,22 +15,18 @@ body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetic
 /* HERO */
 .hero {
   display: grid;
-  grid-template-columns: 96px 1fr;
+  grid-template-columns: 120px 1fr;
   gap: 1rem;
   align-items: center;
-  padding: 1.25rem 1.25rem;
+  padding: 1.25rem;
   border-radius: var(--radius);
   background: linear-gradient(90deg, rgba(37,99,235,.08), rgba(14,165,233,.08));
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 .hero-avatar {
-  width: 120px;        /* or 96px if you want smaller */
-  height: 120px;
-  border-radius: 9999px;
-  object-fit: cover;   /* keeps proportions, crops nicely */
+  width: 120px; height: 120px; border-radius: 9999px; object-fit: cover;
   border: 2px solid var(--brand);
 }
-
 .hero-copy h1 { margin: 0 0 .35rem 0; }
 .hero-ctas .btn { margin-right: .5rem; }
 
@@ -48,28 +44,38 @@ body { font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetic
 .btn-secondary { background: #fff; color: var(--brand); }
 .btn-ghost { background: transparent; color: var(--brand); border-color: transparent; }
 
-/* CARDS */
-.card-grid {
-  display: grid; gap: 1rem;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  margin-bottom: 1.5rem;
+/* THREE-CARD GRID */
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0 0 2rem;
 }
-.card {
-  display: block; padding: 1rem; border: 1px solid #e5e7eb; border-radius: var(--radius);
-  background: #fff; transition: transform .08s ease, box-shadow .08s ease, border-color .08s ease;
-}
-.card:hover { transform: translateY(-2px); box-shadow: 0 8px 26px rgba(0,0,0,.06); border-color: #d1d5db; }
-.meta { color: #6b7280; font-size: .92rem; margin-top: .25rem; }
-.muted { color: #6b7280; font-size: .92rem; }
-.excerpt { color: #4b5563; margin-top: .25rem; }
+@media (max-width: 920px) { .home-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 620px) { .home-cards { grid-template-columns: 1fr; } }
 
-/* POST LIST TWEAKS */
-.post-list { list-style: none; padding-left: 0; }
-.post-list li { margin-bottom: .8rem; }
+.home-card {
+  display: block;
+  padding: 1.1rem 1.2rem;
+  border: 1px solid #e5e7eb;
+  border-radius: var(--radius);
+  background: #fff;
+  text-decoration: none;
+  transition: transform .08s ease, box-shadow .08s ease, border-color .08s ease, background .08s ease;
+}
+.home-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 26px rgba(0,0,0,.06);
+  border-color: #d1d5db;
+  background: linear-gradient(180deg, rgba(37,99,235,.03), rgba(14,165,233,.03));
+}
+.home-card h3 { margin: 0 0 .35rem 0; color: var(--brand); font-weight: 800; }
+.muted { color: #6b7280; }
 
 /* Dark mode polish */
 @media (prefers-color-scheme: dark) {
   .hero { background: linear-gradient(90deg, rgba(37,99,235,.16), rgba(14,165,233,.16)); }
-  .card { background: #0b0b0c; border-color: #1f2937; }
-  .card:hover { border-color: #374151; }
+  .home-card { background: #0b0b0c; border-color: #1f2937; }
+  .home-card:hover { border-color: #374151; background: linear-gradient(180deg, rgba(37,99,235,.09), rgba(14,165,233,.06)); }
+  .muted { color: #9ca3af; }
 }
