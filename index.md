@@ -9,9 +9,6 @@ title: "Jaisree’s — Research"
   <div class="hero-copy">
     <h1>AI • Robotics • Systems</h1>
     <p>I build and write about embodied AI, robot learning, and reliable systems.</p>
-    <p class="hero-ctas">
-      <a class="btn" href="{{ '/posts/' | relative_url }}">Browse all Notes</a>
-    </p>
   </div>
 </div>
 
