@@ -2,6 +2,7 @@
 layout: page
 title: Publications
 permalink: /publications/
+published: false
 ---
 
 {% assign pubs = site.publications | sort: 'year' | reverse %}
