@@ -1,0 +1,12 @@
+---
+layout: page
+title: "ACM Hackathon: Wildfire Risk Predictor"
+year: 2024
+authors: Jaisree D. Ravikumar, Christina Stuck, Thaomi
+venue: UC Santa Cruz
+code_url: https://github.com/Jaisree25/Wildfires_Final_ACM
+---
+
+Led a team to build a wildfire risk detection tool using satellite imagery. Designed and trained a convolutional neural network using TensorFlow and OpenCV to identify high-risk regions based on image features with 94% accuracy. Used Flask to serve model outputs through a simple web interface to deliver a functional prototype under time constraints.
+
+[DevPost with more Info](https://devpost.com/software/wildfire-prediction-dp054e)
