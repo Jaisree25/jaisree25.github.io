@@ -1,6 +1,6 @@
 ---
 layout: default
-title: "Jaisree’s Research"
+title: "Jaisree’s - Research"
 ---
 
 <!-- HERO -->
