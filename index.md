@@ -7,8 +7,8 @@ title: "Jaisree’s — Research"
 <div class="hero">
   <img class="hero-avatar" src="{{ '/assets/images/profile.webp' | relative_url }}" alt="Jaisree headshot" width="120" height="120" />
   <div class="hero-copy">
-    <h1>AI • Robotics • Systems</h1>
-    <p>I build and write about embodied AI, robot learning, and reliable systems.</p>
+    <h1>AI • Robotics • Autonomous Systems</h1>
+    <p>An aspiring AI engineer passionate about building and writing about machine learning, robotics, and intelligent systems.</p>
   </div>
 </div>
 
