@@ -44,6 +44,7 @@ header_pages:
   - projects.md
   - posts.md
   - competitions.md 
+  - certifications.md 
  
 exclude:
   - README.md
