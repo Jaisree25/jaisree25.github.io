@@ -25,6 +25,9 @@ collections:
   competitions:
     output: true
     permalink: /competitions/:name/
+  certifications:
+    output: true
+    permalink: /certifications/:name/
     
 plugins:
   - jekyll-feed
