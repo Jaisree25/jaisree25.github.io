@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 460" width="700" height="460" font-family="Arial, sans-serif">
+  <rect width="700" height="460" fill="#f8faff" rx="14"/>
+  <text x="350" y="40" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">The AI Landscape</text>
+
+  <!-- Artificial Intelligence -->
+  <rect x="175" y="60" width="350" height="74" rx="12" fill="#dde4ff" stroke="#4361ee" stroke-width="2.5"/>
+  <text x="350" y="94" text-anchor="middle" font-size="18" font-weight="bold" fill="#2940b0">Artificial Intelligence</text>
+  <text x="350" y="118" text-anchor="middle" font-size="13" fill="#2940b0">Mimics human intelligence</text>
+
+  <!-- Branch lines -->
+  <line x1="230" y1="134" x2="165" y2="178" stroke="#777" stroke-width="2" stroke-dasharray="6,3"/>
+  <line x1="470" y1="134" x2="535" y2="178" stroke="#777" stroke-width="2" stroke-dasharray="6,3"/>
+
+  <!-- Rule-Based Methods -->
+  <rect x="50" y="178" width="228" height="74" rx="12" fill="#ffe5ec" stroke="#c1121f" stroke-width="2.5"/>
+  <text x="164" y="210" text-anchor="middle" font-size="16" font-weight="bold" fill="#c1121f">Rule-Based Methods</text>
+  <text x="164" y="232" text-anchor="middle" font-size="13" fill="#c1121f">Expert systems, if-then logic</text>
+
+  <!-- Machine Learning -->
+  <rect x="422" y="178" width="228" height="74" rx="12" fill="#dde4ff" stroke="#4361ee" stroke-width="2.5"/>
+  <text x="536" y="210" text-anchor="middle" font-size="16" font-weight="bold" fill="#2940b0">Machine Learning</text>
+  <text x="536" y="232" text-anchor="middle" font-size="13" fill="#2940b0">Linear regression, SVMs…</text>
+
+  <!-- ML to Deep Learning -->
+  <line x1="536" y1="252" x2="536" y2="296" stroke="#777" stroke-width="2" stroke-dasharray="6,3"/>
+
+  <!-- Deep Learning -->
+  <rect x="422" y="296" width="228" height="74" rx="12" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2.5"/>
+  <text x="536" y="328" text-anchor="middle" font-size="16" font-weight="bold" fill="#7b2d8b">Deep Learning</text>
+  <text x="536" y="352" text-anchor="middle" font-size="13" fill="#7b2d8b">Multi-layer networks</text>
+
+  <!-- Deep Learning to Neural Networks -->
+  <line x1="422" y1="333" x2="350" y2="394" stroke="#777" stroke-width="2" stroke-dasharray="6,3"/>
+
+  <!-- Neural Networks -->
+  <rect x="100" y="394" width="500" height="52" rx="12" fill="#d1faf0" stroke="#099268" stroke-width="2.5"/>
+  <text x="350" y="418" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">Neural Networks</text>
+  <text x="350" y="438" text-anchor="middle" font-size="13" fill="#087255">MLPs · CNNs · RNNs · Transformers</text>
+
+  <text x="350" y="457" text-anchor="middle" font-size="11" fill="#888">Each category is a subset of the one above it</text>
+</svg>

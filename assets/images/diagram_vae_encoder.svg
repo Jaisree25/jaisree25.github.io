@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 500" width="860" height="500" font-family="Arial, sans-serif">
+  <rect width="860" height="500" fill="#f8faff" rx="14"/>
+
+  <text x="430" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">VAE Encoder — Detail</text>
+  <text x="430" y="50" text-anchor="middle" font-size="13" fill="#555" font-style="italic">training only — introduces controlled variation to prevent overfitting</text>
+
+  <defs>
+    <marker id="a" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="ap" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7b2d8b"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- ══ INPUT TOKENS ROW ══ -->
+  <!-- CLS -->
+  <rect x="36"  y="72" width="170" height="56" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="121" y="96"  text-anchor="middle" font-size="14" font-weight="bold" fill="#c07a00">CLS Token</text>
+  <text x="121" y="116" text-anchor="middle" font-size="11" fill="#c07a00">learned summary vector</text>
+
+  <!-- Joint States -->
+  <rect x="242" y="72" width="170" height="56" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="327" y="96"  text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Joint States</text>
+  <text x="327" y="116" text-anchor="middle" font-size="11" fill="#2940b0">current robot config</text>
+
+  <!-- Image Features -->
+  <rect x="448" y="72" width="170" height="56" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="533" y="96"  text-anchor="middle" font-size="14" font-weight="bold" fill="#c07a00">Image Features</text>
+  <text x="533" y="116" text-anchor="middle" font-size="11" fill="#c07a00">from CNN</text>
+
+  <!-- Past Actions -->
+  <rect x="654" y="72" width="170" height="56" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="739" y="96"  text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Past Actions</text>
+  <text x="739" y="116" text-anchor="middle" font-size="11" fill="#2940b0">recent joint history</text>
+
+  <!-- Arrows down to transformer block -->
+  <line x1="121" y1="128" x2="121" y2="168" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+  <line x1="327" y1="128" x2="327" y2="168" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+  <line x1="533" y1="128" x2="533" y2="168" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+  <line x1="739" y1="128" x2="739" y2="168" stroke="#555" stroke-width="1.8" marker-end="url(#a)"/>
+
+  <!-- ══ TRANSFORMER BLOCK ══ -->
+  <rect x="36" y="168" width="788" height="68" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="430" y="196" text-anchor="middle" font-size="15" font-weight="bold" fill="#7b2d8b">Transformer Encoder Blocks</text>
+  <text x="430" y="216" text-anchor="middle" font-size="12" fill="#7b2d8b">self-attention + MLP  ·  tokens attend to each other  ·  CLS aggregates full context</text>
+
+  <!-- Arrow from transformer to CLS output -->
+  <line x1="430" y1="236" x2="430" y2="272" stroke="#7b2d8b" stroke-width="2" marker-end="url(#ap)"/>
+  <text x="445" y="258" font-size="11" fill="#7b2d8b" font-style="italic">CLS output</text>
+
+  <!-- ══ CLS OUTPUT BOX ══ -->
+  <rect x="330" y="272" width="200" height="44" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="430" y="291" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">CLS Final Vector</text>
+  <text x="430" y="308" text-anchor="middle" font-size="11" fill="#7b2d8b">summary of full input</text>
+
+  <!-- Two branches from CLS -->
+  <!-- left to μ -->
+  <line x1="330" y1="294" x2="230" y2="294" stroke="#7b2d8b" stroke-width="1.8"/>
+  <line x1="230" y1="294" x2="230" y2="342" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#ap)"/>
+  <!-- right to log(σ²) -->
+  <line x1="530" y1="294" x2="630" y2="294" stroke="#7b2d8b" stroke-width="1.8"/>
+  <line x1="630" y1="294" x2="630" y2="342" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#ap)"/>
+
+  <!-- ══ μ BOX ══ -->
+  <rect x="140" y="342" width="180" height="52" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="230" y="364" text-anchor="middle" font-size="16" font-weight="bold" fill="#c1121f">μ  (mean)</text>
+  <text x="230" y="383" text-anchor="middle" font-size="11" fill="#c1121f">centre of distribution</text>
+
+  <!-- ══ log(σ²) BOX ══ -->
+  <rect x="540" y="342" width="180" height="52" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="630" y="364" text-anchor="middle" font-size="16" font-weight="bold" fill="#c1121f">log(σ²)  (variance)</text>
+  <text x="630" y="383" text-anchor="middle" font-size="11" fill="#c1121f">spread of distribution</text>
+
+  <!-- Both converge to sample box -->
+  <line x1="230" y1="394" x2="230" y2="430" stroke="#c1121f" stroke-width="1.8"/>
+  <line x1="230" y1="430" x2="380" y2="430" stroke="#c1121f" stroke-width="1.8" marker-end="url(#ag)"/>
+  <line x1="630" y1="394" x2="630" y2="430" stroke="#c1121f" stroke-width="1.8"/>
+  <line x1="630" y1="430" x2="480" y2="430" stroke="#c1121f" stroke-width="1.8" marker-end="url(#ag)"/>
+
+  <!-- ══ SAMPLE z BOX ══ -->
+  <rect x="310" y="418" width="240" height="56" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="2.5"/>
+  <text x="430" y="441" text-anchor="middle" font-size="16" font-weight="bold" fill="#065f46">Sample  z  ~  N(μ, σ²)</text>
+  <text x="430" y="460" text-anchor="middle" font-size="12" fill="#087255">latent vector → passed to Main Encoder</text>
+
+
+</svg>

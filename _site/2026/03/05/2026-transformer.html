@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Building an LLM — From Tokens to Attention | J.aiTech</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Building an LLM — From Tokens to Attention" />
+<meta name="author" content="Jaisree David Ravikumar" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="AI • Robotics • Intelligent Systems" />
+<meta property="og:description" content="AI • Robotics • Intelligent Systems" />
+<link rel="canonical" href="http://localhost:4000/2026/03/05/2026-transformer.html" />
+<meta property="og:url" content="http://localhost:4000/2026/03/05/2026-transformer.html" />
+<meta property="og:site_name" content="J.aiTech" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-03-05T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Building an LLM — From Tokens to Attention" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jaisree David Ravikumar"},"dateModified":"2026-03-05T00:00:00-08:00","datePublished":"2026-03-05T00:00:00-08:00","description":"AI • Robotics • Intelligent Systems","headline":"Building an LLM — From Tokens to Attention","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2026/03/05/2026-transformer.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/images/profile.webp"},"name":"Jaisree David Ravikumar"},"url":"http://localhost:4000/2026/03/05/2026-transformer.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="J.aiTech" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">J.aiTech</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/">Home</a><a class="page-link" href="/about/">About</a><a class="page-link" href="/posts/">Posts</a><a class="page-link" href="/projects/">Projects</a><a class="page-link" href="/competitions/">Competitions</a><a class="page-link" href="/certifications/">Certifications</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Building an LLM — From Tokens to Attention</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2026-03-05T00:00:00-08:00" itemprop="datePublished">Mar 5, 2026
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-this-post-covers">What This Post Covers</a></li>
+  <li><a href="#tokenization-turning-text-into-numbers">Tokenization: Turning Text Into Numbers</a></li>
+  <li><a href="#word-embeddings-skip-gram-and-cbow">Word Embeddings: Skip-gram and CBOW</a></li>
+  <li><a href="#sliding-window-data-sampling">Sliding Window Data Sampling</a></li>
+  <li><a href="#simple-self-attention">Simple Self-Attention</a></li>
+  <li><a href="#self-attention-with-queries-keys-and-values">Self-Attention with Queries, Keys, and Values</a></li>
+  <li><a href="#causal-attention">Causal Attention</a></li>
+  <li><a href="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#encoder-only-decoder-only-and-encoder-decoder-architectures">Encoder-Only, Decoder-Only, and Encoder-Decoder Architectures</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-this-post-covers">What This Post Covers</h2>
+
+<p>The previous post on transformers covered the high-level architecture: embedding layers, attention, and MLP layers working together to predict the next word in a sequence. This post goes deeper — into the machinery that makes that possible. We will build up from scratch, starting with how raw text becomes numbers and ending with the full multi-head attention mechanism that sits at the heart of every modern large language model (LLM).</p>
+
+<p>The concepts here are drawn from <em>“Build a Large Language Model (From Scratch)”</em> by Sebastian Raschka. Throughout, we will ground each idea in a concrete running example — the sentence <strong>“The cat sat on the mat”</strong> — and frame explanations around next-word prediction in the style of GPT.</p>
+
+<hr />
+
+<h2 id="tokenization-turning-text-into-numbers">Tokenization: Turning Text Into Numbers</h2>
+
+<p>Neural networks cannot process raw text. Before any learning can happen, text must be converted into numbers. This process is called <strong>tokenization</strong>.</p>
+
+<h3 id="from-characters-to-tokens">From Characters to Tokens</h3>
+
+<p>A <strong>token</strong> is the basic unit of text that a model operates on. Tokens can be characters, words, or subword chunks — the choice depends on the tokenization strategy. Given a sentence:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"The cat sat on the mat"
+</code></pre></div></div>
+
+<p>A simple word-level tokenizer splits on spaces and produces:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>["The", "cat", "sat", "on", "the", "mat"]
+</code></pre></div></div>
+
+<h3 id="token-ids-and-the-vocabulary">Token IDs and the Vocabulary</h3>
+
+<p>Once we have tokens, each unique token is assigned an integer ID by building a <strong>vocabulary</strong> — a dictionary mapping every token the model knows to a unique number:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vocabulary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">The</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">0</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">cat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">1</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">sat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">2</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">on</span><span class="sh">"</span><span class="p">:</span>   <span class="mi">3</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">the</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">4</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">mat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">5</span><span class="p">,</span>
+    <span class="bp">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Our sentence then becomes a sequence of token IDs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 1, 2, 3, 4, 5]
+</code></pre></div></div>
+
+<p>This sequence of integers is what gets fed into the model. The vocabulary size matters: GPT-2 has a vocabulary of 50,257 tokens. Larger vocabularies can represent more words precisely but require more memory.</p>
+
+<h3 id="byte-pair-encoding-bpe">Byte Pair Encoding (BPE)</h3>
+
+<p>Simple word-level tokenization has a critical weakness: any word not seen during training is <strong>out-of-vocabulary (OOV)</strong> and cannot be represented. A completely new word like “ChatGPT” would be unknown to a model trained without it.</p>
+
+<p><strong>Byte Pair Encoding (BPE)</strong> solves this by operating at the subword level. Instead of treating whole words as tokens, BPE learns to split words into frequently occurring subword chunks. The algorithm works as follows:</p>
+
+<ol>
+  <li>Start with every individual character as its own token</li>
+  <li>Count all adjacent pairs of tokens in the training corpus</li>
+  <li>Merge the most frequent pair into a single new token</li>
+  <li>Repeat until the vocabulary reaches the desired size</li>
+</ol>
+
+<p>For example, starting from characters:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"l o w e r"  →  merge "e r" → "l o w er"  →  merge "lo" → "low er"  →  ...
+</code></pre></div></div>
+
+<p>The result is a vocabulary of subword pieces. Common words like “the” become a single token. Rare or new words are split into recognizable pieces:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"unhappiness"  →  ["un", "happiness"]
+"ChatGPT"      →  ["Chat", "G", "PT"]
+</code></pre></div></div>
+
+<p>This means BPE can handle any word, even ones never seen during training, by decomposing them into known subword pieces. GPT-2 and GPT-3 both use BPE.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> BPE tokenization is learned from the training corpus, not hand-crafted. The merge rules are a byproduct of training, not human design.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_tokenization.svg" alt="Tokenization Diagram" /></p>
+
+<hr />
+
+<h2 id="word-embeddings-skip-gram-and-cbow">Word Embeddings: Skip-gram and CBOW</h2>
+
+<p>Token IDs are integers, but integers have no meaningful geometry — the fact that “cat” is ID 1 and “mat” is ID 5 says nothing about whether they are related. We need a richer representation.</p>
+
+<p><strong>Word embeddings</strong> map each token ID to a dense vector of real numbers. Similar words end up with similar vectors — vectors that point in the same direction in high-dimensional space. The similarity between two word vectors can be measured with the <strong>dot product</strong>: a high dot product means the vectors are aligned, indicating semantic similarity.</p>
+
+<p>Two foundational algorithms for learning word embeddings are <strong>Skip-gram</strong> and <strong>CBOW</strong>, both part of the <strong>word2vec</strong> family.</p>
+
+<h3 id="the-core-idea-learning-from-context">The Core Idea: Learning from Context</h3>
+
+<p>Both algorithms are based on the distributional hypothesis: <strong>words that appear in similar contexts have similar meanings</strong>. “Dog” and “puppy” appear near words like “bark”, “leash”, and “fetch” — so their embeddings should be similar.</p>
+
+<h3 id="skip-gram">Skip-gram</h3>
+
+<p>Skip-gram takes a <strong>center word</strong> as input and tries to predict the <strong>surrounding context words</strong>.</p>
+
+<p>Given the sentence <code class="language-plaintext highlighter-rouge">"The cat sat on the mat"</code> with a context window of 2:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Center word: "sat"
+Target predictions: ["The", "cat", "on", "the"]
+</code></pre></div></div>
+
+<p>The model learns: given “sat”, what words are likely nearby? Over millions of such examples, the embeddings adjust so that words appearing in similar contexts end up with similar vectors.</p>
+
+<h3 id="cbow-continuous-bag-of-words">CBOW (Continuous Bag of Words)</h3>
+
+<p>CBOW is the reverse: it takes the <strong>surrounding context words</strong> as input and predicts the <strong>center word</strong>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Context input:  ["The", "cat", "on", "the"]
+Target output:  "sat"
+</code></pre></div></div>
+
+<p>CBOW averages the embeddings of the context words and uses that average to predict the center word. It is generally faster to train than Skip-gram and works better on frequent words. Skip-gram tends to work better on rare words and smaller datasets.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Skip-gram</th>
+      <th>CBOW</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Input</strong></td>
+      <td>Center word</td>
+      <td>Context words</td>
+    </tr>
+    <tr>
+      <td><strong>Predicts</strong></td>
+      <td>Context words</td>
+      <td>Center word</td>
+    </tr>
+    <tr>
+      <td><strong>Better for</strong></td>
+      <td>Rare words, small data</td>
+      <td>Frequent words, large data</td>
+    </tr>
+    <tr>
+      <td><strong>Speed</strong></td>
+      <td>Slower</td>
+      <td>Faster</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Note:</strong> In modern LLMs like GPT, embeddings are not pre-trained with Skip-gram or CBOW — they are learned end-to-end as part of training the full transformer. Skip-gram and CBOW are standalone embedding methods, but understanding them builds intuition for why embedding geometry matters.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_word_embeddings.svg" alt="Word Embeddings Diagram" /></p>
+
+<hr />
+
+<h2 id="sliding-window-data-sampling">Sliding Window Data Sampling</h2>
+
+<p>Before training, we need to decide how to turn a long corpus of text into individual training examples. For next-word prediction, we use a technique called <strong>sliding window sampling</strong>.</p>
+
+<p>Given a long sequence of token IDs — say, the first 8 tokens of a corpus:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 5, 9, 3, 1, 7, 4, 8]
+</code></pre></div></div>
+
+<p>We define a <strong>context length</strong> (also called the sequence length or block size) — the maximum number of tokens the model sees at once. With a context length of 4 and a stride of 1, the sliding window produces the following input-target pairs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  [2, 5, 9, 3]   →  Target: [5, 9, 3, 1]
+Input:  [5, 9, 3, 1]   →  Target: [9, 3, 1, 7]
+Input:  [9, 3, 1, 7]   →  Target: [3, 1, 7, 4]
+Input:  [3, 1, 7, 4]   →  Target: [1, 7, 4, 8]
+</code></pre></div></div>
+
+<p>Each input token predicts the next token — so for input <code class="language-plaintext highlighter-rouge">[2, 5, 9, 3]</code>, the targets are <code class="language-plaintext highlighter-rouge">[5, 9, 3, 1]</code>, meaning: given token <code class="language-plaintext highlighter-rouge">2</code>, predict <code class="language-plaintext highlighter-rouge">5</code>; given <code class="language-plaintext highlighter-rouge">[2, 5]</code>, predict <code class="language-plaintext highlighter-rouge">9</code>; and so on.</p>
+
+<p>The <strong>stride</strong> controls how far the window moves each step. A stride of 1 produces the maximum number of overlapping samples. A larger stride produces fewer samples but reduces redundancy — useful when the training corpus is very large.</p>
+
+<p><img src="/assets/images/diagram_sliding_window.svg" alt="Sliding Window Diagram" /></p>
+
+<hr />
+
+<h2 id="simple-self-attention">Simple Self-Attention</h2>
+
+<p>We now have token embeddings — each token in our sequence is a vector. The next question is: how does each token incorporate information from the other tokens in the sequence? This is what <strong>self-attention</strong> does.</p>
+
+<p>We will build up to the full self-attention mechanism in two steps. First, a simplified version with no trainable weights, to build intuition. Then the full Q, K, V formulation.</p>
+
+<h3 id="the-goal">The Goal</h3>
+
+<p>Consider the sentence <code class="language-plaintext highlighter-rouge">"The cat sat on the mat"</code>. The word “sat” needs to be interpreted in context — it is not just a verb in isolation, but an action performed by “cat” in a location near “mat”. Self-attention allows each token’s vector to be updated by aggregating information from all other tokens, weighted by relevance.</p>
+
+<h3 id="step-1--attention-scores-as-dot-products">Step 1 — Attention Scores as Dot Products</h3>
+
+<p>For a query token <code class="language-plaintext highlighter-rouge">x_query</code> (say, the embedding for “sat”), we compute how relevant every other token <code class="language-plaintext highlighter-rouge">xᵢ</code> is by taking the <strong>dot product</strong>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_score(xᵢ, x_query) = xᵢ · x_query
+</code></pre></div></div>
+
+<p>A higher dot product means the two vectors point in similar directions — the token is more relevant to the query.</p>
+
+<p>For our 6-token sentence, this gives 6 raw attention scores — one per token.</p>
+
+<h3 id="step-2--normalize-to-get-attention-weights">Step 2 — Normalize to Get Attention Weights</h3>
+
+<p>Raw dot products can be large or negative. We normalize them into proper weights that sum to 1 using the <strong>softmax</strong> function:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_weight(xᵢ) = softmax(attention_scores)ᵢ
+</code></pre></div></div>
+
+<p>The result is a probability distribution over the input tokens — how much attention “sat” should pay to each other word.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         The   cat   sat   on    the   mat
+weights: 0.05  0.30  0.20  0.15  0.10  0.20
+                                  (sums to 1.0)
+</code></pre></div></div>
+
+<h3 id="step-3--compute-the-context-vector">Step 3 — Compute the Context Vector</h3>
+
+<p>Finally, we compute the <strong>context vector</strong> for “sat” by taking a weighted sum of all input vectors:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>context_vector = Σᵢ attention_weight(xᵢ) · xᵢ
+</code></pre></div></div>
+
+<p>This context vector is the new, enriched representation of “sat” — a blend of all input tokens, weighted by their relevance. Words like “cat” (0.30) contribute more to “sat”’s updated meaning than “the” (0.05).</p>
+
+<p>This entire process is repeated for every token in the sequence, producing a new context vector for each one.</p>
+
+<p><img src="/assets/images/diagram_simple_attention.svg" alt="Simple Self-Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="self-attention-with-queries-keys-and-values">Self-Attention with Queries, Keys, and Values</h2>
+
+<p>The simple self-attention above has a limitation: the same input vector is used for everything — for asking “what am I looking for?” and for answering “what do I contain?”. In practice, these are different roles and should be handled by different learned projections.</p>
+
+<p>Full self-attention introduces three learned weight matrices:</p>
+
+<ul>
+  <li><strong>Wq</strong> — projects each input into a <strong>Query</strong> vector: <em>“what am I looking for?”</em></li>
+  <li><strong>Wk</strong> — projects each input into a <strong>Key</strong> vector: <em>“what do I contain?”</em></li>
+  <li><strong>Wv</strong> — projects each input into a <strong>Value</strong> vector: <em>“what should I pass forward if selected?”</em></li>
+</ul>
+
+<p>For each input token embedding <code class="language-plaintext highlighter-rouge">xᵢ</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Qᵢ = xᵢ · Wq
+Kᵢ = xᵢ · Wk
+Vᵢ = xᵢ · Wv
+</code></pre></div></div>
+
+<h3 id="computing-attention">Computing Attention</h3>
+
+<p>The attention score between a query token <code class="language-plaintext highlighter-rouge">q</code> and every key <code class="language-plaintext highlighter-rouge">Kᵢ</code> is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>score(q, Kᵢ) = Q · Kᵢᵀ
+</code></pre></div></div>
+
+<p>These scores are then <strong>scaled</strong> by dividing by √dₖ (where dₖ is the dimension of the key vectors). This prevents dot products from growing very large as dimensionality increases, which would push softmax into regions of near-zero gradient:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scaled_score = Q · Kᵢᵀ / √dₖ
+</code></pre></div></div>
+
+<p>The scaled scores are passed through softmax to get attention weights, and the output is a weighted sum of the Value vectors:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = Σᵢ softmax(Q · Kᵢᵀ / √dₖ) · Vᵢ
+</code></pre></div></div>
+
+<p>Written compactly for all queries at once using matrix notation:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention(Q, K, V) = softmax(QKᵀ / √dₖ) · V
+</code></pre></div></div>
+
+<p>This is the <strong>scaled dot-product attention</strong> formula at the core of every transformer.</p>
+
+<p>The key improvement over simple self-attention is that Wq, Wk, and Wv are <strong>learned parameters</strong>. The model learns what to query for, what to advertise in keys, and what to pass forward in values — all tuned by gradient descent to minimize the loss.</p>
+
+<p><img src="/assets/images/diagram_qkv_attention.svg" alt="QKV Self-Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="causal-attention">Causal Attention</h2>
+
+<p>Standard self-attention allows every token to attend to every other token — including future tokens. This is fine for tasks like classification or translation (where the full input is available at once), but it breaks next-word prediction.</p>
+
+<p>During training for next-word prediction, the model should not be able to “cheat” by looking at the answer. Given the sequence <code class="language-plaintext highlighter-rouge">["The", "cat", "sat", "on", "the", "mat"]</code>, when predicting the word after “cat”, the model must not see “sat”, “on”, “the”, or “mat”.</p>
+
+<p><strong>Causal attention</strong> (also called masked self-attention) enforces this by <strong>masking</strong> the upper triangle of the attention score matrix — setting those scores to −∞ before the softmax, which causes them to become 0 after softmax:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention score matrix (before masking):
+
+        The   cat   sat   on   the   mat
+The   [ 0.8   0.3   0.5   0.2   0.4   0.1 ]
+cat   [ 0.6   0.9   0.7   0.3   0.5   0.2 ]
+sat   [ 0.4   0.7   0.8   0.6   0.4   0.3 ]
+on    [ 0.2   0.4   0.6   0.9   0.7   0.5 ]
+the   [ 0.1   0.3   0.4   0.7   0.8   0.6 ]
+mat   [ 0.2   0.4   0.5   0.6   0.7   0.9 ]
+
+After causal masking (upper triangle → −∞ → 0 after softmax):
+
+        The   cat   sat   on   the   mat
+The   [ 0.8   —     —     —     —     —   ]
+cat   [ 0.6   0.9   —     —     —     —   ]
+sat   [ 0.4   0.7   0.8   —     —     —   ]
+on    [ 0.2   0.4   0.6   0.9   —     —   ]
+the   [ 0.1   0.3   0.4   0.7   0.8   —   ]
+mat   [ 0.2   0.4   0.5   0.6   0.7   0.9 ]
+</code></pre></div></div>
+
+<p>Each token can only attend to itself and tokens that came before it. This is what makes GPT-style models <strong>autoregressive</strong>: at inference time, they generate one token at a time, always conditioning only on what has been generated so far.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Causal masking is applied during both training and inference. During training it prevents cheating. During inference it is naturally satisfied because future tokens simply do not exist yet.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_causal_attention.svg" alt="Causal Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="multi-head-attention">Multi-Head Attention</h2>
+
+<p>A single self-attention head produces one context vector per token — one view of which tokens are relevant to which. But language has many simultaneous relationships: syntactic (subject-verb agreement), semantic (word meaning), positional (nearby words), and more.</p>
+
+<p><strong>Multi-head attention</strong> runs several self-attention operations in parallel, each with its own independent Wq, Wk, Wv weight matrices. Each <strong>head</strong> learns to focus on a different type of relationship.</p>
+
+<h3 id="the-mechanism">The Mechanism</h3>
+
+<p>Given <code class="language-plaintext highlighter-rouge">h</code> heads, each head <code class="language-plaintext highlighter-rouge">i</code> computes its own attention output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>headᵢ = Attention(Q·Wqᵢ, K·Wkᵢ, V·Wvᵢ)
+</code></pre></div></div>
+
+<p>The outputs of all heads are then <strong>concatenated</strong> and projected through a final learned weight matrix Wo:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MultiHead(Q, K, V) = Concat(head₁, head₂, ..., headₕ) · Wo
+</code></pre></div></div>
+
+<h3 id="why-it-matters">Why It Matters</h3>
+
+<p>Each head operates on a lower-dimensional subspace — if the model dimension is 512 and there are 8 heads, each head works in a 64-dimensional space. This is computationally similar to a single full-dimensional attention operation, but produces richer representations because the heads specialize independently.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> The model dimension (<code class="language-plaintext highlighter-rouge">d_model</code>) is the size of every token’s vector throughout the entire transformer. A <code class="language-plaintext highlighter-rouge">d_model</code> of 512 means every token is represented as 512 numbers at every layer — input, output, and everything in between. This number is a design choice: GPT-3 uses 12,288. Larger dimensions give the model more capacity to represent complex relationships but are more expensive to train.</p>
+</blockquote>
+
+<p>For example, in a trained GPT model, one head might learn to track subject-verb relationships, another might focus on coreference (connecting “it” to the noun it refers to), and another might attend to positional proximity.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> We cannot explicitly tell each head what to focus on — this specialization emerges from training. After training, the attention patterns of individual heads can be visualized and interpreted, but they are not pre-programmed.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_multihead_attention.svg" alt="Multi-Head Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="encoder-only-decoder-only-and-encoder-decoder-architectures">Encoder-Only, Decoder-Only, and Encoder-Decoder Architectures</h2>
+
+<p>The transformer architecture is flexible. Depending on the task, different configurations of encoder and decoder blocks are used. Understanding the distinction is essential for understanding why GPT, BERT, and T5 behave so differently despite all being “transformers”.</p>
+
+<h3 id="the-encoder-block">The Encoder Block</h3>
+
+<p>An <strong>encoder</strong> block processes an input sequence and produces a contextual representation of it. It uses <strong>bidirectional self-attention</strong> — every token can attend to every other token, past and future. This makes encoders excellent at understanding and representing text.</p>
+
+<h3 id="the-decoder-block">The Decoder Block</h3>
+
+<p>A <strong>decoder</strong> block generates an output sequence one token at a time. It uses <strong>causal (masked) self-attention</strong> — each token can only attend to previous tokens. Decoders are designed for generation.</p>
+
+<p>In encoder-decoder models, the decoder also has a <strong>cross-attention</strong> layer that allows it to attend to the encoder’s output — connecting understanding of the input to generation of the output.</p>
+
+<h3 id="encoder-only-models">Encoder-Only Models</h3>
+
+<p><strong>Architecture:</strong> Stack of encoder blocks only, bidirectional attention.</p>
+
+<p><strong>Examples:</strong> BERT, RoBERTa</p>
+
+<p><strong>Best for:</strong> Tasks that require deep understanding of the full input — classification, named entity recognition, question answering (extractive), semantic similarity.</p>
+
+<p><strong>Why:</strong> Because every token can attend to every other token, encoder-only models build richer representations of meaning. There is no generation step — a classification head is placed on top of the final representations.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "The cat sat on the mat"
+         ↓ bidirectional attention (all tokens see all tokens)
+Output: [rich contextual representation of each token]
+         ↓ classification head
+Result: sentiment / label / entity tag
+</code></pre></div></div>
+
+<h3 id="decoder-only-models">Decoder-Only Models</h3>
+
+<p><strong>Architecture:</strong> Stack of decoder blocks only, causal attention.</p>
+
+<p><strong>Examples:</strong> GPT-2, GPT-3, GPT-4, LLaMA, Mistral</p>
+
+<p><strong>Best for:</strong> Text generation, next-word prediction, chat, code generation.</p>
+
+<p><strong>Why:</strong> Causal attention naturally supports autoregressive generation — predict the next token, append it, predict the next, and so on. The entire pretraining objective (next-word prediction) is perfectly aligned with this architecture.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "The cat sat on"
+         ↓ causal attention (each token sees only past tokens)
+Output: probability distribution over vocabulary
+Result: "the" (most likely next token)
+</code></pre></div></div>
+
+<h3 id="encoder-decoder-models">Encoder-Decoder Models</h3>
+
+<p><strong>Architecture:</strong> Encoder stack + Decoder stack, connected by cross-attention.</p>
+
+<p><strong>Examples:</strong> T5, BART, the original transformer (Vaswani et al. 2017)</p>
+
+<p><strong>Best for:</strong> Sequence-to-sequence tasks where the input and output are different sequences — translation, summarization, question answering (generative).</p>
+
+<p><strong>Why:</strong> The encoder reads and understands the full input (bidirectionally). The decoder then generates the output token by token, using cross-attention to condition each generated token on the encoder’s representation of the input.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:   "The cat sat on the mat"  (→ encoder → rich representation)
+                                         ↓ cross-attention
+Decoder: generates "Le chat s'est assis sur le tapis"  (French translation)
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Note:</strong> Encoder-decoder models have become less common in practice. It turns out that large decoder-only models — when trained on enough data — develop strong understanding capabilities on their own, without needing a separate encoder. The original encoder-decoder design made more sense when models were smaller and the two components provided a clean separation of “understand the input” and “generate the output” — but at scale, that separation is no longer necessary.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_encoder_decoder.svg" alt="Encoder Decoder Architectures Diagram" /></p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="tokenization">Tokenization</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Token</strong></td>
+      <td>Basic unit of text (character, word, or subword)</td>
+    </tr>
+    <tr>
+      <td><strong>Vocabulary</strong></td>
+      <td>Dictionary mapping tokens to integer IDs</td>
+    </tr>
+    <tr>
+      <td><strong>BPE</strong></td>
+      <td>Learns subword splits from corpus; handles unseen words</td>
+    </tr>
+    <tr>
+      <td><strong>Sliding Window</strong></td>
+      <td>Turns a long sequence into input-target pairs for training</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="attention-mechanisms">Attention Mechanisms</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mechanism</th>
+      <th>Weights Trainable?</th>
+      <th>Key Feature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Simple self-attention</strong></td>
+      <td>No</td>
+      <td>Dot product of raw input vectors</td>
+    </tr>
+    <tr>
+      <td><strong>Q, K, V self-attention</strong></td>
+      <td>Yes (Wq, Wk, Wv)</td>
+      <td>Separate learned projections for querying, matching, passing</td>
+    </tr>
+    <tr>
+      <td><strong>Causal attention</strong></td>
+      <td>Yes</td>
+      <td>Upper triangle masked; tokens only see the past</td>
+    </tr>
+    <tr>
+      <td><strong>Multi-head attention</strong></td>
+      <td>Yes (per head + Wo)</td>
+      <td>Multiple parallel heads; each learns different relationships</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="architectures">Architectures</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Architecture</th>
+      <th>Attention</th>
+      <th>Use Case</th>
+      <th>Examples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Encoder-only</strong></td>
+      <td>Bidirectional</td>
+      <td>Understanding</td>
+      <td>BERT, RoBERTa</td>
+    </tr>
+    <tr>
+      <td><strong>Decoder-only</strong></td>
+      <td>Causal</td>
+      <td>Generation</td>
+      <td>GPT, LLaMA</td>
+    </tr>
+    <tr>
+      <td><strong>Encoder-Decoder</strong></td>
+      <td>Both + cross-attention</td>
+      <td>Seq-to-seq</td>
+      <td>T5, BART</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="word-embeddings">Word Embeddings</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Input</th>
+      <th>Predicts</th>
+      <th>Strength</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Skip-gram</strong></td>
+      <td>Center word</td>
+      <td>Context words</td>
+      <td>Rare words</td>
+    </tr>
+    <tr>
+      <td><strong>CBOW</strong></td>
+      <td>Context words</td>
+      <td>Center word</td>
+      <td>Frequent words, speed</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div><a class="u-url" href="/2026/03/05/2026-transformer.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">J.aiTech</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name" style="color:#000;">Jaisree David Ravikumar</li><li style="color:#000; list-style:none;">AI • Robotics • Intelligent Systems</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

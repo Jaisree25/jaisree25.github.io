@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Intro to Transformers | J.aiTech</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Intro to Transformers" />
+<meta name="author" content="Jaisree David Ravikumar" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="AI • Robotics • Intelligent Systems" />
+<meta property="og:description" content="AI • Robotics • Intelligent Systems" />
+<link rel="canonical" href="http://localhost:4000/2025/01/25/introtransformer.html" />
+<meta property="og:url" content="http://localhost:4000/2025/01/25/introtransformer.html" />
+<meta property="og:site_name" content="J.aiTech" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-01-25T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Intro to Transformers" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jaisree David Ravikumar"},"dateModified":"2025-01-25T00:00:00-08:00","datePublished":"2025-01-25T00:00:00-08:00","description":"AI • Robotics • Intelligent Systems","headline":"Intro to Transformers","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2025/01/25/introtransformer.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/images/profile.webp"},"name":"Jaisree David Ravikumar"},"url":"http://localhost:4000/2025/01/25/introtransformer.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="J.aiTech" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">J.aiTech</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/">Home</a><a class="page-link" href="/about/">About</a><a class="page-link" href="/posts/">Posts</a><a class="page-link" href="/projects/">Projects</a><a class="page-link" href="/competitions/">Competitions</a><a class="page-link" href="/certifications/">Certifications</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Intro to Transformers</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-01-25T00:00:00-08:00" itemprop="datePublished">Jan 25, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-is-a-transformer">What Is a Transformer?</a></li>
+  <li><a href="#rnns-vs-transformers">RNNs vs Transformers</a></li>
+  <li><a href="#the-embedding-layer">The Embedding Layer</a></li>
+  <li><a href="#the-attention-layer">The Attention Layer</a></li>
+  <li><a href="#queries-keys-and-values">Queries, Keys, and Values</a></li>
+  <li><a href="#self-attention-vs-cross-attention">Self-Attention vs Cross-Attention</a></li>
+  <li><a href="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#the-full-forward-pass">The Full Forward Pass</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-is-a-transformer">What Is a Transformer?</h2>
+
+<p>If you have been following developments in AI over the past few years, you have almost certainly encountered the word <em>transformer</em>. It is the architecture behind GPT, BERT, and virtually every modern large language model. But what exactly is a transformer, why is it so powerful, and how does it work?</p>
+
+<p>This post builds directly on the neural networks guide. We have already seen how a vanilla neural network maps a fixed input to a fixed output — for instance, predicting whether a patient has diabetes from ten health metrics. The key limitation of that approach is that it produces a <strong>single output for a single input</strong>. Real language tasks — translation, text generation, summarization — require models that process and produce <em>sequences</em>. That need is what gave rise to transformers.</p>
+
+<p>The transformer architecture was introduced in the 2017 paper <em>“Attention Is All You Need”</em> by Vaswani et al., and has since become the foundation of virtually every modern language model.</p>
+
+<p>A transformer is a neural network designed to process and generate <strong>sequences of information</strong>. It is made up of three core components, repeated across multiple layers:</p>
+
+<ul>
+  <li><strong>Embedding layer</strong> — converts raw tokens (words or subwords) into dense numerical vectors</li>
+  <li><strong>Attention layer</strong> — allows each token to incorporate context from every other token in the sequence</li>
+  <li><strong>MLP layer</strong> — a standard feedforward network applied to each token’s representation independently</li>
+</ul>
+
+<p>Throughout this post, we will ground the explanation in a single task: <strong>next-word prediction</strong> — given a partial sentence, predict what word comes next.</p>
+
+<hr />
+
+<h2 id="rnns-vs-transformers">RNNs vs Transformers</h2>
+
+<p>Before transformers, the dominant architecture for sequence tasks was the <strong>Recurrent Neural Network (RNN)</strong>. Understanding where RNNs fell short is the clearest way to see what transformers solved.</p>
+
+<p>An RNN processes a sequence <strong>one token at a time</strong>, left to right. Each step takes the current token and a hidden state carried forward from the previous step, and produces a new hidden state. This means the model must compress everything it has seen so far into a single vector before moving to the next token — a significant bottleneck for long sequences.</p>
+
+<p>A transformer processes <strong>all tokens in the sequence simultaneously</strong>, in parallel. Rather than passing information through a sequential chain, every token attends directly to every other token in a single operation. This has two major consequences:</p>
+
+<ul>
+  <li><strong>Speed</strong> — parallel processing maps naturally to GPU hardware, making transformers dramatically faster to train than RNNs</li>
+  <li><strong>Long-range dependencies</strong> — a token at position 1 and a token at position 100 attend to each other directly, with no information loss from the intervening steps</li>
+</ul>
+
+<p><img src="/assets/images/diagram_rnn_vs_transformer.svg" alt="RNN vs Transformer Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> RNNs process tokens sequentially, so training cannot be parallelized across the sequence. Transformers process all tokens at once, enabling efficient use of GPU parallelism.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="the-embedding-layer">The Embedding Layer</h2>
+
+<p>Neural networks operate on numbers, not words. The embedding layer is responsible for converting each token into a numerical vector that the rest of the network can work with.</p>
+
+<h3 id="why-not-just-use-integer-ids">Why Not Just Use Integer IDs?</h3>
+
+<p>Before the embedding layer can do anything, each word must be converted to an integer ID by mapping it against a vocabulary — a dictionary of every token the model knows. But raw integers have no useful geometry — the fact that “cat” is ID 1 and “mat” is ID 5 tells the model nothing about whether they are related.</p>
+
+<h3 id="one-hot-encoding-a-naive-approach">One-Hot Encoding: A Naive Approach</h3>
+
+<p>An early approach was <strong>one-hot encoding</strong>: represent each word as a vector of all zeros, with a single 1 at the index corresponding to that word’s ID. With a vocabulary of 10,000 words, “cat” might be:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 1, 0, 0, 0, ... 0]   ← 10,000 values, all zero except index 1
+</code></pre></div></div>
+
+<p>This has two serious problems. First, the vectors are enormous — 10,000 dimensions for every single word. Second, and more fundamentally, one-hot vectors carry no information about meaning. “Dog” and “puppy” are just as different from each other as “dog” and “democracy” — there is no similarity captured.</p>
+
+<h3 id="dense-embeddings">Dense Embeddings</h3>
+
+<p>The embedding layer solves both problems by mapping each token ID to a <strong>dense vector</strong> — a short list of real numbers, typically 256 to 1024 values, learned during training.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>one-hot:  [0, 0, 1, 0, 0, ... 0]           ← 10,000 dimensions, mostly zeros
+embedding: [0.21, -0.54, 0.83, 0.12, ...]  ← 512 dimensions, all meaningful
+</code></pre></div></div>
+
+<p>These vectors are stored in an <strong>embedding matrix</strong> — one row per token in the vocabulary. Initially the values are random. As the model trains, the embedding matrix is updated via gradient descent alongside all other weights, and the vectors gradually adjust so that words used in similar contexts end up pointing in similar directions.</p>
+
+<p>Similarity between two word vectors is measured using the <strong>dot product</strong> — a single number computed by multiplying corresponding elements and summing the results. A high dot product means the vectors are aligned, indicating the words are semantically related. This is why a well-trained embedding space places “dog” and “puppy” close together, and far from “democracy”.</p>
+
+<p><img src="/assets/images/diagram_embedding.svg" alt="Embedding Diagram" /></p>
+
+<hr />
+
+<h2 id="the-attention-layer">The Attention Layer</h2>
+
+<p>The embedding layer encodes the <em>meaning</em> of individual words, but not their <em>context</em>. The word “model” means something very different in “fashion model” versus “neural network model” — yet both would receive the same embedding vector coming out of the embedding layer. The <strong>attention layer</strong> resolves this by updating each token’s representation based on its relationship to all other tokens in the sequence.</p>
+
+<h3 id="a-concrete-example">A Concrete Example</h3>
+
+<p>Take the sentence: <strong>“There is a fluffy pink rock.”</strong></p>
+
+<p>The noun is “rock” and the adjectives are “fluffy” and “pink”. The attention layer needs to figure out that “fluffy” and “pink” modify “rock” — and update the vector for “rock” so that it carries the meaning of “fluffy pink rock”.</p>
+
+<p>Here is how that happens.</p>
+
+<h3 id="step-1--attention-scores">Step 1 — Attention Scores</h3>
+
+<p>For each token in the sequence, the model computes an <strong>attention score</strong> against every other token. These scores measure how relevant each token is to each other token. Higher score = more relevant.</p>
+
+<p>Each token in the sequence has an embedding vector — a list of numbers representing its meaning. To compute how relevant any token is to “rock”, we take the <strong>dot product</strong> of their two vectors:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_score(xᵢ, x_query) = xᵢ · x_query
+</code></pre></div></div>
+
+<p>For example, the embedding vector for “fluffy” points in a similar direction to the embedding vector for “rock” — both are associated with physical, tangible objects. Their dot product is therefore high (0.90). The embedding vector for “There” points in a very different direction — it is a filler word with no physical meaning — so its dot product with “rock” is low (0.01). We repeat this for every token in the sentence, giving us one raw score per token representing how relevant it is to “rock”.</p>
+
+<p>The raw attention scores for our sentence might look like this — the key insight is that “rock” has high scores with “fluffy” and “pink”, since adjectives are strongly associated with the noun they modify:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         There   is     a    fluffy  pink   rock
+There  [  0.00  0.00  0.00   0.00   0.00   0.00 ]
+is     [  0.10  0.00  0.00   0.00   0.00   0.00 ]
+a      [  0.05  0.10  0.00   0.00   0.00   0.00 ]
+fluffy [  0.05  0.05  0.10   0.00   0.00   0.00 ]
+pink   [  0.05  0.05  0.10   0.30   0.00   0.00 ]
+rock   [  0.01  0.01  0.01   0.90   0.80   0.01 ]
+                             ^^^^   ^^^^
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Note:</strong> The lower triangle is zeroed out — this is called <strong>causal masking</strong>, a technique that prevents earlier tokens from being influenced by later ones. It is used in GPT-style next-word prediction models. We cover this in depth in the LLM internals post.</p>
+</blockquote>
+
+<h3 id="step-2--softmax-normalization">Step 2 — Softmax Normalization</h3>
+
+<p>Raw attention scores are converted into <strong>attention weights</strong> using the softmax function, so that the weights for each token sum to 1. This turns the scores into a proper probability distribution — how much attention should “rock” pay to each other word?</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rock's attention weights (after softmax → sums to 1.0):
+
+There: 0.01,  is: 0.01,  a: 0.01,  fluffy: 0.47,  pink: 0.42,  rock: 0.08
+</code></pre></div></div>
+
+<p>“fluffy” and “pink” dominate, which is exactly what we want.</p>
+
+<h3 id="step-3--weighted-sum-context-vector">Step 3 — Weighted Sum (Context Vector)</h3>
+
+<p>Finally, the model computes a <strong>context vector</strong> for “rock” by taking a weighted sum of all token vectors, using the attention weights:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>context("rock") = 0.01·v(There) + 0.01·v(is) + 0.01·v(a)
+                + 0.47·v(fluffy) + 0.42·v(pink) + 0.08·v(rock)
+</code></pre></div></div>
+
+<p>This context vector is the new, enriched representation of “rock” — a blend of all tokens, dominated by “fluffy” and “pink”. The same process runs for every token in the sequence, producing an updated representation for each one.</p>
+
+<p><img src="/assets/images/diagram_attention_score.svg" alt="Attention Score Diagram" /></p>
+
+<hr />
+
+<h2 id="queries-keys-and-values">Queries, Keys, and Values</h2>
+
+<p>The attention mechanism above computed scores by comparing token vectors directly against each other. In practice, transformers use a more powerful formulation that gives the model three separate learned projections per token — <strong>Queries, Keys, and Values</strong> — each with its own weight matrix learned during training.</p>
+
+<ul>
+  <li><strong>Query (Q)</strong> — <em>“What am I looking for?”</em> — the token asking the question</li>
+  <li><strong>Key (K)</strong> — <em>“What do I contain?”</em> — every token advertising its content</li>
+  <li><strong>Value (V)</strong> — <em>“What should I pass forward if selected?”</em> — the actual information to aggregate</li>
+</ul>
+
+<p>For each input token embedding <code class="language-plaintext highlighter-rouge">x</code>, three vectors are computed:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Q = x · Wq
+K = x · Wk
+V = x · Wv
+</code></pre></div></div>
+
+<p>Where <code class="language-plaintext highlighter-rouge">Wq</code>, <code class="language-plaintext highlighter-rouge">Wk</code>, and <code class="language-plaintext highlighter-rouge">Wv</code> are learned weight matrices. The attention score between a query and all keys is computed as a dot product, scaled by √dₖ to prevent gradients from vanishing as vector dimensionality grows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention(Q, K, V) = softmax( QKᵀ / √dₖ ) · V
+</code></pre></div></div>
+
+<p>The improvement over the simpler version is that the model now has three separate learned lenses for each token — it can learn <em>what to ask</em>, <em>what to advertise</em>, and <em>what to contribute</em> independently, all tuned by gradient descent.</p>
+
+<hr />
+
+<h2 id="self-attention-vs-cross-attention">Self-Attention vs Cross-Attention</h2>
+
+<p>The attention mechanism described above is <strong>self-attention</strong>: the queries, keys, and values all come from the <em>same</em> sequence. Each token attends to every other token within the same input, learning how words within a sentence relate to one another.</p>
+
+<p><strong>Cross-attention</strong> is used when the model needs to align information from <em>two different sequences</em>. The queries come from one sequence, while the keys and values come from another. This is how encoder-decoder transformers connect understanding of the input to generation of the output — the decoder queries the encoder’s representations using cross-attention at each generation step.</p>
+
+<p>Common use cases for cross-attention:</p>
+
+<ul>
+  <li><strong>Language translation</strong> — decoder attends to the encoder’s representation of the source sentence</li>
+  <li><strong>Image captioning</strong> — language decoder attends to visual features extracted from the image</li>
+  <li><strong>ACT (robotics)</strong> — the action decoder attends to the encoder’s representation of the robot’s current state</li>
+</ul>
+
+<hr />
+
+<h2 id="multi-head-attention">Multi-Head Attention</h2>
+
+<p>A single attention operation produces one view of which tokens are relevant to which. But language contains many simultaneous relationships — syntactic, semantic, positional — and a single head cannot specialize in all of them at once.</p>
+
+<p><strong>Multi-head attention</strong> runs several attention operations in parallel, each with its own independent <code class="language-plaintext highlighter-rouge">Wq</code>, <code class="language-plaintext highlighter-rouge">Wk</code>, <code class="language-plaintext highlighter-rouge">Wv</code> weight matrices. Each <strong>head</strong> learns to focus on a different type of relationship.</p>
+
+<p>If the model dimension is 512 and there are 8 heads, each head operates in a 64-dimensional subspace — computationally similar to a single full-dimensional attention operation, but producing richer representations because the heads specialize independently.</p>
+
+<p>In practice, one head might learn to track subject-verb relationships, another might connect pronouns to their referents, and another might attend to nearby positional context. We cannot tell the heads what to focus on — this specialization emerges entirely from training.</p>
+
+<hr />
+
+<h2 id="the-full-forward-pass">The Full Forward Pass</h2>
+
+<p>Now we can put the full picture together. Given the partial sentence <strong>“There was a”</strong>, here is what happens at each stage:</p>
+
+<h3 id="1-tokenization-and-embedding">1. Tokenization and Embedding</h3>
+
+<p>Each word is converted to a token ID, then looked up in the embedding matrix to produce a dense vector. Positional encodings are added to each vector to give the model information about the order of tokens — without this, the model would treat “cat sat on” and “on sat cat” identically.</p>
+
+<h3 id="2-attention-layers">2. Attention Layers</h3>
+
+<p>The token vectors pass through multiple stacked attention layers. At each layer, every token attends to every other token (subject to causal masking), and each token’s vector is updated to reflect the context of the full sequence. After several layers, the representation of “a” has been enriched by its relationship to “There” and “was”.</p>
+
+<h3 id="3-mlp-layers">3. MLP Layers</h3>
+
+<p>After each attention layer, the updated vectors pass through a <strong>feedforward MLP</strong> applied independently to each token. The MLP refines each representation further — it is where much of the model’s factual knowledge is believed to be stored.</p>
+
+<h3 id="4-output">4. Output</h3>
+
+<p>The final vector for the last token — “a” — is passed through a linear layer that projects it into the vocabulary space (one score per word in the vocabulary), followed by softmax to produce a probability distribution. The highest-probability word is the prediction.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "There was a"
+Output probabilities: { "rock": 0.25, "dog": 0.10, "time": 0.18, ... }
+Predicted next word:  "rock"
+</code></pre></div></div>
+
+<p>The predicted word is appended to the sequence, and the entire process repeats — this is how transformers generate text one token at a time.</p>
+
+<p><img src="/assets/images/diagram_transformer_forward_pass.svg" alt="Transformer Forward Pass Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> Throughout this post, references to the model “learning” or “training” mean the same thing: weight matrices — the embedding matrix <code class="language-plaintext highlighter-rouge">WE</code>, query matrix <code class="language-plaintext highlighter-rouge">Wq</code>, key matrix <code class="language-plaintext highlighter-rouge">Wk</code>, value matrix <code class="language-plaintext highlighter-rouge">Wv</code>, and all MLP weights — being updated via gradient descent and backpropagation as described in the neural networks guide.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="core-components">Core Components</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Embedding layer</strong></td>
+      <td>Maps token IDs to dense vectors; learns semantic similarity</td>
+    </tr>
+    <tr>
+      <td><strong>Attention layer</strong></td>
+      <td>Updates each token’s representation using context from all other tokens</td>
+    </tr>
+    <tr>
+      <td><strong>MLP layer</strong></td>
+      <td>Refines representations independently per token; stores factual knowledge</td>
+    </tr>
+    <tr>
+      <td><strong>Positional encoding</strong></td>
+      <td>Adds order information to token embeddings</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="key-concepts">Key Concepts</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>One-Line Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Dot product</strong></td>
+      <td>Measures similarity between two vectors — higher means more aligned</td>
+    </tr>
+    <tr>
+      <td><strong>Softmax</strong></td>
+      <td>Converts raw scores into weights that sum to 1</td>
+    </tr>
+    <tr>
+      <td><strong>Context vector</strong></td>
+      <td>Weighted sum of all token vectors; the enriched output of attention</td>
+    </tr>
+    <tr>
+      <td><strong>Q, K, V</strong></td>
+      <td>Separate learned projections controlling what each token queries, advertises, and contributes</td>
+    </tr>
+    <tr>
+      <td><strong>Causal masking</strong></td>
+      <td>Prevents tokens from attending to future positions during next-word prediction</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div><a class="u-url" href="/2025/01/25/introtransformer.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">J.aiTech</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name" style="color:#000;">Jaisree David Ravikumar</li><li style="color:#000; list-style:none;">AI • Robotics • Intelligent Systems</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

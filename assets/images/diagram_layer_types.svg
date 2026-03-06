@@ -1,0 +1,223 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" width="900" height="620" font-family="Arial, sans-serif">
+  <rect width="900" height="620" fill="#f8faff" rx="14"/>
+  <text x="450" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">Common Layer Types</text>
+
+  <!-- ─────────────── ROW 1 ─────────────── -->
+
+  <!-- ── Dense ── -->
+  <rect x="18" y="55" width="200" height="240" rx="10" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="118" y="82" text-anchor="middle" font-size="15" font-weight="bold" fill="#2940b0">Dense</text>
+  <text x="118" y="100" text-anchor="middle" font-size="12" fill="#2940b0">(Fully Connected)</text>
+  <!-- mini network -->
+  <circle cx="68"  cy="155" r="11" fill="#4361ee"/>
+  <circle cx="68"  cy="188" r="11" fill="#4361ee"/>
+  <circle cx="118" cy="140" r="11" fill="#4361ee"/>
+  <circle cx="118" cy="170" r="11" fill="#4361ee"/>
+  <circle cx="118" cy="200" r="11" fill="#4361ee"/>
+  <circle cx="168" cy="170" r="11" fill="#4361ee"/>
+  <g stroke="#4361ee" stroke-width="0.9" opacity="0.4">
+    <line x1="79" y1="155" x2="107" y2="140"/><line x1="79" y1="155" x2="107" y2="170"/><line x1="79" y1="155" x2="107" y2="200"/>
+    <line x1="79" y1="188" x2="107" y2="140"/><line x1="79" y1="188" x2="107" y2="170"/><line x1="79" y1="188" x2="107" y2="200"/>
+    <line x1="129" y1="140" x2="157" y2="170"/><line x1="129" y1="170" x2="157" y2="170"/><line x1="129" y1="200" x2="157" y2="170"/>
+  </g>
+  <text x="118" y="234" text-anchor="middle" font-size="12" fill="#333">Every node connects</text>
+  <text x="118" y="252" text-anchor="middle" font-size="12" fill="#333">to every next node</text>
+  <text x="118" y="278" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Tabular / MLP layers</text>
+
+  <!-- ── Conv2D ── -->
+  <rect x="234" y="55" width="200" height="240" rx="10" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="334" y="82" text-anchor="middle" font-size="15" font-weight="bold" fill="#7b2d8b">Conv2D</text>
+  <text x="334" y="100" text-anchor="middle" font-size="12" fill="#7b2d8b">(Convolutional)</text>
+  <!-- 4×4 grid, 2×2 filter highlighted -->
+  <g transform="translate(258,112)">
+    <rect x="0"  y="0"  width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="24" y="0"  width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="48" y="0"  width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="72" y="0"  width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="0"  y="24" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="24" y="24" width="22" height="22" fill="#7b2d8b" opacity="0.4" stroke="#7b2d8b" stroke-width="2"/>
+    <rect x="48" y="24" width="22" height="22" fill="#7b2d8b" opacity="0.4" stroke="#7b2d8b" stroke-width="2"/>
+    <rect x="72" y="24" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="0"  y="48" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="24" y="48" width="22" height="22" fill="#7b2d8b" opacity="0.4" stroke="#7b2d8b" stroke-width="2"/>
+    <rect x="48" y="48" width="22" height="22" fill="#7b2d8b" opacity="0.4" stroke="#7b2d8b" stroke-width="2"/>
+    <rect x="72" y="48" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="0"  y="72" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="24" y="72" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="48" y="72" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <rect x="72" y="72" width="22" height="22" fill="#ddd" stroke="#aaa" stroke-width="1"/>
+    <text x="47" y="108" text-anchor="middle" font-size="12" fill="#7b2d8b" font-weight="bold">3×3 filter slides</text>
+  </g>
+  <text x="334" y="252" text-anchor="middle" font-size="12" fill="#333">Detects local patterns</text>
+  <text x="334" y="278" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Images · spatial data</text>
+
+  <!-- ── MaxPooling ── -->
+  <rect x="450" y="55" width="200" height="240" rx="10" fill="#d1faf0" stroke="#099268" stroke-width="2"/>
+  <text x="550" y="82" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">MaxPooling</text>
+  <text x="550" y="100" text-anchor="middle" font-size="12" fill="#087255">(Pooling)</text>
+  <!-- 2×2 → 1 max -->
+  <g transform="translate(470,116)">
+    <rect x="0"  y="0"  width="42" height="42" fill="#06d6a0" opacity="0.35" stroke="#099268" stroke-width="1.5"/>
+    <text x="21" y="26" text-anchor="middle" font-size="16" fill="#087255">3</text>
+    <rect x="46" y="0"  width="42" height="42" fill="#06d6a0" opacity="0.2" stroke="#099268" stroke-width="1.5"/>
+    <text x="67" y="26" text-anchor="middle" font-size="16" fill="#087255">1</text>
+    <rect x="0"  y="46" width="42" height="42" fill="#06d6a0" opacity="0.2" stroke="#099268" stroke-width="1.5"/>
+    <text x="21" y="72" text-anchor="middle" font-size="16" fill="#087255">2</text>
+    <rect x="46" y="46" width="42" height="42" fill="#06d6a0" opacity="0.7" stroke="#099268" stroke-width="2.5"/>
+    <text x="67" y="72" text-anchor="middle" font-size="18" font-weight="bold" fill="#087255">7</text>
+    <!-- arrow -->
+    <defs>
+      <marker id="pool_a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L0,7 L9,3.5 z" fill="#087255"/>
+      </marker>
+    </defs>
+    <line x1="100" y1="44" x2="118" y2="44" stroke="#087255" stroke-width="2.5" marker-end="url(#pool_a)"/>
+    <rect x="124" y="22" width="42" height="42" fill="#06d6a0" opacity="0.8" stroke="#099268" stroke-width="2.5"/>
+    <text x="145" y="48" text-anchor="middle" font-size="20" font-weight="bold" fill="white">7</text>
+    <text x="83" y="110" text-anchor="middle" font-size="12" fill="#087255" font-weight="bold">max(3,1,2,7) = 7</text>
+  </g>
+  <text x="550" y="254" text-anchor="middle" font-size="12" fill="#333">Shrinks spatial dimensions</text>
+  <text x="550" y="278" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">Used after Conv layers</text>
+
+  <!-- ── Flatten ── -->
+  <rect x="666" y="55" width="216" height="240" rx="10" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="774" y="82" text-anchor="middle" font-size="15" font-weight="bold" fill="#e07b00">Flatten</text>
+  <text x="774" y="100" text-anchor="middle" font-size="12" fill="#e07b00">2D → 1D vector</text>
+  <g transform="translate(686,116)">
+    <!-- 2×2 grid -->
+    <rect x="0"  y="0"  width="34" height="34" fill="#ff9f1c" opacity="0.5" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="38" y="0"  width="34" height="34" fill="#ff9f1c" opacity="0.35" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="0"  y="38" width="34" height="34" fill="#ff9f1c" opacity="0.6" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="38" y="38" width="34" height="34" fill="#ff9f1c" opacity="0.25" stroke="#e07b00" stroke-width="1.5"/>
+    <text x="36" y="90" text-anchor="middle" font-size="12" fill="#e07b00">2D feature map</text>
+    <!-- arrow -->
+    <defs>
+      <marker id="flat_a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L0,7 L9,3.5 z" fill="#e07b00"/>
+      </marker>
+    </defs>
+    <line x1="82" y1="36" x2="100" y2="36" stroke="#e07b00" stroke-width="2.5" marker-end="url(#flat_a)"/>
+    <!-- 1D column -->
+    <rect x="106" y="0"  width="24" height="20" fill="#ff9f1c" opacity="0.5" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="106" y="24" width="24" height="20" fill="#ff9f1c" opacity="0.35" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="106" y="48" width="24" height="20" fill="#ff9f1c" opacity="0.6" stroke="#e07b00" stroke-width="1.5"/>
+    <rect x="106" y="72" width="24" height="20" fill="#ff9f1c" opacity="0.25" stroke="#e07b00" stroke-width="1.5"/>
+    <text x="118" y="108" text-anchor="middle" font-size="12" fill="#e07b00">1D vector</text>
+  </g>
+  <text x="774" y="256" text-anchor="middle" font-size="12" fill="#333">Bridge between CNN</text>
+  <text x="774" y="274" text-anchor="middle" font-size="12" fill="#333">and Dense layers</text>
+  <text x="774" y="278" text-anchor="middle" font-size="12" fill="white">.</text>
+
+  <!-- ─────────────── ROW 2 ─────────────── -->
+
+  <!-- ── Dropout ── -->
+  <rect x="18" y="315" width="200" height="240" rx="10" fill="#fde8e9" stroke="#e63946" stroke-width="2"/>
+  <text x="118" y="342" text-anchor="middle" font-size="15" font-weight="bold" fill="#c1121f">Dropout</text>
+  <text x="118" y="360" text-anchor="middle" font-size="12" fill="#c1121f">Regularisation</text>
+  <!-- active and dropped nodes -->
+  <circle cx="78"  cy="410" r="13" fill="#c1121f" opacity="0.8"/>
+  <circle cx="118" cy="390" r="13" fill="#ddd"/>
+  <line x1="108" y1="380" x2="128" y2="400" stroke="#c1121f" stroke-width="2.5"/>
+  <line x1="128" y1="380" x2="108" y2="400" stroke="#c1121f" stroke-width="2.5"/>
+  <circle cx="158" cy="410" r="13" fill="#c1121f" opacity="0.8"/>
+  <circle cx="118" cy="430" r="13" fill="#ddd"/>
+  <line x1="108" y1="420" x2="128" y2="440" stroke="#c1121f" stroke-width="2.5"/>
+  <line x1="128" y1="420" x2="108" y2="440" stroke="#c1121f" stroke-width="2.5"/>
+  <text x="78"  cy="410" fill="white"/>
+  <text x="118" y="475" text-anchor="middle" font-size="12" fill="#333">Randomly silences nodes</text>
+  <text x="118" y="493" text-anchor="middle" font-size="12" fill="#333">during training only</text>
+  <text x="118" y="515" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">Prevents overfitting</text>
+  <text x="118" y="535" text-anchor="middle" font-size="12" fill="#333">Rate: 20 – 50%</text>
+
+  <!-- ── Batch Norm ── -->
+  <rect x="234" y="315" width="200" height="240" rx="10" fill="#e0f4ff" stroke="#0077b6" stroke-width="2"/>
+  <text x="334" y="342" text-anchor="middle" font-size="15" font-weight="bold" fill="#0077b6">Batch Norm</text>
+  <text x="334" y="360" text-anchor="middle" font-size="12" fill="#0077b6">(Normalisation)</text>
+  <!-- Before / After boxes -->
+  <rect x="250" y="374" width="76" height="76" fill="#4cc9f0" opacity="0.2" rx="5" stroke="#0077b6" stroke-width="1.5"/>
+  <text x="288" y="393" text-anchor="middle" font-size="12" fill="#0077b6" font-weight="bold">Before</text>
+  <circle cx="260" cy="430" r="4" fill="#0077b6" opacity="0.7"/>
+  <circle cx="310" cy="385" r="4" fill="#0077b6" opacity="0.7"/>
+  <circle cx="285" cy="415" r="4" fill="#0077b6" opacity="0.7"/>
+  <circle cx="265" cy="400" r="4" fill="#0077b6" opacity="0.7"/>
+  <circle cx="305" cy="438" r="4" fill="#0077b6" opacity="0.7"/>
+  <!-- arrow -->
+  <defs>
+    <marker id="bn_a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L9,3.5 z" fill="#0077b6"/>
+    </marker>
+  </defs>
+  <line x1="330" y1="412" x2="344" y2="412" stroke="#0077b6" stroke-width="2.5" marker-end="url(#bn_a)"/>
+  <rect x="348" y="374" width="76" height="76" fill="#4cc9f0" opacity="0.35" rx="5" stroke="#0077b6" stroke-width="1.5"/>
+  <text x="386" y="393" text-anchor="middle" font-size="12" fill="#0077b6" font-weight="bold">After</text>
+  <circle cx="386" cy="410" r="4" fill="#0077b6"/>
+  <circle cx="378" cy="422" r="4" fill="#0077b6"/>
+  <circle cx="394" cy="417" r="4" fill="#0077b6"/>
+  <circle cx="382" cy="430" r="4" fill="#0077b6"/>
+  <circle cx="390" cy="405" r="4" fill="#0077b6"/>
+  <text x="386" y="462" text-anchor="middle" font-size="11" fill="#0077b6">μ ≈ 0, σ ≈ 1</text>
+  <text x="334" y="491" text-anchor="middle" font-size="12" fill="#333">Normalises activations</text>
+  <text x="334" y="509" text-anchor="middle" font-size="12" fill="#333">per mini-batch</text>
+  <text x="334" y="531" text-anchor="middle" font-size="13" font-weight="bold" fill="#0077b6">Faster, stable training</text>
+
+  <!-- ── Skip Connection ── -->
+  <rect x="450" y="315" width="200" height="240" rx="10" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="550" y="342" text-anchor="middle" font-size="15" font-weight="bold" fill="#7b2d8b">Skip Connection</text>
+  <text x="550" y="360" text-anchor="middle" font-size="12" fill="#7b2d8b">(ResNet)</text>
+  <!-- diagram -->
+  <g transform="translate(490,374)">
+    <rect x="30" y="0"  width="80" height="32" rx="6" fill="#7b2d8b" opacity="0.2" stroke="#7b2d8b" stroke-width="1.5"/>
+    <text x="70" y="20" text-anchor="middle" font-size="12" fill="#7b2d8b" font-weight="bold">Layer block</text>
+    <line x1="70" y1="32" x2="70" y2="52" stroke="#7b2d8b" stroke-width="2.5"/>
+    <rect x="30" y="52" width="80" height="32" rx="6" fill="#7b2d8b" opacity="0.2" stroke="#7b2d8b" stroke-width="1.5"/>
+    <text x="70" y="72" text-anchor="middle" font-size="12" fill="#7b2d8b" font-weight="bold">Layer block</text>
+    <!-- skip path -->
+    <path d="M30,16 Q0,16 0,68 Q0,84 30,84" fill="none" stroke="#c1121f" stroke-width="2.5" stroke-dasharray="5,3"/>
+    <defs>
+      <marker id="skip_a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+        <path d="M0,0 L0,7 L9,3.5 z" fill="#c1121f"/>
+      </marker>
+    </defs>
+    <line x1="30" y1="84" x2="56" y2="84" stroke="#c1121f" stroke-width="2.5" marker-end="url(#skip_a)"/>
+    <!-- add circle -->
+    <line x1="70" y1="84" x2="70" y2="96" stroke="#7b2d8b" stroke-width="2.5"/>
+    <circle cx="70" cy="106" r="14" fill="white" stroke="#7b2d8b" stroke-width="2"/>
+    <text x="70" y="111" text-anchor="middle" font-size="18" fill="#7b2d8b" font-weight="bold">+</text>
+    <text x="70" y="136" text-anchor="middle" font-size="13" fill="#333">F(x) + x</text>
+  </g>
+  <text x="550" y="525" text-anchor="middle" font-size="12" fill="#333">Bypasses layers entirely</text>
+  <text x="550" y="543" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Solves vanishing gradient</text>
+
+  <!-- ── Embedding (bonus) ── -->
+  <rect x="666" y="315" width="216" height="240" rx="10" fill="#f0fff4" stroke="#2d6a4f" stroke-width="2"/>
+  <text x="774" y="342" text-anchor="middle" font-size="15" font-weight="bold" fill="#2d6a4f">Embedding</text>
+  <text x="774" y="360" text-anchor="middle" font-size="12" fill="#2d6a4f">Categorical → Vector</text>
+  <!-- word → vector illustration -->
+  <rect x="690" y="378" width="90" height="32" rx="6" fill="#2d6a4f" opacity="0.15" stroke="#2d6a4f" stroke-width="1.5"/>
+  <text x="735" y="399" text-anchor="middle" font-size="14" fill="#2d6a4f" font-weight="bold">"cat"</text>
+  <defs>
+    <marker id="emb_a" markerWidth="9" markerHeight="9" refX="7" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L9,3.5 z" fill="#2d6a4f"/>
+    </marker>
+  </defs>
+  <line x1="735" y1="410" x2="735" y2="430" stroke="#2d6a4f" stroke-width="2.5" marker-end="url(#emb_a)"/>
+  <!-- vector boxes -->
+  <rect x="694" y="434" width="22" height="22" fill="#52b788" opacity="0.6" stroke="#2d6a4f" stroke-width="1.5"/>
+  <rect x="720" y="434" width="22" height="22" fill="#52b788" opacity="0.4" stroke="#2d6a4f" stroke-width="1.5"/>
+  <rect x="746" y="434" width="22" height="22" fill="#52b788" opacity="0.8" stroke="#2d6a4f" stroke-width="1.5"/>
+  <rect x="772" y="434" width="22" height="22" fill="#52b788" opacity="0.3" stroke="#2d6a4f" stroke-width="1.5"/>
+  <text x="705" y="450" text-anchor="middle" font-size="10" fill="#2d6a4f">0.2</text>
+  <text x="731" y="450" text-anchor="middle" font-size="10" fill="#2d6a4f">0.8</text>
+  <text x="757" y="450" text-anchor="middle" font-size="10" fill="#2d6a4f">0.1</text>
+  <text x="783" y="450" text-anchor="middle" font-size="10" fill="#2d6a4f">0.6</text>
+  <text x="735" y="476" text-anchor="middle" font-size="12" fill="#2d6a4f">Dense vector (learned)</text>
+  <text x="774" y="500" text-anchor="middle" font-size="12" fill="#333">Maps integer IDs to</text>
+  <text x="774" y="518" text-anchor="middle" font-size="12" fill="#333">learned dense vectors</text>
+  <text x="774" y="540" text-anchor="middle" font-size="13" font-weight="bold" fill="#2d6a4f">NLP · recommendation</text>
+
+  <!-- Footer -->
+  <rect x="18" y="564" width="864" height="22" rx="6" fill="#1a1a2e"/>
+  <text x="450" y="579" text-anchor="middle" font-size="12" fill="white">
+    These building blocks are combined to create architectures like ResNet, VGG, BERT, and GPT
+  </text>
+</svg>

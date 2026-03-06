@@ -1,0 +1,117 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 440" width="820" height="440" font-family="Arial, sans-serif">
+  <rect width="820" height="440" fill="#f8faff" rx="14"/>
+
+  <!-- Title -->
+  <text x="410" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Neural Network Architecture (MLP)</text>
+  <text x="410" y="58" text-anchor="middle" font-size="13" fill="#444">Diabetes prediction — 10 input features → binary output</text>
+
+  <!-- ── Layer header boxes ── -->
+  <!-- Input Layer -->
+  <rect x="40" y="72" width="130" height="48" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="105" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Input Layer</text>
+  <text x="105" y="112" text-anchor="middle" font-size="12" fill="#2940b0">10 nodes</text>
+
+  <!-- Hidden Layer 1 -->
+  <rect x="240" y="72" width="130" height="48" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="305" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">Hidden Layer 1</text>
+  <text x="305" y="112" text-anchor="middle" font-size="12" fill="#7b2d8b">ReLU activation</text>
+
+  <!-- Hidden Layer 2 -->
+  <rect x="440" y="72" width="130" height="48" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="505" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">Hidden Layer 2</text>
+  <text x="505" y="112" text-anchor="middle" font-size="12" fill="#7b2d8b">ReLU activation</text>
+
+  <!-- Output Layer -->
+  <rect x="640" y="72" width="130" height="48" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="705" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">Output Layer</text>
+  <text x="705" y="112" text-anchor="middle" font-size="12" fill="#c1121f">Sigmoid</text>
+
+  <!-- ── Input nodes (6 shown + dots + 1 more) ── -->
+  <circle cx="105" cy="155" r="16" fill="#4361ee"/>
+  <circle cx="105" cy="195" r="16" fill="#4361ee"/>
+  <circle cx="105" cy="235" r="16" fill="#4361ee"/>
+  <circle cx="105" cy="275" r="16" fill="#4361ee"/>
+  <circle cx="105" cy="315" r="16" fill="#4361ee"/>
+  <text x="105" y="348" text-anchor="middle" font-size="22" fill="#4361ee" font-weight="bold">⋮</text>
+  <circle cx="105" cy="375" r="16" fill="#4361ee"/>
+
+  <!-- Input labels -->
+  <text x="56" y="160" text-anchor="end" font-size="12" fill="#333">BP</text>
+  <text x="56" y="200" text-anchor="end" font-size="12" fill="#333">Chol</text>
+  <text x="56" y="240" text-anchor="end" font-size="12" fill="#333">BMI</text>
+  <text x="56" y="280" text-anchor="end" font-size="12" fill="#333">Age</text>
+  <text x="56" y="320" text-anchor="end" font-size="12" fill="#333">Gluc</text>
+  <text x="56" y="379" text-anchor="end" font-size="12" fill="#333">x₁₀</text>
+
+  <!-- ── Hidden Layer 1 nodes (4) ── -->
+  <circle cx="305" cy="178" r="16" fill="#7b2d8b"/>
+  <circle cx="305" cy="228" r="16" fill="#7b2d8b"/>
+  <circle cx="305" cy="278" r="16" fill="#7b2d8b"/>
+  <circle cx="305" cy="328" r="16" fill="#7b2d8b"/>
+
+  <!-- ── Hidden Layer 2 nodes (3) ── -->
+  <circle cx="505" cy="203" r="16" fill="#7b2d8b"/>
+  <circle cx="505" cy="268" r="16" fill="#7b2d8b"/>
+  <circle cx="505" cy="333" r="16" fill="#7b2d8b"/>
+
+  <!-- ── Output node ── -->
+  <circle cx="705" cy="265" r="22" fill="#c1121f"/>
+  <text x="705" y="261" text-anchor="middle" font-size="12" fill="white" font-weight="bold">0.85</text>
+  <text x="705" y="276" text-anchor="middle" font-size="10" fill="white">P(diab)</text>
+
+  <!-- ── Connections Input → H1 (faint) ── -->
+  <g stroke="#4361ee" stroke-width="0.8" opacity="0.25">
+    <line x1="121" y1="155" x2="289" y2="178"/>
+    <line x1="121" y1="155" x2="289" y2="228"/>
+    <line x1="121" y1="155" x2="289" y2="278"/>
+    <line x1="121" y1="155" x2="289" y2="328"/>
+    <line x1="121" y1="195" x2="289" y2="178"/>
+    <line x1="121" y1="195" x2="289" y2="228"/>
+    <line x1="121" y1="195" x2="289" y2="278"/>
+    <line x1="121" y1="195" x2="289" y2="328"/>
+    <line x1="121" y1="235" x2="289" y2="178"/>
+    <line x1="121" y1="235" x2="289" y2="228"/>
+    <line x1="121" y1="235" x2="289" y2="278"/>
+    <line x1="121" y1="235" x2="289" y2="328"/>
+    <line x1="121" y1="275" x2="289" y2="178"/>
+    <line x1="121" y1="275" x2="289" y2="228"/>
+    <line x1="121" y1="275" x2="289" y2="278"/>
+    <line x1="121" y1="275" x2="289" y2="328"/>
+    <line x1="121" y1="375" x2="289" y2="178"/>
+    <line x1="121" y1="375" x2="289" y2="228"/>
+    <line x1="121" y1="375" x2="289" y2="278"/>
+    <line x1="121" y1="375" x2="289" y2="328"/>
+  </g>
+
+  <!-- H1 → H2 -->
+  <g stroke="#7b2d8b" stroke-width="0.8" opacity="0.25">
+    <line x1="321" y1="178" x2="489" y2="203"/>
+    <line x1="321" y1="178" x2="489" y2="268"/>
+    <line x1="321" y1="178" x2="489" y2="333"/>
+    <line x1="321" y1="228" x2="489" y2="203"/>
+    <line x1="321" y1="228" x2="489" y2="268"/>
+    <line x1="321" y1="228" x2="489" y2="333"/>
+    <line x1="321" y1="278" x2="489" y2="203"/>
+    <line x1="321" y1="278" x2="489" y2="268"/>
+    <line x1="321" y1="278" x2="489" y2="333"/>
+    <line x1="321" y1="328" x2="489" y2="203"/>
+    <line x1="321" y1="328" x2="489" y2="268"/>
+    <line x1="321" y1="328" x2="489" y2="333"/>
+  </g>
+
+  <!-- H2 → Output -->
+  <g stroke="#c1121f" stroke-width="1.5" opacity="0.6">
+    <line x1="521" y1="203" x2="683" y2="265"/>
+    <line x1="521" y1="268" x2="683" y2="265"/>
+    <line x1="521" y1="333" x2="683" y2="265"/>
+  </g>
+
+  <!-- ── Forward pass arrow ── -->
+  <defs>
+    <marker id="fwd_arr" markerWidth="10" markerHeight="10" refX="8" refY="3.5" orient="auto">
+      <path d="M0,0 L0,7 L10,3.5 z" fill="#099268"/>
+    </marker>
+  </defs>
+  <line x1="60" y1="415" x2="760" y2="415" stroke="#099268" stroke-width="2.5" marker-end="url(#fwd_arr)"/>
+  <text x="410" y="410" text-anchor="middle" font-size="13" fill="#099268" font-weight="bold">Forward Pass →</text>
+</svg>

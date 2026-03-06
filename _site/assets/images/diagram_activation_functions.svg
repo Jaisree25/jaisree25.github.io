@@ -1,0 +1,169 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 620" width="920" height="620" font-family="Arial, sans-serif">
+  <rect width="920" height="620" fill="#f8faff" rx="14"/>
+  <text x="460" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">Common Activation Functions</text>
+
+  <!-- ══════════ ROW 1 ══════════ -->
+
+  <!-- ─── ReLU ─── -->
+  <g transform="translate(20,50)">
+    <rect x="0" y="0" width="280" height="270" rx="10" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#2940b0">ReLU</text>
+    <text x="140" y="44" text-anchor="middle" font-size="13" fill="#2940b0">f(x) = max(0, x)</text>
+    <!-- white graph area -->
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#c8d0f0" stroke-width="1"/>
+    <!-- x-axis at y=171 -->
+    <line x1="18" y1="171" x2="242" y2="171" stroke="#aaa" stroke-width="1.2"/>
+    <!-- y-axis at x=130 -->
+    <line x1="130" y1="54" x2="130" y2="171" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="134" y="169" font-size="10" fill="#888">0</text>
+    <!-- ReLU: flat left, diagonal right (x-axis = y=171, top = y=54) -->
+    <polyline points="18,171 130,171 135.6,165.2 141.2,159.3 146.8,153.4 152.4,147.6 158,141.8 163.6,135.9 169.2,130.1 174.8,124.2 180.4,118.3 186,112.5 191.6,106.6 197.2,100.8 202.8,95 208.4,89.1 214,83.2 219.6,77.4 225.2,71.5 230.8,65.7 236.4,59.9 242,54"
+          fill="none" stroke="#4361ee" stroke-width="2.8" stroke-linejoin="round"/>
+    <text x="245" y="174" font-size="11" fill="#666">x</text>
+    <text x="134" y="66"  font-size="11" fill="#666">f(x)</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Range: [0, ∞)</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">Default for hidden layers</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Gradient = 1 for x &gt; 0</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">Solves vanishing gradient</text>
+  </g>
+
+  <!-- ─── Sigmoid ─── -->
+  <g transform="translate(320,50)">
+    <rect x="0" y="0" width="280" height="270" rx="10" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#c1121f">Sigmoid</text>
+    <text x="140" y="44" text-anchor="middle" font-size="13" fill="#c1121f">f(x) = 1 / (1 + e⁻ˣ)</text>
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#f0c0cc" stroke-width="1"/>
+    <!-- x-axis at bottom of graph (y=0 → y=171) -->
+    <line x1="18" y1="171" x2="242" y2="171" stroke="#aaa" stroke-width="1.2"/>
+    <!-- y-axis -->
+    <line x1="130" y1="54" x2="130" y2="171" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <!-- dashed guides at y=1 (top=54) and y=0.5 (mid=112.5) -->
+    <line x1="18" y1="54"    x2="242" y2="54"    stroke="#c1121f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+    <line x1="18" y1="112.5" x2="242" y2="112.5" stroke="#c1121f" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+    <!-- tick labels -->
+    <text x="22" y="60"    font-size="10" fill="#888">1</text>
+    <text x="20" y="117"   font-size="10" fill="#888">0.5</text>
+    <text x="22" y="169"   font-size="10" fill="#888">0</text>
+    <text x="134" y="169"  font-size="10" fill="#888">0</text>
+    <!-- accurate sigmoid (y range 0..1 mapped to svg 171..54) -->
+    <polyline points="18,170.2 23.6,170 29.2,169.7 34.8,169.4 40.4,168.9 46,168.3 51.6,167.6 57.2,166.6 62.8,165.5 68.4,164 74,162.1 79.6,159.8 85.2,157.1 90.8,153.7 96.4,149.7 102,144.9 107.6,139.5 113.2,133.5 118.8,126.8 124.4,119.8 130,112.5 135.6,105.2 141.2,98.2 146.8,91.5 152.4,85.5 158,80.1 163.6,75.3 169.2,71.3 174.8,67.9 180.4,65.2 186,62.9 191.6,61 197.2,59.5 202.8,58.4 208.4,57.4 214,56.7 219.6,56.1 225.2,55.6 230.8,55.3 236.4,55 242,54.8"
+          fill="none" stroke="#c1121f" stroke-width="2.8"/>
+    <text x="245" y="174" font-size="11" fill="#666">x</text>
+    <text x="134" y="66"  font-size="11" fill="#666">f(x)</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">Range: (0, 1)</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">Output is a probability</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Binary classification output</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">Saturates → vanishing gradient</text>
+  </g>
+
+  <!-- ─── Tanh ─── -->
+  <g transform="translate(620,50)">
+    <rect x="0" y="0" width="280" height="270" rx="10" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#7b2d8b">Tanh</text>
+    <text x="140" y="44" text-anchor="middle" font-size="13" fill="#7b2d8b">f(x) = (eˣ − e⁻ˣ) / (eˣ + e⁻ˣ)</text>
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#d0b8e8" stroke-width="1"/>
+    <!-- x-axis at y=0 → midpoint y=112.5 -->
+    <line x1="18" y1="112.5" x2="242" y2="112.5" stroke="#aaa" stroke-width="1.2"/>
+    <!-- y-axis -->
+    <line x1="130" y1="54" x2="130" y2="171" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <!-- dashed guides at y=+1 (top=54) and y=−1 (bot=171) -->
+    <line x1="18" y1="54"  x2="242" y2="54"  stroke="#7b2d8b" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+    <line x1="18" y1="171" x2="242" y2="171" stroke="#7b2d8b" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.5"/>
+    <text x="22" y="60"    font-size="10" fill="#888">+1</text>
+    <text x="134" y="108"  font-size="10" fill="#888">0</text>
+    <text x="22" y="169"   font-size="10" fill="#888">−1</text>
+    <!-- accurate tanh (y range -1..1 mapped to svg 171..54, midpoint=112.5) -->
+    <polyline points="18,171 23.6,171 29.2,171 34.8,171 40.4,171 46,170.9 51.6,170.9 57.2,170.8 62.8,170.7 68.4,170.5 74,170.2 79.6,169.7 85.2,168.9 90.8,167.6 96.4,165.5 102,162.1 107.6,157.1 113.2,149.7 118.8,139.5 124.4,127.8 130,112.5 135.6,97.2 141.2,84.5 146.8,74.3 152.4,67.9 158,62.9 163.6,59.5 169.2,57.4 174.8,56.1 180.4,55.3 186,54.8 191.6,54.5 197.2,54.3 202.8,54.2 208.4,54.1 214,54.1 219.6,54 225.2,54 230.8,54 236.4,54 242,54"
+          fill="none" stroke="#7b2d8b" stroke-width="2.8"/>
+    <text x="245" y="116" font-size="11" fill="#666">x</text>
+    <text x="134" y="66"  font-size="11" fill="#666">f(x)</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Range: (−1, 1)</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">Zero-centred output</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Better than sigmoid in hidden layers</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">Still saturates at extremes</text>
+  </g>
+
+  <!-- ══════════ ROW 2 ══════════ -->
+
+  <!-- ─── Softmax ─── -->
+  <g transform="translate(20,345)">
+    <rect x="0" y="0" width="280" height="265" rx="10" fill="#d1faf0" stroke="#099268" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#087255">Softmax</text>
+    <text x="140" y="44" text-anchor="middle" font-size="13" fill="#087255">eˣⁱ / Σ eˣʲ  per class</text>
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#9de8cc" stroke-width="1"/>
+    <!-- bars: Cat 5%, Dog 15%, Bird 65%, Fish 10%, Frog 5%
+         usable height=105px (y=54..159), baseline at y=171
+         bar tops: 171 - pct/100*105
+         bar width=30, 5 bars + 4 gaps of 12 = 198px, left offset = (224-198)/2+18 = 31 -->
+    <rect x="31"  y="165.8" width="30" height="5.3"  fill="#099268" opacity="0.55" rx="2"/>
+    <rect x="73"  y="155.3" width="30" height="15.8" fill="#099268" opacity="0.7"  rx="2"/>
+    <rect x="115" y="102.8" width="30" height="68.3" fill="#099268" rx="2"/>
+    <rect x="157" y="160.5" width="30" height="10.5" fill="#099268" opacity="0.65" rx="2"/>
+    <rect x="199" y="165.8" width="30" height="5.3"  fill="#099268" opacity="0.55" rx="2"/>
+    <line x1="18" y1="171" x2="242" y2="171" stroke="#aaa" stroke-width="1.2"/>
+    <!-- % labels above bars -->
+    <text x="46"  y="163" text-anchor="middle" font-size="10" fill="#555">5%</text>
+    <text x="88"  y="152" text-anchor="middle" font-size="10" fill="#555">15%</text>
+    <text x="130" y="99"  text-anchor="middle" font-size="12" font-weight="bold" fill="#087255">65% ✓</text>
+    <text x="172" y="157" text-anchor="middle" font-size="10" fill="#555">10%</text>
+    <text x="214" y="163" text-anchor="middle" font-size="10" fill="#555">5%</text>
+    <!-- class labels -->
+    <text x="46"  y="169" text-anchor="middle" font-size="9" fill="#666">Cat</text>
+    <text x="88"  y="169" text-anchor="middle" font-size="9" fill="#666">Dog</text>
+    <text x="130" y="169" text-anchor="middle" font-size="9" font-weight="bold" fill="#087255">Bird</text>
+    <text x="172" y="169" text-anchor="middle" font-size="9" fill="#666">Fish</text>
+    <text x="214" y="169" text-anchor="middle" font-size="9" fill="#666">Frog</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">All outputs sum to 1.0</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">Converts raw scores to probs</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Multi-class output layer</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">Highest probability = prediction</text>
+  </g>
+
+  <!-- ─── Linear ─── -->
+  <g transform="translate(320,345)">
+    <rect x="0" y="0" width="280" height="265" rx="10" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#c07a00">Linear (none)</text>
+    <text x="140" y="44" text-anchor="middle" font-size="13" fill="#c07a00">f(x) = x</text>
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#f0d890" stroke-width="1"/>
+    <!-- x-axis at y=0 → midpoint y=112.5 -->
+    <line x1="18" y1="112.5" x2="242" y2="112.5" stroke="#aaa" stroke-width="1.2"/>
+    <!-- y-axis -->
+    <line x1="130" y1="54" x2="130" y2="171" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="134" y="108" font-size="10" fill="#888">0</text>
+    <!-- linear line through origin: (18,171) → (130,112.5) → (242,54) -->
+    <line x1="18" y1="171" x2="242" y2="54" stroke="#e07b00" stroke-width="2.8"/>
+    <circle cx="130" cy="112.5" r="3.5" fill="#e07b00"/>
+    <text x="245" y="116" font-size="11" fill="#666">x</text>
+    <text x="134" y="66"  font-size="11" fill="#666">f(x)</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">Range: (−∞, +∞)</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">No transformation applied</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Regression output layer</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">ResNet skip connections</text>
+  </g>
+
+  <!-- ─── Leaky ReLU ─── -->
+  <g transform="translate(620,345)">
+    <rect x="0" y="0" width="280" height="265" rx="10" fill="#fde8e9" stroke="#e63946" stroke-width="2"/>
+    <text x="140" y="24" text-anchor="middle" font-size="17" font-weight="bold" fill="#c1121f">Leaky ReLU</text>
+    <text x="140" y="44" text-anchor="middle" font-size="12" fill="#c1121f">f(x) = x if x&gt;0,  else 0.01·x</text>
+    <rect x="18" y="54" width="224" height="117" fill="white" rx="3" stroke="#f0b8bc" stroke-width="1"/>
+    <!-- x-axis: y range is -0.5..5, so y=0 maps to y = 171 - (0-(-0.5))/(5-(-0.5))*117 = 171 - 0.5/5.5*117 = 171 - 10.6 = 160.4 -->
+    <line x1="18" y1="160.4" x2="242" y2="160.4" stroke="#aaa" stroke-width="1.2"/>
+    <!-- y-axis -->
+    <line x1="130" y1="54" x2="130" y2="171" stroke="#bbb" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="134" y="157" font-size="10" fill="#888">0</text>
+    <!-- Leaky ReLU (slope 0.1 left for visibility, labelled) -->
+    <polyline points="18,171 23.6,170.5 29.2,169.9 34.8,169.4 40.4,168.9 46,168.3 51.6,167.8 57.2,167.3 62.8,166.7 68.4,166.2 74,165.7 79.6,165.2 85.2,164.6 90.8,164.1 96.4,163.6 102,163 107.6,162.5 113.2,162 118.8,161.4 124.4,160.9 130,160.4 135.6,155 141.2,149.7 146.8,144.4 152.4,139.1 158,133.8 163.6,128.5 169.2,123.1 174.8,117.8 180.4,112.5 186,107.2 191.6,101.9 197.2,96.5 202.8,91.2 208.4,85.9 214,80.6 219.6,75.3 225.2,70 230.8,64.6 236.4,59.3 242,54"
+          fill="none" stroke="#e63946" stroke-width="2.8"/>
+    <!-- annotation for small left slope -->
+    <text x="38" y="76"  font-size="10" fill="#c1121f" font-style="italic">small slope</text>
+    <text x="38" y="89"  font-size="10" fill="#c1121f" font-style="italic">(0.01) here</text>
+    <line x1="57" y1="91" x2="65" y2="150" stroke="#c1121f" stroke-width="1" stroke-dasharray="3,2"/>
+    <text x="245" y="164" font-size="11" fill="#666">x</text>
+    <text x="134" y="66"  font-size="11" fill="#666">f(x)</text>
+    <text x="140" y="190" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">Range: (−∞, +∞)</text>
+    <text x="140" y="210" text-anchor="middle" font-size="12" fill="#333">Fixes "dying ReLU" problem</text>
+    <text x="140" y="230" text-anchor="middle" font-size="12" fill="#333">Tiny gradient keeps neurons alive</text>
+    <text x="140" y="250" text-anchor="middle" font-size="12" fill="#333">Small slope (0.01) for x &lt; 0</text>
+  </g>
+</svg>

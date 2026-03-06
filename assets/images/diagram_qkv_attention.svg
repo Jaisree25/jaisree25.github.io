@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 500" width="860" height="500" font-family="Arial, sans-serif">
+  <rect width="860" height="500" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Self-Attention with Queries, Keys, and Values</text>
+  <text x="430" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Each input token is projected into three separate vectors via learned weight matrices</text>
+
+  <defs>
+    <marker id="arr"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-r" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c1121f"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+    <marker id="arr-o" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07b00"/></marker>
+    <marker id="arr-p" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7b2d8b"/></marker>
+  </defs>
+
+  <!-- ══ Input token x  (cx=430, y=60..104) ══ -->
+  <rect x="358" y="60" width="144" height="44" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="430" y="78" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Input token  x</text>
+  <text x="430" y="96" text-anchor="middle" font-size="11" fill="#2940b0">[0.21, −0.54, 0.83, ...]</text>
+
+  <!-- Input → Wq (fan left, from bottom-left of input box to top-center of Wq) -->
+  <line x1="390" y1="104" x2="215" y2="146" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr-p)"/>
+  <!-- Input → Wk (straight down from bottom-center) -->
+  <line x1="430" y1="104" x2="430" y2="146" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr-r)"/>
+  <!-- Input → Wv (fan right, from bottom-right of input box to top-center of Wv) -->
+  <line x1="470" y1="104" x2="645" y2="146" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <!-- ══ Weight matrices  (y=148..192) ══ -->
+  <!-- Wq: cx=190 -->
+  <rect x="120" y="148" width="140" height="44" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="190" y="167" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">× Wq</text>
+  <text x="190" y="184" text-anchor="middle" font-size="11" fill="#7b2d8b">query weights</text>
+
+  <!-- Wk: cx=430 -->
+  <rect x="360" y="148" width="140" height="44" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="430" y="167" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">× Wk</text>
+  <text x="430" y="184" text-anchor="middle" font-size="11" fill="#c1121f">key weights</text>
+
+  <!-- Wv: cx=670 -->
+  <rect x="600" y="148" width="140" height="44" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="2"/>
+  <text x="670" y="167" text-anchor="middle" font-size="14" font-weight="bold" fill="#087255">× Wv</text>
+  <text x="670" y="184" text-anchor="middle" font-size="11" fill="#087255">value weights</text>
+
+  <!-- Wq → Q (straight down) -->
+  <line x1="190" y1="192" x2="190" y2="230" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr-p)"/>
+  <!-- Wk → K (straight down) -->
+  <line x1="430" y1="192" x2="430" y2="230" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr-r)"/>
+  <!-- Wv → V (straight down) -->
+  <line x1="670" y1="192" x2="670" y2="230" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <!-- ══ Q, K, V boxes  (y=232..282) ══ -->
+  <!-- Q: cx=190 -->
+  <rect x="128" y="232" width="124" height="50" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="190" y="253" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">Q  (Query)</text>
+  <text x="190" y="270" text-anchor="middle" font-size="10" fill="#7b2d8b">"What am I looking for?"</text>
+
+  <!-- K: cx=430 -->
+  <rect x="368" y="232" width="124" height="50" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="430" y="253" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">K  (Key)</text>
+  <text x="430" y="270" text-anchor="middle" font-size="10" fill="#c1121f">"What do I contain?"</text>
+
+  <!-- V: cx=670 -->
+  <rect x="608" y="232" width="124" height="50" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="2"/>
+  <text x="670" y="253" text-anchor="middle" font-size="14" font-weight="bold" fill="#087255">V  (Value)</text>
+  <text x="670" y="270" text-anchor="middle" font-size="10" fill="#087255">"What do I pass forward?"</text>
+
+  <!-- Q right-edge (252,257) → score box top-left (298,316) -->
+  <line x1="252" y1="257" x2="298" y2="314" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr-p)"/>
+  <!-- K bottom-center (430,282) → score box top (380,314) -->
+  <line x1="430" y1="282" x2="382" y2="314" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr-r)"/>
+
+  <!-- ══ Score box  (cx=330, y=316..364) ══ -->
+  <rect x="220" y="316" width="220" height="48" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="330" y="337" text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">Q · Kᵀ / √dₖ</text>
+  <text x="330" y="354" text-anchor="middle" font-size="11" fill="#c07a00">scaled attention scores</text>
+
+  <!-- Score → weights (straight down with softmax label) -->
+  <line x1="330" y1="364" x2="330" y2="396" stroke="#e07b00" stroke-width="1.8" marker-end="url(#arr-o)"/>
+  <text x="358" y="385" font-size="11" fill="#888" font-style="italic">softmax</text>
+
+  <!-- ══ Weights box  (cx=330, y=398..436) ══ -->
+  <rect x="220" y="398" width="220" height="38" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="330" y="422" text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">attention weights</text>
+
+  <!--
+    V routes down then left into the weights box right side.
+    V bottom-center = (670, 282).
+    Route: down to (670, 417) then left to (442, 417) entering right side of weights box.
+    Weights box right edge = 440, midpoint y = 417.
+  -->
+  <line x1="670" y1="282" x2="670" y2="417" stroke="#087255" stroke-width="1.8"/>
+  <line x1="670" y1="417" x2="444" y2="417" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+  <!-- × label sits on the V line just before it enters the box -->
+  <text x="462" y="411" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">×</text>
+  <!-- V label on the vertical segment -->
+  <text x="684" y="355" font-size="12" fill="#087255" font-weight="bold" font-style="italic">V</text>
+
+  <!-- Weights box bottom → output (straight down then into output box) -->
+  <line x1="330" y1="436" x2="330" y2="458" stroke="#555" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ══ Output box  (cx=430, y=460..494) ══ -->
+  <rect x="186" y="460" width="488" height="34" rx="8" fill="#099268" stroke="#065f46" stroke-width="2"/>
+  <text x="430" y="478" text-anchor="middle" font-size="14" font-weight="bold" fill="white">output  =  Attention(Q, K, V)  =  softmax( QKᵀ / √dₖ ) · V</text>
+</svg>

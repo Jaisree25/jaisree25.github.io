@@ -1,11 +1,14 @@
 ---
 layout: default
-title: "Jaisree’s - Research"
+title: "Home"
 ---
 
 <!-- HERO -->
 <div class="hero">
-  <img class="hero-avatar" src="{{ '/assets/images/profile.webp' | relative_url }}" alt="Jaisree headshot" width="120" height="120" />
+  <div class="hero-banner-wrap">
+    <img class="hero-banner" src="{{ '/assets/images/banner.png' | relative_url }}" alt="Jaisree banner" />
+    <img src="{{ '/assets/images/j.ai_cropped.png' | relative_url }}" alt="J.ai logo" class="hero-avatar" />
+  </div>
   <div class="hero-copy">
     <h1>AI • Robotics • Intelligent Systems</h1>
     <p>An aspiring AI engineer passionate about building and writing about machine learning, robotics, and autonomous systems.</p>

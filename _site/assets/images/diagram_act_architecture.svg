@@ -1,0 +1,132 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 720" width="900" height="720" font-family="Arial, sans-serif">
+  <rect width="900" height="720" fill="#f8faff" rx="14"/>
+
+  <defs>
+    <marker id="arr-blue"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#4361ee"/></marker>
+    <marker id="arr-orange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#e07b00"/></marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7b2d8b"/></marker>
+    <marker id="arr-red"    markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#c1121f"/></marker>
+    <marker id="arr-green"  markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="450" y="30" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">ACT — Full Architecture</text>
+
+  <!-- Legend -->
+  <rect x="600" y="12" width="14" height="14" rx="3" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="618" y="24" font-size="12" fill="#7b2d8b">Training only</text>
+  <rect x="720" y="12" width="14" height="14" rx="3" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="738" y="24" font-size="12" fill="#087255">Training + Inference</text>
+
+  <!-- ══ ROW 1: INPUT BOXES ══
+       Camera Images  cx=132  x=50..215
+       Joint States   cx=450  x=368..533   (centred in diagram)
+       Past Actions   cx=768  x=686..851
+  -->
+  <rect x="50"  y="52" width="165" height="52" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="132" y="74"  text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Camera Images</text>
+  <text x="132" y="92"  text-anchor="middle" font-size="12" fill="#2940b0">video frames</text>
+
+  <rect x="368" y="52" width="165" height="52" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="450" y="74"  text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Joint States</text>
+  <text x="450" y="92"  text-anchor="middle" font-size="12" fill="#2940b0">robot configuration</text>
+
+  <rect x="686" y="52" width="165" height="52" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="768" y="74"  text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Past Actions</text>
+  <text x="768" y="92"  text-anchor="middle" font-size="12" fill="#2940b0">recent joint history</text>
+
+  <!-- ══ ROW 2: CNN (under Camera Images) ══
+       CNN box cx=132, x=50..215, y=148..200
+  -->
+  <line x1="132" y1="104" x2="132" y2="146" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+  <rect x="50"  y="148" width="165" height="52" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="132" y="170" text-anchor="middle" font-size="14" font-weight="bold" fill="#c07a00">CNN</text>
+  <text x="132" y="189" text-anchor="middle" font-size="12" fill="#c07a00">image features</text>
+
+  <!-- ══ ARROWS INTO VAE (training) ══
+       VAE box: x=220..730  y=244..316   cx=475
+       CNN  (132,200) → right to (220,278) into VAE left side
+       Joint States (450,104) → down, bypasses VAE → continues; also branch into VAE
+       Past Actions (768,104) → down to (768,232) → left to (730,232) → down into VAE right side
+  -->
+
+  <!-- CNN → VAE: down then right into VAE left edge midpoint y=278 -->
+  <line x1="132" y1="200" x2="132" y2="278" stroke="#c07a00" stroke-width="1.8"/>
+  <line x1="132" y1="278" x2="218" y2="278" stroke="#c07a00" stroke-width="1.8" marker-end="url(#arr-orange)"/>
+
+  <!-- Joint States → VAE: straight down into VAE top -->
+  <line x1="450" y1="104" x2="450" y2="242" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+
+  <!-- Past Actions → VAE: down then left into VAE right edge midpoint y=278 -->
+  <line x1="768" y1="104" x2="768" y2="278" stroke="#4361ee" stroke-width="1.8"/>
+  <line x1="768" y1="278" x2="732" y2="278" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+
+  <!-- ══ VAE ENCODER ══  x=220..730  y=244..316 -->
+  <rect x="220" y="244" width="510" height="72" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="475" y="272" text-anchor="middle" font-size="15" font-weight="bold" fill="#7b2d8b">VAE Encoder</text>
+  <text x="475" y="291" text-anchor="middle" font-size="12" fill="#7b2d8b">CLS token → μ and σ → sample latent z</text>
+  <text x="475" y="308" text-anchor="middle" font-size="11" fill="#7b2d8b" font-style="italic">(training only — replaced by z = 0 at inference)</text>
+
+  <!-- VAE → Main Encoder: straight down, center to center -->
+  <line x1="475" y1="316" x2="475" y2="354" stroke="#7b2d8b" stroke-width="2" marker-end="url(#arr-purple)"/>
+
+  <!-- ══ ARROWS INTO MAIN ENCODER ══
+       Main Encoder: x=220..730  y=356..428   cx=475
+       CNN image features also feed Main Encoder: CNN bottom (132,200) down to y=392, right to (220,392)
+       Joint States also feed Main Encoder: (450,316) already arrives via VAE path;
+         Joint States directly: (450,104) branch — we route a separate dashed line
+         Actually cleaner: show CNN and Joint States feeding Main Encoder via labeled side arrows
+  -->
+
+  <!-- CNN → Main Encoder: dashed continuation down left side -->
+  <line x1="132" y1="200" x2="132" y2="392" stroke="#c07a00" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="132" y1="392" x2="218" y2="392" stroke="#c07a00" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-orange)"/>
+
+  <!-- Joint States → Main Encoder: dashed continuation down right side of Joint States -->
+  <line x1="533" y1="78" x2="600" y2="78" stroke="#4361ee" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="600" y1="78" x2="600" y2="392" stroke="#4361ee" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="600" y1="392" x2="732" y2="392" stroke="#4361ee" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-blue)"/>
+
+  <!-- ══ MAIN ENCODER ══  x=220..730  y=356..428 -->
+  <rect x="220" y="356" width="510" height="72" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="2"/>
+  <text x="475" y="384" text-anchor="middle" font-size="15" font-weight="bold" fill="#c1121f">Main Encoder</text>
+  <text x="475" y="403" text-anchor="middle" font-size="12" fill="#c1121f">self-attention + MLP → contextualised state representation</text>
+
+  <!-- Main Encoder → Main Decoder: straight down -->
+  <line x1="475" y1="428" x2="475" y2="466" stroke="#c1121f" stroke-width="2" marker-end="url(#arr-red)"/>
+
+  <!-- Query Tokens box: right side -->
+  <rect x="748" y="468" width="130" height="52" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="813" y="490" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Query Tokens</text>
+  <text x="813" y="508" text-anchor="middle" font-size="11" fill="#2940b0">one per future step</text>
+  <!-- Query Tokens → Main Decoder left side -->
+  <line x1="748" y1="494" x2="732" y2="494" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-blue)"/>
+
+  <!-- ══ MAIN DECODER ══  x=220..730  y=468..540 -->
+  <rect x="220" y="468" width="510" height="72" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="2"/>
+  <text x="475" y="496" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">Main Decoder</text>
+  <text x="475" y="515" text-anchor="middle" font-size="12" fill="#087255">self-attention + cross-attention → predicted action sequence</text>
+
+  <!-- Main Decoder → Output -->
+  <line x1="475" y1="540" x2="475" y2="578" stroke="#087255" stroke-width="2" marker-end="url(#arr-green)"/>
+
+  <!-- ══ OUTPUT ══ -->
+  <rect x="315" y="578" width="320" height="52" rx="8" fill="#d1faf0" stroke="#065f46" stroke-width="2"/>
+  <text x="475" y="600" text-anchor="middle" font-size="15" font-weight="bold" fill="#065f46">Predicted Action Chunk</text>
+  <text x="475" y="619" text-anchor="middle" font-size="12" fill="#065f46">sequence of future joint positions</text>
+
+  <!-- Row labels -->
+  <text x="18" y="78"  font-size="11" fill="#999" font-style="italic">inputs</text>
+  <text x="18" y="174" font-size="11" fill="#999" font-style="italic">vision</text>
+  <text x="18" y="280" font-size="11" fill="#999" font-style="italic">encode</text>
+  <text x="18" y="392" font-size="11" fill="#999" font-style="italic">encode</text>
+  <text x="18" y="504" font-size="11" fill="#999" font-style="italic">decode</text>
+  <text x="18" y="604" font-size="11" fill="#999" font-style="italic">output</text>
+
+  <!-- Backprop feedback loop -->
+  <line x1="315" y1="630" x2="315" y2="656" stroke="#c1121f" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="315" y1="656" x2="60"  y2="656" stroke="#c1121f" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="60"  y1="656" x2="60"  y2="270" stroke="#c1121f" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <line x1="60"  y1="270" x2="218" y2="270" stroke="#c1121f" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-red)"/>
+  <text x="130"  y="672" font-size="11" fill="#c1121f" font-style="italic">backpropagation updates all weights (training only)</text>
+</svg>

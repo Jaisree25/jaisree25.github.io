@@ -1,0 +1,1875 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.4.1">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-03-05T16:14:14-08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">J.aiTech</title><subtitle>AI • Robotics • Intelligent Systems</subtitle><author><name>Jaisree David Ravikumar</name></author><entry><title type="html">Building an LLM — From Tokens to Attention</title><link href="http://localhost:4000/2026/03/05/2026-transformer.html" rel="alternate" type="text/html" title="Building an LLM — From Tokens to Attention" /><published>2026-03-05T00:00:00-08:00</published><updated>2026-03-05T00:00:00-08:00</updated><id>http://localhost:4000/2026/03/05/2026-transformer</id><content type="html" xml:base="http://localhost:4000/2026/03/05/2026-transformer.html"><![CDATA[<hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-this-post-covers">What This Post Covers</a></li>
+  <li><a href="#tokenization-turning-text-into-numbers">Tokenization: Turning Text Into Numbers</a></li>
+  <li><a href="#word-embeddings-skip-gram-and-cbow">Word Embeddings: Skip-gram and CBOW</a></li>
+  <li><a href="#sliding-window-data-sampling">Sliding Window Data Sampling</a></li>
+  <li><a href="#simple-self-attention">Simple Self-Attention</a></li>
+  <li><a href="#self-attention-with-queries-keys-and-values">Self-Attention with Queries, Keys, and Values</a></li>
+  <li><a href="#causal-attention">Causal Attention</a></li>
+  <li><a href="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#encoder-only-decoder-only-and-encoder-decoder-architectures">Encoder-Only, Decoder-Only, and Encoder-Decoder Architectures</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-this-post-covers">What This Post Covers</h2>
+
+<p>The previous post on transformers covered the high-level architecture: embedding layers, attention, and MLP layers working together to predict the next word in a sequence. This post goes deeper — into the machinery that makes that possible. We will build up from scratch, starting with how raw text becomes numbers and ending with the full multi-head attention mechanism that sits at the heart of every modern large language model (LLM).</p>
+
+<p>The concepts here are drawn from <em>“Build a Large Language Model (From Scratch)”</em> by Sebastian Raschka. Throughout, we will ground each idea in a concrete running example — the sentence <strong>“The cat sat on the mat”</strong> — and frame explanations around next-word prediction in the style of GPT.</p>
+
+<hr />
+
+<h2 id="tokenization-turning-text-into-numbers">Tokenization: Turning Text Into Numbers</h2>
+
+<p>Neural networks cannot process raw text. Before any learning can happen, text must be converted into numbers. This process is called <strong>tokenization</strong>.</p>
+
+<h3 id="from-characters-to-tokens">From Characters to Tokens</h3>
+
+<p>A <strong>token</strong> is the basic unit of text that a model operates on. Tokens can be characters, words, or subword chunks — the choice depends on the tokenization strategy. Given a sentence:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"The cat sat on the mat"
+</code></pre></div></div>
+
+<p>A simple word-level tokenizer splits on spaces and produces:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>["The", "cat", "sat", "on", "the", "mat"]
+</code></pre></div></div>
+
+<h3 id="token-ids-and-the-vocabulary">Token IDs and the Vocabulary</h3>
+
+<p>Once we have tokens, each unique token is assigned an integer ID by building a <strong>vocabulary</strong> — a dictionary mapping every token the model knows to a unique number:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">vocabulary</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="sh">"</span><span class="s">The</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">0</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">cat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">1</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">sat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">2</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">on</span><span class="sh">"</span><span class="p">:</span>   <span class="mi">3</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">the</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">4</span><span class="p">,</span>
+    <span class="sh">"</span><span class="s">mat</span><span class="sh">"</span><span class="p">:</span>  <span class="mi">5</span><span class="p">,</span>
+    <span class="bp">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Our sentence then becomes a sequence of token IDs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 1, 2, 3, 4, 5]
+</code></pre></div></div>
+
+<p>This sequence of integers is what gets fed into the model. The vocabulary size matters: GPT-2 has a vocabulary of 50,257 tokens. Larger vocabularies can represent more words precisely but require more memory.</p>
+
+<h3 id="byte-pair-encoding-bpe">Byte Pair Encoding (BPE)</h3>
+
+<p>Simple word-level tokenization has a critical weakness: any word not seen during training is <strong>out-of-vocabulary (OOV)</strong> and cannot be represented. A completely new word like “ChatGPT” would be unknown to a model trained without it.</p>
+
+<p><strong>Byte Pair Encoding (BPE)</strong> solves this by operating at the subword level. Instead of treating whole words as tokens, BPE learns to split words into frequently occurring subword chunks. The algorithm works as follows:</p>
+
+<ol>
+  <li>Start with every individual character as its own token</li>
+  <li>Count all adjacent pairs of tokens in the training corpus</li>
+  <li>Merge the most frequent pair into a single new token</li>
+  <li>Repeat until the vocabulary reaches the desired size</li>
+</ol>
+
+<p>For example, starting from characters:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"l o w e r"  →  merge "e r" → "l o w er"  →  merge "lo" → "low er"  →  ...
+</code></pre></div></div>
+
+<p>The result is a vocabulary of subword pieces. Common words like “the” become a single token. Rare or new words are split into recognizable pieces:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"unhappiness"  →  ["un", "happiness"]
+"ChatGPT"      →  ["Chat", "G", "PT"]
+</code></pre></div></div>
+
+<p>This means BPE can handle any word, even ones never seen during training, by decomposing them into known subword pieces. GPT-2 and GPT-3 both use BPE.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> BPE tokenization is learned from the training corpus, not hand-crafted. The merge rules are a byproduct of training, not human design.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_tokenization.svg" alt="Tokenization Diagram" /></p>
+
+<hr />
+
+<h2 id="word-embeddings-skip-gram-and-cbow">Word Embeddings: Skip-gram and CBOW</h2>
+
+<p>Token IDs are integers, but integers have no meaningful geometry — the fact that “cat” is ID 1 and “mat” is ID 5 says nothing about whether they are related. We need a richer representation.</p>
+
+<p><strong>Word embeddings</strong> map each token ID to a dense vector of real numbers. Similar words end up with similar vectors — vectors that point in the same direction in high-dimensional space. The similarity between two word vectors can be measured with the <strong>dot product</strong>: a high dot product means the vectors are aligned, indicating semantic similarity.</p>
+
+<p>Two foundational algorithms for learning word embeddings are <strong>Skip-gram</strong> and <strong>CBOW</strong>, both part of the <strong>word2vec</strong> family.</p>
+
+<h3 id="the-core-idea-learning-from-context">The Core Idea: Learning from Context</h3>
+
+<p>Both algorithms are based on the distributional hypothesis: <strong>words that appear in similar contexts have similar meanings</strong>. “Dog” and “puppy” appear near words like “bark”, “leash”, and “fetch” — so their embeddings should be similar.</p>
+
+<h3 id="skip-gram">Skip-gram</h3>
+
+<p>Skip-gram takes a <strong>center word</strong> as input and tries to predict the <strong>surrounding context words</strong>.</p>
+
+<p>Given the sentence <code class="language-plaintext highlighter-rouge">"The cat sat on the mat"</code> with a context window of 2:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Center word: "sat"
+Target predictions: ["The", "cat", "on", "the"]
+</code></pre></div></div>
+
+<p>The model learns: given “sat”, what words are likely nearby? Over millions of such examples, the embeddings adjust so that words appearing in similar contexts end up with similar vectors.</p>
+
+<h3 id="cbow-continuous-bag-of-words">CBOW (Continuous Bag of Words)</h3>
+
+<p>CBOW is the reverse: it takes the <strong>surrounding context words</strong> as input and predicts the <strong>center word</strong>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Context input:  ["The", "cat", "on", "the"]
+Target output:  "sat"
+</code></pre></div></div>
+
+<p>CBOW averages the embeddings of the context words and uses that average to predict the center word. It is generally faster to train than Skip-gram and works better on frequent words. Skip-gram tends to work better on rare words and smaller datasets.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Skip-gram</th>
+      <th>CBOW</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Input</strong></td>
+      <td>Center word</td>
+      <td>Context words</td>
+    </tr>
+    <tr>
+      <td><strong>Predicts</strong></td>
+      <td>Context words</td>
+      <td>Center word</td>
+    </tr>
+    <tr>
+      <td><strong>Better for</strong></td>
+      <td>Rare words, small data</td>
+      <td>Frequent words, large data</td>
+    </tr>
+    <tr>
+      <td><strong>Speed</strong></td>
+      <td>Slower</td>
+      <td>Faster</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Note:</strong> In modern LLMs like GPT, embeddings are not pre-trained with Skip-gram or CBOW — they are learned end-to-end as part of training the full transformer. Skip-gram and CBOW are standalone embedding methods, but understanding them builds intuition for why embedding geometry matters.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_word_embeddings.svg" alt="Word Embeddings Diagram" /></p>
+
+<hr />
+
+<h2 id="sliding-window-data-sampling">Sliding Window Data Sampling</h2>
+
+<p>Before training, we need to decide how to turn a long corpus of text into individual training examples. For next-word prediction, we use a technique called <strong>sliding window sampling</strong>.</p>
+
+<p>Given a long sequence of token IDs — say, the first 8 tokens of a corpus:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[2, 5, 9, 3, 1, 7, 4, 8]
+</code></pre></div></div>
+
+<p>We define a <strong>context length</strong> (also called the sequence length or block size) — the maximum number of tokens the model sees at once. With a context length of 4 and a stride of 1, the sliding window produces the following input-target pairs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  [2, 5, 9, 3]   →  Target: [5, 9, 3, 1]
+Input:  [5, 9, 3, 1]   →  Target: [9, 3, 1, 7]
+Input:  [9, 3, 1, 7]   →  Target: [3, 1, 7, 4]
+Input:  [3, 1, 7, 4]   →  Target: [1, 7, 4, 8]
+</code></pre></div></div>
+
+<p>Each input token predicts the next token — so for input <code class="language-plaintext highlighter-rouge">[2, 5, 9, 3]</code>, the targets are <code class="language-plaintext highlighter-rouge">[5, 9, 3, 1]</code>, meaning: given token <code class="language-plaintext highlighter-rouge">2</code>, predict <code class="language-plaintext highlighter-rouge">5</code>; given <code class="language-plaintext highlighter-rouge">[2, 5]</code>, predict <code class="language-plaintext highlighter-rouge">9</code>; and so on.</p>
+
+<p>The <strong>stride</strong> controls how far the window moves each step. A stride of 1 produces the maximum number of overlapping samples. A larger stride produces fewer samples but reduces redundancy — useful when the training corpus is very large.</p>
+
+<p><img src="/assets/images/diagram_sliding_window.svg" alt="Sliding Window Diagram" /></p>
+
+<hr />
+
+<h2 id="simple-self-attention">Simple Self-Attention</h2>
+
+<p>We now have token embeddings — each token in our sequence is a vector. The next question is: how does each token incorporate information from the other tokens in the sequence? This is what <strong>self-attention</strong> does.</p>
+
+<p>We will build up to the full self-attention mechanism in two steps. First, a simplified version with no trainable weights, to build intuition. Then the full Q, K, V formulation.</p>
+
+<h3 id="the-goal">The Goal</h3>
+
+<p>Consider the sentence <code class="language-plaintext highlighter-rouge">"The cat sat on the mat"</code>. The word “sat” needs to be interpreted in context — it is not just a verb in isolation, but an action performed by “cat” in a location near “mat”. Self-attention allows each token’s vector to be updated by aggregating information from all other tokens, weighted by relevance.</p>
+
+<h3 id="step-1--attention-scores-as-dot-products">Step 1 — Attention Scores as Dot Products</h3>
+
+<p>For a query token <code class="language-plaintext highlighter-rouge">x_query</code> (say, the embedding for “sat”), we compute how relevant every other token <code class="language-plaintext highlighter-rouge">xᵢ</code> is by taking the <strong>dot product</strong>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_score(xᵢ, x_query) = xᵢ · x_query
+</code></pre></div></div>
+
+<p>A higher dot product means the two vectors point in similar directions — the token is more relevant to the query.</p>
+
+<p>For our 6-token sentence, this gives 6 raw attention scores — one per token.</p>
+
+<h3 id="step-2--normalize-to-get-attention-weights">Step 2 — Normalize to Get Attention Weights</h3>
+
+<p>Raw dot products can be large or negative. We normalize them into proper weights that sum to 1 using the <strong>softmax</strong> function:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_weight(xᵢ) = softmax(attention_scores)ᵢ
+</code></pre></div></div>
+
+<p>The result is a probability distribution over the input tokens — how much attention “sat” should pay to each other word.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         The   cat   sat   on    the   mat
+weights: 0.05  0.30  0.20  0.15  0.10  0.20
+                                  (sums to 1.0)
+</code></pre></div></div>
+
+<h3 id="step-3--compute-the-context-vector">Step 3 — Compute the Context Vector</h3>
+
+<p>Finally, we compute the <strong>context vector</strong> for “sat” by taking a weighted sum of all input vectors:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>context_vector = Σᵢ attention_weight(xᵢ) · xᵢ
+</code></pre></div></div>
+
+<p>This context vector is the new, enriched representation of “sat” — a blend of all input tokens, weighted by their relevance. Words like “cat” (0.30) contribute more to “sat”’s updated meaning than “the” (0.05).</p>
+
+<p>This entire process is repeated for every token in the sequence, producing a new context vector for each one.</p>
+
+<p><img src="/assets/images/diagram_simple_attention.svg" alt="Simple Self-Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="self-attention-with-queries-keys-and-values">Self-Attention with Queries, Keys, and Values</h2>
+
+<p>The simple self-attention above has a limitation: the same input vector is used for everything — for asking “what am I looking for?” and for answering “what do I contain?”. In practice, these are different roles and should be handled by different learned projections.</p>
+
+<p>Full self-attention introduces three learned weight matrices:</p>
+
+<ul>
+  <li><strong>Wq</strong> — projects each input into a <strong>Query</strong> vector: <em>“what am I looking for?”</em></li>
+  <li><strong>Wk</strong> — projects each input into a <strong>Key</strong> vector: <em>“what do I contain?”</em></li>
+  <li><strong>Wv</strong> — projects each input into a <strong>Value</strong> vector: <em>“what should I pass forward if selected?”</em></li>
+</ul>
+
+<p>For each input token embedding <code class="language-plaintext highlighter-rouge">xᵢ</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Qᵢ = xᵢ · Wq
+Kᵢ = xᵢ · Wk
+Vᵢ = xᵢ · Wv
+</code></pre></div></div>
+
+<h3 id="computing-attention">Computing Attention</h3>
+
+<p>The attention score between a query token <code class="language-plaintext highlighter-rouge">q</code> and every key <code class="language-plaintext highlighter-rouge">Kᵢ</code> is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>score(q, Kᵢ) = Q · Kᵢᵀ
+</code></pre></div></div>
+
+<p>These scores are then <strong>scaled</strong> by dividing by √dₖ (where dₖ is the dimension of the key vectors). This prevents dot products from growing very large as dimensionality increases, which would push softmax into regions of near-zero gradient:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scaled_score = Q · Kᵢᵀ / √dₖ
+</code></pre></div></div>
+
+<p>The scaled scores are passed through softmax to get attention weights, and the output is a weighted sum of the Value vectors:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = Σᵢ softmax(Q · Kᵢᵀ / √dₖ) · Vᵢ
+</code></pre></div></div>
+
+<p>Written compactly for all queries at once using matrix notation:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention(Q, K, V) = softmax(QKᵀ / √dₖ) · V
+</code></pre></div></div>
+
+<p>This is the <strong>scaled dot-product attention</strong> formula at the core of every transformer.</p>
+
+<p>The key improvement over simple self-attention is that Wq, Wk, and Wv are <strong>learned parameters</strong>. The model learns what to query for, what to advertise in keys, and what to pass forward in values — all tuned by gradient descent to minimize the loss.</p>
+
+<p><img src="/assets/images/diagram_qkv_attention.svg" alt="QKV Self-Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="causal-attention">Causal Attention</h2>
+
+<p>Standard self-attention allows every token to attend to every other token — including future tokens. This is fine for tasks like classification or translation (where the full input is available at once), but it breaks next-word prediction.</p>
+
+<p>During training for next-word prediction, the model should not be able to “cheat” by looking at the answer. Given the sequence <code class="language-plaintext highlighter-rouge">["The", "cat", "sat", "on", "the", "mat"]</code>, when predicting the word after “cat”, the model must not see “sat”, “on”, “the”, or “mat”.</p>
+
+<p><strong>Causal attention</strong> (also called masked self-attention) enforces this by <strong>masking</strong> the upper triangle of the attention score matrix — setting those scores to −∞ before the softmax, which causes them to become 0 after softmax:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention score matrix (before masking):
+
+        The   cat   sat   on   the   mat
+The   [ 0.8   0.3   0.5   0.2   0.4   0.1 ]
+cat   [ 0.6   0.9   0.7   0.3   0.5   0.2 ]
+sat   [ 0.4   0.7   0.8   0.6   0.4   0.3 ]
+on    [ 0.2   0.4   0.6   0.9   0.7   0.5 ]
+the   [ 0.1   0.3   0.4   0.7   0.8   0.6 ]
+mat   [ 0.2   0.4   0.5   0.6   0.7   0.9 ]
+
+After causal masking (upper triangle → −∞ → 0 after softmax):
+
+        The   cat   sat   on   the   mat
+The   [ 0.8   —     —     —     —     —   ]
+cat   [ 0.6   0.9   —     —     —     —   ]
+sat   [ 0.4   0.7   0.8   —     —     —   ]
+on    [ 0.2   0.4   0.6   0.9   —     —   ]
+the   [ 0.1   0.3   0.4   0.7   0.8   —   ]
+mat   [ 0.2   0.4   0.5   0.6   0.7   0.9 ]
+</code></pre></div></div>
+
+<p>Each token can only attend to itself and tokens that came before it. This is what makes GPT-style models <strong>autoregressive</strong>: at inference time, they generate one token at a time, always conditioning only on what has been generated so far.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Causal masking is applied during both training and inference. During training it prevents cheating. During inference it is naturally satisfied because future tokens simply do not exist yet.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_causal_attention.svg" alt="Causal Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="multi-head-attention">Multi-Head Attention</h2>
+
+<p>A single self-attention head produces one context vector per token — one view of which tokens are relevant to which. But language has many simultaneous relationships: syntactic (subject-verb agreement), semantic (word meaning), positional (nearby words), and more.</p>
+
+<p><strong>Multi-head attention</strong> runs several self-attention operations in parallel, each with its own independent Wq, Wk, Wv weight matrices. Each <strong>head</strong> learns to focus on a different type of relationship.</p>
+
+<h3 id="the-mechanism">The Mechanism</h3>
+
+<p>Given <code class="language-plaintext highlighter-rouge">h</code> heads, each head <code class="language-plaintext highlighter-rouge">i</code> computes its own attention output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>headᵢ = Attention(Q·Wqᵢ, K·Wkᵢ, V·Wvᵢ)
+</code></pre></div></div>
+
+<p>The outputs of all heads are then <strong>concatenated</strong> and projected through a final learned weight matrix Wo:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>MultiHead(Q, K, V) = Concat(head₁, head₂, ..., headₕ) · Wo
+</code></pre></div></div>
+
+<h3 id="why-it-matters">Why It Matters</h3>
+
+<p>Each head operates on a lower-dimensional subspace — if the model dimension is 512 and there are 8 heads, each head works in a 64-dimensional space. This is computationally similar to a single full-dimensional attention operation, but produces richer representations because the heads specialize independently.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> The model dimension (<code class="language-plaintext highlighter-rouge">d_model</code>) is the size of every token’s vector throughout the entire transformer. A <code class="language-plaintext highlighter-rouge">d_model</code> of 512 means every token is represented as 512 numbers at every layer — input, output, and everything in between. This number is a design choice: GPT-3 uses 12,288. Larger dimensions give the model more capacity to represent complex relationships but are more expensive to train.</p>
+</blockquote>
+
+<p>For example, in a trained GPT model, one head might learn to track subject-verb relationships, another might focus on coreference (connecting “it” to the noun it refers to), and another might attend to positional proximity.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> We cannot explicitly tell each head what to focus on — this specialization emerges from training. After training, the attention patterns of individual heads can be visualized and interpreted, but they are not pre-programmed.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_multihead_attention.svg" alt="Multi-Head Attention Diagram" /></p>
+
+<hr />
+
+<h2 id="encoder-only-decoder-only-and-encoder-decoder-architectures">Encoder-Only, Decoder-Only, and Encoder-Decoder Architectures</h2>
+
+<p>The transformer architecture is flexible. Depending on the task, different configurations of encoder and decoder blocks are used. Understanding the distinction is essential for understanding why GPT, BERT, and T5 behave so differently despite all being “transformers”.</p>
+
+<h3 id="the-encoder-block">The Encoder Block</h3>
+
+<p>An <strong>encoder</strong> block processes an input sequence and produces a contextual representation of it. It uses <strong>bidirectional self-attention</strong> — every token can attend to every other token, past and future. This makes encoders excellent at understanding and representing text.</p>
+
+<h3 id="the-decoder-block">The Decoder Block</h3>
+
+<p>A <strong>decoder</strong> block generates an output sequence one token at a time. It uses <strong>causal (masked) self-attention</strong> — each token can only attend to previous tokens. Decoders are designed for generation.</p>
+
+<p>In encoder-decoder models, the decoder also has a <strong>cross-attention</strong> layer that allows it to attend to the encoder’s output — connecting understanding of the input to generation of the output.</p>
+
+<h3 id="encoder-only-models">Encoder-Only Models</h3>
+
+<p><strong>Architecture:</strong> Stack of encoder blocks only, bidirectional attention.</p>
+
+<p><strong>Examples:</strong> BERT, RoBERTa</p>
+
+<p><strong>Best for:</strong> Tasks that require deep understanding of the full input — classification, named entity recognition, question answering (extractive), semantic similarity.</p>
+
+<p><strong>Why:</strong> Because every token can attend to every other token, encoder-only models build richer representations of meaning. There is no generation step — a classification head is placed on top of the final representations.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "The cat sat on the mat"
+         ↓ bidirectional attention (all tokens see all tokens)
+Output: [rich contextual representation of each token]
+         ↓ classification head
+Result: sentiment / label / entity tag
+</code></pre></div></div>
+
+<h3 id="decoder-only-models">Decoder-Only Models</h3>
+
+<p><strong>Architecture:</strong> Stack of decoder blocks only, causal attention.</p>
+
+<p><strong>Examples:</strong> GPT-2, GPT-3, GPT-4, LLaMA, Mistral</p>
+
+<p><strong>Best for:</strong> Text generation, next-word prediction, chat, code generation.</p>
+
+<p><strong>Why:</strong> Causal attention naturally supports autoregressive generation — predict the next token, append it, predict the next, and so on. The entire pretraining objective (next-word prediction) is perfectly aligned with this architecture.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "The cat sat on"
+         ↓ causal attention (each token sees only past tokens)
+Output: probability distribution over vocabulary
+Result: "the" (most likely next token)
+</code></pre></div></div>
+
+<h3 id="encoder-decoder-models">Encoder-Decoder Models</h3>
+
+<p><strong>Architecture:</strong> Encoder stack + Decoder stack, connected by cross-attention.</p>
+
+<p><strong>Examples:</strong> T5, BART, the original transformer (Vaswani et al. 2017)</p>
+
+<p><strong>Best for:</strong> Sequence-to-sequence tasks where the input and output are different sequences — translation, summarization, question answering (generative).</p>
+
+<p><strong>Why:</strong> The encoder reads and understands the full input (bidirectionally). The decoder then generates the output token by token, using cross-attention to condition each generated token on the encoder’s representation of the input.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:   "The cat sat on the mat"  (→ encoder → rich representation)
+                                         ↓ cross-attention
+Decoder: generates "Le chat s'est assis sur le tapis"  (French translation)
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Note:</strong> Encoder-decoder models have become less common in practice. It turns out that large decoder-only models — when trained on enough data — develop strong understanding capabilities on their own, without needing a separate encoder. The original encoder-decoder design made more sense when models were smaller and the two components provided a clean separation of “understand the input” and “generate the output” — but at scale, that separation is no longer necessary.</p>
+</blockquote>
+
+<p><img src="/assets/images/diagram_encoder_decoder.svg" alt="Encoder Decoder Architectures Diagram" /></p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="tokenization">Tokenization</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Token</strong></td>
+      <td>Basic unit of text (character, word, or subword)</td>
+    </tr>
+    <tr>
+      <td><strong>Vocabulary</strong></td>
+      <td>Dictionary mapping tokens to integer IDs</td>
+    </tr>
+    <tr>
+      <td><strong>BPE</strong></td>
+      <td>Learns subword splits from corpus; handles unseen words</td>
+    </tr>
+    <tr>
+      <td><strong>Sliding Window</strong></td>
+      <td>Turns a long sequence into input-target pairs for training</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="attention-mechanisms">Attention Mechanisms</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Mechanism</th>
+      <th>Weights Trainable?</th>
+      <th>Key Feature</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Simple self-attention</strong></td>
+      <td>No</td>
+      <td>Dot product of raw input vectors</td>
+    </tr>
+    <tr>
+      <td><strong>Q, K, V self-attention</strong></td>
+      <td>Yes (Wq, Wk, Wv)</td>
+      <td>Separate learned projections for querying, matching, passing</td>
+    </tr>
+    <tr>
+      <td><strong>Causal attention</strong></td>
+      <td>Yes</td>
+      <td>Upper triangle masked; tokens only see the past</td>
+    </tr>
+    <tr>
+      <td><strong>Multi-head attention</strong></td>
+      <td>Yes (per head + Wo)</td>
+      <td>Multiple parallel heads; each learns different relationships</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="architectures">Architectures</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Architecture</th>
+      <th>Attention</th>
+      <th>Use Case</th>
+      <th>Examples</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Encoder-only</strong></td>
+      <td>Bidirectional</td>
+      <td>Understanding</td>
+      <td>BERT, RoBERTa</td>
+    </tr>
+    <tr>
+      <td><strong>Decoder-only</strong></td>
+      <td>Causal</td>
+      <td>Generation</td>
+      <td>GPT, LLaMA</td>
+    </tr>
+    <tr>
+      <td><strong>Encoder-Decoder</strong></td>
+      <td>Both + cross-attention</td>
+      <td>Seq-to-seq</td>
+      <td>T5, BART</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="word-embeddings">Word Embeddings</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Method</th>
+      <th>Input</th>
+      <th>Predicts</th>
+      <th>Strength</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Skip-gram</strong></td>
+      <td>Center word</td>
+      <td>Context words</td>
+      <td>Rare words</td>
+    </tr>
+    <tr>
+      <td><strong>CBOW</strong></td>
+      <td>Context words</td>
+      <td>Center word</td>
+      <td>Frequent words, speed</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jaisree David Ravikumar</name></author><category term="Transformers" /><category term="LLM" /><category term="Attention" /><category term="NLP" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">The Complete Guide to Neural Networks</title><link href="http://localhost:4000/2026/03/04/neural-networks.html" rel="alternate" type="text/html" title="The Complete Guide to Neural Networks" /><published>2026-03-04T00:00:00-08:00</published><updated>2026-03-04T00:00:00-08:00</updated><id>http://localhost:4000/2026/03/04/neural-networks</id><content type="html" xml:base="http://localhost:4000/2026/03/04/neural-networks.html"><![CDATA[<hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#the-ai-landscape">The AI Landscape</a></li>
+  <li><a href="#how-machines-learn-supervised-vs-unsupervised-learning">How Machines Learn: Supervised vs Unsupervised Learning</a></li>
+  <li><a href="#from-linear-regression-to-neural-networks">From y = mx + b to Neural Networks</a></li>
+  <li><a href="#what-is-a-neural-network">What Is a Neural Network?</a></li>
+  <li><a href="#a-concrete-example-predicting-diabetes">A Concrete Example: Predicting Diabetes</a></li>
+  <li><a href="#activation-functions-the-brains-onoff-switch">Activation Functions: The Brain’s On/Off Switch</a></li>
+  <li><a href="#a-primer-on-derivatives">A Primer on Derivatives</a></li>
+  <li><a href="#learning-from-mistakes-loss-backpropagation--gradient-descent">Learning From Mistakes: Loss, Backpropagation &amp; Gradient Descent</a></li>
+  <li><a href="#backpropagation-a-full-worked-example">Backpropagation: A Full Worked Example</a></li>
+  <li><a href="#gradient-descent-variants">Gradient Descent Variants</a></li>
+  <li><a href="#common-layer-types">Building Blocks: Common Layer Types</a></li>
+  <li><a href="#skip-connections-and-resnets">Skip Connections and ResNets</a></li>
+  <li><a href="#beyond-binary-classification">Beyond Binary Classification</a></li>
+  <li><a href="#summary">Summary Reference Tables</a></li>
+</ol>
+
+<hr />
+
+<h2 id="the-ai-landscape">The AI Landscape</h2>
+
+<p>You’ve probably heard the terms <em>artificial intelligence</em>, <em>machine learning</em>, and <em>deep learning</em> thrown around — sometimes interchangeably. But what does each one actually mean, and how do they relate to each other?</p>
+
+<p>Artificial intelligence is the broadest term. It refers to any system or technique designed to mimic human intelligence. Under the AI umbrella, two major branches emerge: <strong>rule-based methods</strong> and <strong>machine learning (ML)</strong>.</p>
+
+<p>Rule-based systems operate on explicit if-then logic written by humans — they follow instructions. Machine learning, on the other hand, allows systems to <em>learn patterns from data</em>. ML includes techniques like linear regression, support vector machines, and at its deepest level — <strong>deep learning</strong>.</p>
+
+<p>Deep learning uses multi-layered networks to learn increasingly abstract representations of data. And it is within deep learning that <strong>neural networks</strong> live.</p>
+
+<p><img src="/assets/images/diagram_ai_hierarchy.svg" alt="AI/ML Hierarchy Diagram" /></p>
+
+<hr />
+
+<h2 id="how-machines-learn-supervised-vs-unsupervised-learning">How Machines Learn: Supervised vs Unsupervised Learning</h2>
+
+<p>Before diving into neural networks, it’s important to understand the two dominant styles of machine learning, because they shape how you design and train a model.</p>
+
+<h3 id="supervised-learning">Supervised Learning</h3>
+
+<p>In supervised learning, the training data comes with <strong>labels</strong> — the correct answers. The model is trained to map inputs to those known outputs, and its performance is measured by how close its predictions are to the true labels.</p>
+
+<p>To make this concrete, imagine a spreadsheet of patient health records. Each row contains measurements for one patient — things like blood pressure, cholesterol, BMI, and age. The final column contains a label: <code class="language-plaintext highlighter-rouge">0</code> meaning the patient does not have diabetes, <code class="language-plaintext highlighter-rouge">1</code> meaning they do. The model’s job is to learn, from thousands of such rows, how to predict that label for a brand new patient it has never seen. The label is the “supervision” — it acts as the teacher, telling the model when it’s right or wrong. We will use this exact example throughout the guide to make the mechanics of neural networks as tangible as possible.</p>
+
+<p>Common supervised learning tasks include:</p>
+<ul>
+  <li><strong>Classification</strong> — predicting a category (e.g. spam vs not spam, diabetes vs no diabetes)</li>
+  <li><strong>Regression</strong> — predicting a continuous number (e.g. house price, temperature forecast)</li>
+</ul>
+
+<h3 id="unsupervised-learning">Unsupervised Learning</h3>
+
+<p>In unsupervised learning, there are <strong>no labels</strong>. The model receives only raw input data and must find its own structure, patterns, or groupings within it.</p>
+
+<p>Take the same patient spreadsheet, but remove the diabetes column entirely. Without a label to predict, the model cannot be supervised. However, it might still discover something useful — for instance, that patients naturally cluster into distinct groups based on similar health profiles. This is called <strong>clustering</strong>. Another common technique is <strong>dimensionality reduction</strong>, where a model compresses high-dimensional data into a smaller representation while preserving meaningful structure.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Supervised</th>
+      <th>Unsupervised</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Labels</strong></td>
+      <td>Required</td>
+      <td>Not present</td>
+    </tr>
+    <tr>
+      <td><strong>Goal</strong></td>
+      <td>Predict output</td>
+      <td>Find structure</td>
+    </tr>
+    <tr>
+      <td><strong>Examples</strong></td>
+      <td>Classification, Regression</td>
+      <td>Clustering, Dimensionality reduction</td>
+    </tr>
+    <tr>
+      <td><strong>Feedback</strong></td>
+      <td>Loss against true label</td>
+      <td>Internal criteria (e.g. cluster tightness)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Neural networks can be used for both cases, though the most widely understood and deployed applications — including everything covered in this guide — are supervised.</p>
+
+<hr />
+
+<h2 id="from-linear-regression-to-neural-networks">From Linear Regression to Neural Networks</h2>
+
+<h3 id="the-simplest-model-y--mx--b">The Simplest Model: y = mx + b</h3>
+
+<p>Before neural networks existed, statisticians used <strong>linear regression</strong> — one of the simplest machine learning techniques. Its formula is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>y = mx + b
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">x</code> is the input feature (e.g. a patient’s age)</li>
+  <li><code class="language-plaintext highlighter-rouge">m</code> is the weight (slope) — how much <code class="language-plaintext highlighter-rouge">y</code> changes per unit of <code class="language-plaintext highlighter-rouge">x</code></li>
+  <li><code class="language-plaintext highlighter-rouge">b</code> is the bias (intercept) — the baseline value of <code class="language-plaintext highlighter-rouge">y</code> when <code class="language-plaintext highlighter-rouge">x</code> is zero</li>
+  <li><code class="language-plaintext highlighter-rouge">y</code> is the prediction</li>
+</ul>
+
+<p>Training this model means finding the values of <code class="language-plaintext highlighter-rouge">m</code> and <code class="language-plaintext highlighter-rouge">b</code> that make the line fit the data as well as possible. The result is a straight line drawn through a scatter of data points.</p>
+
+<p><strong>The key limitation?</strong> Life is not linear. Real-world relationships — like those between health metrics and disease risk — are curved, interacting, and conditional. A single straight line cannot capture them.</p>
+
+<h3 id="scaling-up-multiple-inputs">Scaling Up: Multiple Inputs</h3>
+
+<p>Now suppose our patient has not one feature but ten. We extend the formula:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>y = w₁x₁ + w₂x₂ + w₃x₃ + ... + w₁₀x₁₀ + b
+</code></pre></div></div>
+
+<p>This is called <strong>multiple linear regression</strong>. It has one weight per feature, plus a bias. It can use all ten health metrics simultaneously to produce a prediction. But it still fits only a flat hyperplane through the data — it cannot model curves or interactions between features.</p>
+
+<h3 id="the-neural-network-as-a-massively-extended-version">The Neural Network as a Massively Extended Version</h3>
+
+<p>A neural network takes this idea to its logical extreme. Instead of one set of weights mapping inputs to an output, it stacks <em>multiple layers</em> of such computations. Between each layer, it applies a non-linear <strong>activation function</strong> (more on this shortly).</p>
+
+<p>A single hidden layer node does exactly this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b    ← same as linear regression
+h = activation(z)                  ← this is what makes it powerful
+</code></pre></div></div>
+
+<p>With enough nodes and layers, and with non-linear activation functions in between, a neural network can approximate <em>any</em> function — no matter how complex.</p>
+
+<hr />
+
+<h2 id="what-is-a-neural-network">What Is a Neural Network?</h2>
+
+<p>A neural network is a machine learning model inspired by the human brain. Just as the brain is made up of neurons connected by synapses, a neural network has <strong>nodes</strong> (neurons) connected by <strong>weights</strong> (synaptic strengths).</p>
+
+<p>These nodes are organized into three types of layers:</p>
+
+<ul>
+  <li><strong>Input layer</strong> — receives the raw data, one node per feature</li>
+  <li><strong>Hidden layers</strong> — where the network learns intermediate representations</li>
+  <li><strong>Output layer</strong> — produces the final prediction</li>
+</ul>
+
+<p>There are many types of neural networks, each suited to different tasks:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Best For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>MLP</strong> (Multilayer Perceptron)</td>
+      <td>Structured / tabular data</td>
+    </tr>
+    <tr>
+      <td><strong>CNN</strong> (Convolutional Neural Network)</td>
+      <td>Image processing &amp; classification</td>
+    </tr>
+    <tr>
+      <td><strong>RNN</strong> (Recurrent Neural Network)</td>
+      <td>Sequential data (e.g. time series, audio)</td>
+    </tr>
+    <tr>
+      <td><strong>Transformer</strong></td>
+      <td>Language, sequences, generative AI</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Note</strong>: An MLP is the foundational type of neural network: fully-connected layers of nodes stacked in sequence, with no special structure. Every other architecture (CNNs, RNNs, Transformers) is a neural network that adds constraints or structure on top of this basic idea. When people say “neural network” without qualification, they usually mean an MLP.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="a-concrete-example-predicting-diabetes">A Concrete Example: Predicting Diabetes</h2>
+
+<p>Now that we understand what a neural network is structurally, let’s bring it to life with the patient health example introduced earlier. Recall the spreadsheet: each row is a patient, with <strong>10 health metric columns</strong> — blood pressure, cholesterol, BMI, age, and so on — and a final label column (<code class="language-plaintext highlighter-rouge">0</code> = no diabetes, <code class="language-plaintext highlighter-rouge">1</code> = diabetes). We want to train an MLP that, given a new patient’s 10 measurements, predicts whether they have diabetes.</p>
+
+<h3 id="setting-up-the-network">Setting Up the Network</h3>
+
+<p>Since there are 10 features, the <strong>input layer has 10 nodes</strong> — one per feature. The output layer has <strong>1 node</strong> outputting a probability between 0 and 1.</p>
+
+<h3 id="the-forward-pass">The Forward Pass</h3>
+
+<p>When we feed a patient’s row into the network, the data flows forward through each layer in sequence. At every hidden layer node, the incoming values are:</p>
+
+<ol>
+  <li>Multiplied by their respective weights</li>
+  <li>Summed together</li>
+  <li>Added a bias term</li>
+  <li>Passed through an <strong>activation function</strong></li>
+</ol>
+
+<p>At the output layer, a <strong>sigmoid</strong> activation squashes the result to a probability. An output of <code class="language-plaintext highlighter-rouge">0.85</code> means an estimated <strong>85% chance</strong> the patient has diabetes.</p>
+
+<p>This end-to-end journey from input to prediction is called the <strong>forward pass</strong>.</p>
+
+<p><img src="/assets/images/diagram_neural_network.svg" alt="Neural Network Architecture Diagram" /></p>
+
+<hr />
+
+<h2 id="activation-functions-the-brains-onoff-switch">Activation Functions: The Brain’s On/Off Switch</h2>
+
+<p>Activation functions are arguably the most important ingredient in a neural network. Without them, no matter how many layers you stack, the entire network collapses into a single linear transformation — functionally identical to plain linear regression. Let’s understand exactly why they matter.</p>
+
+<h3 id="the-biological-analogy">The Biological Analogy</h3>
+
+<p>In the brain, a biological neuron only fires — passes a signal to the next neuron — when its incoming signals are strong enough to exceed a threshold. Below the threshold, it stays silent. Activation functions mimic this behaviour: they decide <strong>how strongly a node should “fire”</strong>, i.e. how large the output signal passed to the next layer should be.</p>
+
+<p>Think of each activation function as a <strong>gate</strong>. It receives a weighted sum of inputs and then determines:</p>
+<ul>
+  <li>Whether the neuron activates at all</li>
+  <li>If so, with what strength</li>
+</ul>
+
+<h3 id="why-non-linearity-is-essential">Why Non-Linearity Is Essential</h3>
+
+<p>Consider what happens without any activation function. Each layer performs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = W · input + b
+</code></pre></div></div>
+
+<p>This is a linear operation. If you stack two such layers:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Layer 2(Layer 1(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂)
+</code></pre></div></div>
+
+<p>The result is still just <code class="language-plaintext highlighter-rouge">Wx + b</code> — a single linear layer. No matter how deep the network goes, it can only ever model a straight line through data. You lose all expressive power of the depth.</p>
+
+<p>When you insert a non-linear activation function between layers, the combined function becomes genuinely more complex with each added layer. This is what allows neural networks to model curves, decision boundaries, and intricate real-world patterns.</p>
+
+<h3 id="activation-functions-in-practice-where-to-use-what">Activation Functions in Practice: Where to Use What</h3>
+
+<p>A useful mental model: <strong>hidden layers</strong> need activation functions that allow rich learning; <strong>output layers</strong> need activation functions whose range matches the prediction task.</p>
+
+<ul>
+  <li><strong>After every hidden layer</strong> → use <strong>ReLU</strong> by default</li>
+  <li><strong>Output for binary classification</strong> → use <strong>Sigmoid</strong> (outputs a probability between 0 and 1)</li>
+  <li><strong>Output for multi-class classification</strong> → use <strong>Softmax</strong> (outputs a probability distribution over all classes)</li>
+  <li><strong>Output for regression</strong> → use <strong>no activation</strong> (linear), since the output can be any real number</li>
+  <li><strong>Skip connections in ResNets</strong> → use <strong>no activation</strong> (linear identity pass-through)</li>
+</ul>
+
+<p>There is also a notable exception: <strong>ResNet-style skip connections</strong> intentionally bypass the activation function, passing the raw input directly to a later layer. We’ll cover this in detail in the ResNet section.</p>
+
+<p><img src="/assets/images/diagram_activation_functions.svg" alt="Activation Functions Diagram" /></p>
+
+<h3 id="relu-rectified-linear-unit">ReLU (Rectified Linear Unit)</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = max(0, x)
+</code></pre></div></div>
+
+<p>ReLU is the default choice for hidden layers. It is computationally simple: it outputs <code class="language-plaintext highlighter-rouge">x</code> if <code class="language-plaintext highlighter-rouge">x</code> is positive, and <code class="language-plaintext highlighter-rouge">0</code> otherwise. This zero-ing out of negative values is what introduces non-linearity.</p>
+
+<p><strong>Why ReLU over functions like Tanh?</strong> It solves the <strong>vanishing gradient problem</strong>. In deep networks, gradients are multiplied together as they propagate backwards. Sigmoid and Tanh squash their outputs into small ranges ([0,1] and [−1,1] respectively), so their gradients are always less than 1. Multiplying many small gradients together causes the product to shrink exponentially as it travels toward earlier layers — the gradient effectively <em>vanishes</em>, and early layers stop learning. ReLU has a gradient of exactly <code class="language-plaintext highlighter-rouge">1</code> for all positive inputs, so it does not diminish the gradient as it passes through, keeping early layers trainable in deep networks.</p>
+
+<p>A minor drawback: if a node’s input is consistently negative, ReLU outputs 0 and the gradient is also 0 — the node never activates or learns. This is called the <strong>dying ReLU problem</strong>. <strong>Leaky ReLU</strong> addresses this by using a small slope (typically 0.01) for negative inputs instead of flat zero.</p>
+
+<h3 id="sigmoid">Sigmoid</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = 1 / (1 + e⁻ˣ)
+</code></pre></div></div>
+
+<p>Sigmoid squashes any input to a value between 0 and 1 — making it a natural probability. It is the standard choice for the <strong>output node of a binary classification problem</strong>. Its smooth S-curve is differentiable everywhere.</p>
+
+<p>The downside in hidden layers is the vanishing gradient: for large positive or negative inputs, the sigmoid saturates (output approaches 0 or 1), and its gradient approaches 0. This makes it a poor choice for hidden layers in deep networks.</p>
+
+<h3 id="tanh-hyperbolic-tangent">Tanh (Hyperbolic Tangent)</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = (eˣ − e⁻ˣ) / (eˣ + e⁻ˣ)
+</code></pre></div></div>
+
+<p>Tanh is similar to sigmoid but maps inputs to the range (−1, 1). Because tanh outputs both positive and negative values, its gradients can push weights in either direction during training — unlike sigmoid, which only outputs positive values and causes weight updates to all move the same way, making it preferable to sigmoid in hidden layers. However, it still saturates and causes vanishing gradients in very deep networks, so ReLU is usually preferred.</p>
+
+<h3 id="softmax">Softmax</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(xᵢ) = eˣⁱ / Σⱼ eˣʲ
+</code></pre></div></div>
+
+<p>Softmax is used at the <strong>output layer of multi-class classification</strong> problems. It takes a vector of raw scores (called logits) and converts them into a probability distribution: each output is between 0 and 1, and all outputs sum to exactly 1.0. The class with the highest probability is the model’s prediction.</p>
+
+<p>For example, in an image classifier with 5 animal classes, softmax might output <code class="language-plaintext highlighter-rouge">[cat: 0.03, dog: 0.12, bird: 0.78, fish: 0.04, frog: 0.03]</code>.</p>
+
+<h3 id="the-differentiability-requirement">The Differentiability Requirement</h3>
+
+<p>There is a mathematical requirement that is easy to overlook: activation functions must be <strong>differentiable</strong> (or at least differentiable almost everywhere). The reason is backpropagation. When the network computes gradients to update weights, it uses the <strong>chain rule of calculus</strong>, which requires multiplying derivatives at each layer. If an activation function has no derivative, the gradient cannot flow backwards through it, and learning breaks down.</p>
+
+<p>This is why a simple step function (0 if input &lt; 0, else 1) is not used in practice — it is not differentiable at 0 and has zero gradient everywhere else, meaning the network would receive no learning signal. ReLU is technically not differentiable exactly at zero, but it has well-defined derivatives everywhere else and works extremely well in practice.</p>
+
+<hr />
+
+<h2 id="a-primer-on-derivatives">A Primer on Derivatives</h2>
+
+<p><img src="/assets/images/diagram_limit_derivative.svg" alt="Limit Derivative Diagram" /></p>
+
+<p>Before we can fully understand backpropagation, we need to understand <strong>derivatives</strong>. If you’re already comfortable with calculus, feel free to skim this section — but if not, this foundation will make the rest of the guide click.</p>
+
+<h3 id="what-is-a-derivative">What Is a Derivative?</h3>
+
+<p>A derivative measures <strong>how much a function’s output changes when you change its input by an infinitely small amount</strong>. Informally, it’s the <em>slope</em> of a function at a specific point.</p>
+
+<p>For a simple function like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = x²
+</code></pre></div></div>
+
+<p>The derivative is written as <code class="language-plaintext highlighter-rouge">f'(x)</code> or <code class="language-plaintext highlighter-rouge">df/dx</code>, and it equals <code class="language-plaintext highlighter-rouge">2x</code>. This tells us:</p>
+
+<ul>
+  <li>At <code class="language-plaintext highlighter-rouge">x = 3</code>, the slope is <code class="language-plaintext highlighter-rouge">2(3) = 6</code> — for a tiny increase in <code class="language-plaintext highlighter-rouge">x</code>, the output increases roughly 6 times as fast</li>
+  <li>At <code class="language-plaintext highlighter-rouge">x = 0</code>, the slope is <code class="language-plaintext highlighter-rouge">0</code> — the function is at a flat minimum there</li>
+  <li>At <code class="language-plaintext highlighter-rouge">x = −2</code>, the slope is <code class="language-plaintext highlighter-rouge">−4</code> — the function is decreasing as <code class="language-plaintext highlighter-rouge">x</code> increases</li>
+</ul>
+
+<h3 id="derivative-rules-youll-need">Derivative Rules You’ll Need</h3>
+
+<p><strong>Power rule:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>d/dx [xⁿ] = n · xⁿ⁻¹
+
+Examples:
+  d/dx [x²]  = 2x
+  d/dx [x³]  = 3x²
+  d/dx [5x]  = 5
+  d/dx [c]   = 0   (c is a constant)
+</code></pre></div></div>
+
+<p><strong>Chain rule</strong> — used when functions are nested inside each other:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>If y = f(g(x)),  then  dy/dx = f'(g(x)) · g'(x)
+
+Example:
+  y = (3x + 1)²
+  Let u = 3x + 1, so y = u²
+  dy/du = 2u,   du/dx = 3
+  dy/dx = 2u · 3 = 6(3x + 1)
+</code></pre></div></div>
+
+<p>The chain rule is the mathematical foundation of backpropagation. Because a neural network is a deeply nested composition of functions, computing the gradient of the loss with respect to an early-layer weight requires multiplying the chain of local derivatives all the way from the output back to that weight.</p>
+
+<h3 id="derivatives-of-common-activation-functions">Derivatives of Common Activation Functions</h3>
+
+<p>These are the derivatives you’ll encounter in backpropagation:</p>
+
+<p><strong>ReLU:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x)  = max(0, x)
+f'(x) = 1  if x &gt; 0
+        0  if x ≤ 0
+</code></pre></div></div>
+<p>The derivative is simply 1 for positive inputs and 0 otherwise — a perfect pass-through for positive gradients.</p>
+
+<p><strong>Sigmoid:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x)  = σ(x) = 1 / (1 + e⁻ˣ)
+f'(x) = σ(x) · (1 − σ(x))
+</code></pre></div></div>
+<p>If σ(x) = 0.8, then f’(x) = 0.8 × 0.2 = 0.16. Note that this is always between 0 and 0.25, which is why gradients shrink when passing through many sigmoid layers.</p>
+
+<p><strong>MSE Loss (Looking Ahead to Loss Functions):</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = (ŷ − y)²
+dL/dŷ = 2(ŷ − y)
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="learning-from-mistakes-loss-backpropagation--gradient-descent">Learning From Mistakes: Loss, Backpropagation &amp; Gradient Descent</h2>
+
+<h3 id="the-loss-function">The Loss Function</h3>
+
+<p>To measure how wrong a prediction is, we use a <strong>loss function</strong>. It calculates the error between the prediction <code class="language-plaintext highlighter-rouge">ŷ</code> and the true label <code class="language-plaintext highlighter-rouge">y</code>.</p>
+
+<p><strong>Mean Squared Error (MSE)</strong> — used for regression:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = (ŷ − y)²
+</code></pre></div></div>
+
+<p><strong>Binary Cross-Entropy</strong> — used for binary classification (e.g. our diabetes example):</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = −[y·log(ŷ) + (1−y)·log(1−ŷ)]
+</code></pre></div></div>
+
+<p>The bigger the loss, the further off the model is. Training aims to minimize this value.</p>
+
+<h3 id="backward-pass-backpropagation">Backward Pass (Backpropagation)</h3>
+
+<p>Once the loss is computed, the network needs to figure out which weights contributed to the error and by how much. This is done through <strong>backpropagation</strong> — the process of applying the chain rule recursively from the output layer back to the input layer.</p>
+
+<p>At each layer, backpropagation computes the <strong>gradient</strong> of the loss with respect to every weight. A gradient is the generalization of a derivative to multi-variable functions — it points in the direction of steepest increase in loss.</p>
+
+<h3 id="gradient-descent">Gradient Descent</h3>
+
+<p><img src="/assets/images/gradient_descent.png" alt="Gradient Descent Diagram" />
+<em>Image from analyticsvidhya</em></p>
+
+<p>With gradients computed, each weight is updated using the <strong>gradient descent</strong> rule:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>W_new = W_old − η · (∂L / ∂W_old)
+</code></pre></div></div>
+
+<ul>
+  <li><strong>W</strong> — the weight being updated</li>
+  <li><strong>η (eta)</strong> — the <em>learning rate</em>, controlling step size</li>
+  <li><strong>∂L/∂W</strong> — the gradient of the loss with respect to the weight</li>
+</ul>
+
+<p>The sign of the gradient tells the network which direction to move:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Gradient sign</th>
+      <th>Meaning</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positive</td>
+      <td>Increasing W increases loss</td>
+      <td>Decrease W</td>
+    </tr>
+    <tr>
+      <td>Negative</td>
+      <td>Increasing W decreases loss</td>
+      <td>Increase W</td>
+    </tr>
+    <tr>
+      <td>Near zero</td>
+      <td>W is near-optimal</td>
+      <td>Small / no change</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="backpropagation-a-full-worked-example">Backpropagation: A Full Worked Example</h2>
+
+<p>Let’s walk through a minimal network step by step with real numbers, so the mathematics becomes fully concrete.</p>
+
+<p><strong>The network:</strong></p>
+<ul>
+  <li>1 input node: <code class="language-plaintext highlighter-rouge">x = 2</code></li>
+  <li>1 hidden node with <strong>ReLU</strong> activation</li>
+  <li>1 output node (no activation — regression output)</li>
+  <li>Weights: <code class="language-plaintext highlighter-rouge">w₁ = 0.5</code> (input → hidden), <code class="language-plaintext highlighter-rouge">w₂ = 0.8</code> (hidden → output)</li>
+  <li>No bias terms for simplicity</li>
+  <li>Loss: <strong>MSE</strong> → <code class="language-plaintext highlighter-rouge">L = (ŷ − y)²</code></li>
+  <li>True label: <code class="language-plaintext highlighter-rouge">y = 1.0</code></li>
+  <li>Learning rate: <code class="language-plaintext highlighter-rouge">η = 0.1</code></li>
+</ul>
+
+<p><img src="/assets/images/diagram_backprop_math.svg" alt="Backpropagation Worked Example" /></p>
+
+<h3 id="weight-updates">Weight Updates</h3>
+
+<p>With <code class="language-plaintext highlighter-rouge">η = 0.1</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>w₂_new = w₂ − η · dL/dw₂ = 0.8 − 0.1 × (−0.4) = 0.84
+w₁_new = w₁ − η · dL/dw₁ = 0.5 − 0.1 × (−0.64) = 0.564
+</code></pre></div></div>
+
+<p>Both weights increased — which makes sense, because both gradients were negative, meaning increasing the weights would reduce the loss. If we ran the forward pass again with these new weights:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>z₁ = 2 × 0.564 = 1.128
+h  = ReLU(1.128) = 1.128
+ŷ  = 1.128 × 0.84 = 0.948
+L  = (0.948 − 1.0)² = 0.0027
+</code></pre></div></div>
+
+<p>The loss dropped from <code class="language-plaintext highlighter-rouge">0.04</code> to <code class="language-plaintext highlighter-rouge">0.0027</code> after just one update. Over many iterations, the network converges toward <code class="language-plaintext highlighter-rouge">ŷ ≈ 1.0</code>.</p>
+
+<hr />
+
+<h2 id="gradient-descent-variants">Gradient Descent Variants</h2>
+
+<p>In the example above, we updated weights after computing the gradient on a single data point. In practice, there are three strategies for choosing <em>how much data to use</em> before each weight update. In other words <strong>when to update weights</strong>.</p>
+
+<h3 id="batch-gradient-descent">Batch Gradient Descent</h3>
+
+<p>Compute the gradient using the <strong>entire dataset</strong> before making a single weight update. This produces a very accurate gradient estimate, leading to smooth, stable convergence. However, it requires loading all the data into memory at once and is extremely slow for large datasets with millions of rows.</p>
+
+<h3 id="stochastic-gradient-descent-sgd">Stochastic Gradient Descent (SGD)</h3>
+
+<p>Compute the gradient and update weights using <strong>one randomly selected sample</strong> at a time. This is extremely fast and updates happen frequently, but the gradient estimate is very noisy — the loss curve zigzags unpredictably rather than descending smoothly. The noise can sometimes be beneficial, helping the model escape shallow local minima.</p>
+
+<h3 id="mini-batch-gradient-descent">Mini-Batch Gradient Descent</h3>
+
+<p>A compromise: compute the gradient over a <strong>small random batch</strong> of samples (typically 32, 64, 128, or 256 rows) and update weights after each batch. This is the standard approach used in virtually all modern deep learning. It:</p>
+
+<ul>
+  <li>Is fast and memory-efficient</li>
+  <li>Produces a reasonably accurate gradient estimate</li>
+  <li>Works naturally with GPU parallelism, which can process an entire batch simultaneously</li>
+</ul>
+
+<hr />
+
+<h2 id="common-layer-types">Common Layer Types</h2>
+
+<p>Neural networks are assembled from specialized building blocks. Each layer type is designed to exploit a particular structure in the data or to regularize the model during training.</p>
+
+<p><img src="/assets/images/diagram_layer_types.svg" alt="Common Layer Types" /></p>
+
+<h3 id="dense-fully-connected-layer">Dense (Fully Connected) Layer</h3>
+
+<p>The fundamental building block we’ve used throughout this guide. Every node in the layer is connected to every node in the next layer. Each connection has its own learnable weight. Dense layers are used when the input features don’t have a meaningful spatial or sequential structure — such as tabular data (like our diabetes CSV).</p>
+
+<h3 id="convolutional-layer-conv2d">Convolutional Layer (Conv2D)</h3>
+
+<p>A convolutional layer applies a small learnable <strong>filter</strong> (e.g. 3×3 pixels) that slides across the input — typically an image — and computes a dot product at each position. This detects local spatial patterns: edges, corners, textures at early layers, and progressively more abstract features (eyes, wheels, fur) at deeper layers.</p>
+
+<p>A key advantage of convolutions is <strong>parameter sharing</strong>: the same filter is reused across all positions of the image, dramatically reducing the number of weights compared to a fully connected layer applied to an image. A 256×256 image as input to a dense layer would require 65,536 weights per node; a single 3×3 convolutional filter requires only 9.</p>
+
+<h3 id="pooling-layer-maxpool--avgpool">Pooling Layer (MaxPool / AvgPool)</h3>
+
+<p>Pooling layers reduce the spatial dimensions of the feature maps produced by convolutional layers. <strong>Max pooling</strong> takes the maximum value within each small patch (e.g. 2×2), discarding fine spatial detail while retaining the strongest activations. <strong>Average pooling</strong> takes the average instead.</p>
+
+<p>Pooling serves two purposes: it reduces computational load and memory usage, and it makes the network partially <strong>translation-invariant</strong> — a slightly shifted object in an image still produces similar feature activations after pooling.</p>
+
+<h3 id="flatten-layer">Flatten Layer</h3>
+
+<p>A flatten layer reshapes a multi-dimensional tensor into a 1D vector. It is used as the <strong>bridge between convolutional layers and dense layers</strong> in image classification networks. After a CNN has extracted spatial features from an image through convolutional and pooling layers, the flatten layer unrolls those features into a vector that a dense layer can process.</p>
+
+<h3 id="dropout-layer">Dropout Layer</h3>
+
+<p>Dropout is a <strong>regularization technique</strong> that randomly sets a fraction of node outputs to zero during training (typically 20–50%). Each training step, a different random subset of nodes is silenced. At inference time, dropout is disabled and all nodes are active.</p>
+
+<p>Dropout prevents overfitting by forcing the network to learn redundant representations — no single node can be relied upon to carry all the information. It acts like training an ensemble of many slightly different sub-networks simultaneously.</p>
+
+<h3 id="batch-normalization">Batch Normalization</h3>
+
+<p>Batch normalization normalises the activations of a layer across the current mini-batch to have approximately zero mean and unit variance. It is typically inserted <strong>before or after the activation function</strong> in hidden layers.</p>
+
+<p>Benefit of batch normalization:</p>
+<ul>
+  <li><strong>Stabilizes training</strong> by keeping the inputs to each layer on a consistent scale as weights update</li>
+</ul>
+
+<hr />
+
+<h2 id="skip-connections-and-resnets">Skip Connections and ResNets</h2>
+
+<p>As neural networks get deeper — tens or even hundreds of layers — a new problem emerges: gradients struggle to propagate all the way back to early layers during backpropagation. Even with ReLU, the repeated multiplication of gradients across many layers can cause them to shrink toward zero, starving early layers of the learning signal. This is called the <strong>vanishing gradient problem</strong> in deep networks.</p>
+
+<p><strong>Residual Networks (ResNets)</strong>, introduced by He et al. in 2015, solved this with a simple but powerful idea: <strong>skip connections</strong> (also called residual connections or identity shortcuts).</p>
+
+<p>Instead of a block of layers learning the function <code class="language-plaintext highlighter-rouge">F(x)</code>, the block learns the <em>residual</em> <code class="language-plaintext highlighter-rouge">F(x)</code>, and the input <code class="language-plaintext highlighter-rouge">x</code> is <strong>added directly</strong> to the block’s output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = F(x) + x
+</code></pre></div></div>
+
+<p>This addition bypasses the block entirely. The gradient during backpropagation can now flow through two paths: through the layers in the block, <em>or</em> directly through the skip connection. The skip connection has a gradient of exactly <code class="language-plaintext highlighter-rouge">1</code> with respect to <code class="language-plaintext highlighter-rouge">x</code> (since <code class="language-plaintext highlighter-rouge">d/dx [F(x) + x] = F'(x) + 1</code>), which ensures that even if <code class="language-plaintext highlighter-rouge">F'(x)</code> vanishes, a gradient of <code class="language-plaintext highlighter-rouge">1</code> always flows back unimpeded.</p>
+
+<p>Skip connections also make it easier for layers to learn identity mappings (i.e. “don’t change anything here”), which is useful when a layer doesn’t need to transform the data further.</p>
+
+<p>The skip connection passes the input through untouched — no activation, no transformation. The conv layers and the skip connection are then added together, and a single activation is applied to the combined result.</p>
+
+<p>ResNets enabled training of networks with 50, 100, even 152 layers — depths that were previously impossible to train reliably. They are foundational to modern computer vision and influenced architecture design across all of deep learning.</p>
+
+<hr />
+
+<h2 id="beyond-binary-classification">Beyond Binary Classification</h2>
+
+<p>So far we’ve focused on a binary classification problem (diabetes: yes or no). Neural networks are far more flexible. The same principles apply to:</p>
+
+<ul>
+  <li><strong>Multi-class classification</strong> — the output layer uses Softmax over N nodes, one per class (e.g. recognising 1,000 ImageNet categories)</li>
+  <li><strong>Regression</strong> — the output layer has one (or more) nodes with no activation function, predicting continuous values</li>
+  <li><strong>Image processing</strong> — CNNs apply convolutional + pooling layers to extract spatial hierarchies of features before a Dense output</li>
+  <li><strong>Sequence modelling</strong> — RNNs and Transformers process variable-length sequences</li>
+</ul>
+
+<p>One key limitation of vanilla MLPs is that they produce a single output for a single input. This is what motivated <strong>Recurrent Neural Networks (RNNs)</strong> and later <strong>Transformers</strong> — architectures capable of processing and producing <em>sequences</em> of data, which brought upon modern NLP, speech recognition, and generative AI.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="architecture-decisions">Architecture Decisions</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Output activation</th>
+      <th>Loss function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Binary classification</td>
+      <td>Sigmoid</td>
+      <td>Binary cross-entropy</td>
+    </tr>
+    <tr>
+      <td>Multi-class classification</td>
+      <td>Softmax</td>
+      <td>Categorical cross-entropy</td>
+    </tr>
+    <tr>
+      <td>Regression</td>
+      <td>None (linear)</td>
+      <td>MSE</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="activation-function-quick-reference">Activation Function Quick Reference</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Range</th>
+      <th>Typical use</th>
+      <th>Key property</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ReLU</td>
+      <td>[0, ∞)</td>
+      <td>Hidden layers</td>
+      <td>Solves vanishing gradient</td>
+    </tr>
+    <tr>
+      <td>Leaky ReLU</td>
+      <td>(−∞, ∞)</td>
+      <td>Hidden layers</td>
+      <td>Fixes dying ReLU</td>
+    </tr>
+    <tr>
+      <td>Sigmoid</td>
+      <td>(0, 1)</td>
+      <td>Binary output</td>
+      <td>Output is probability</td>
+    </tr>
+    <tr>
+      <td>Tanh</td>
+      <td>(−1, 1)</td>
+      <td>Hidden layers</td>
+      <td>Zero-centred</td>
+    </tr>
+    <tr>
+      <td>Softmax</td>
+      <td>(0, 1), sums to 1</td>
+      <td>Multi-class output</td>
+      <td>Probability distribution</td>
+    </tr>
+    <tr>
+      <td>Linear</td>
+      <td>(−∞, ∞)</td>
+      <td>Regression output, skip connections</td>
+      <td>No transformation</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="core-concepts">Core Concepts</h3>
+
+<p><img src="/assets/images/diagram_forward_backward.svg" alt="Forward &amp; Backward Pass Diagram" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Forward Pass</strong></td>
+      <td>Data flows input → output to produce a prediction</td>
+    </tr>
+    <tr>
+      <td><strong>Loss Function</strong></td>
+      <td>Measures how wrong the prediction is</td>
+    </tr>
+    <tr>
+      <td><strong>Backpropagation</strong></td>
+      <td>Chain rule applied backwards; computes gradients for every weight</td>
+    </tr>
+    <tr>
+      <td><strong>Gradient Descent</strong></td>
+      <td>Updates weights in the direction that reduces loss</td>
+    </tr>
+    <tr>
+      <td><strong>Activation Function</strong></td>
+      <td>Introduces non-linearity; acts as a gate on each neuron’s output</td>
+    </tr>
+    <tr>
+      <td><strong>Dropout</strong></td>
+      <td>Regularization by randomly silencing nodes during training</td>
+    </tr>
+    <tr>
+      <td><strong>Batch Normalization</strong></td>
+      <td>Normalises activations for stable, faster training</td>
+    </tr>
+    <tr>
+      <td><strong>Skip Connection</strong></td>
+      <td>Bypasses layers to preserve gradient flow in deep networks</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jaisree David Ravikumar</name></author><category term="Neural Network" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Action Chunking Transformer</title><link href="http://localhost:4000/2025/03/10/ACT-transformer.html" rel="alternate" type="text/html" title="Action Chunking Transformer" /><published>2025-03-10T00:00:00-07:00</published><updated>2025-03-10T00:00:00-07:00</updated><id>http://localhost:4000/2025/03/10/ACT-transformer</id><content type="html" xml:base="http://localhost:4000/2025/03/10/ACT-transformer.html"><![CDATA[<hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-is-act">What Is ACT?</a></li>
+  <li><a href="#a-quick-refresher-transformers">A Quick Refresher: Transformers</a></li>
+  <li><a href="#the-task-and-the-data">The Task and the Data</a></li>
+  <li><a href="#what-act-actually-does">What ACT Actually Does</a></li>
+  <li><a href="#act-architecture-overview">ACT Architecture Overview</a></li>
+  <li><a href="#the-vae-encoder">The VAE Encoder</a></li>
+  <li><a href="#the-main-encoder">The Main Encoder</a></li>
+  <li><a href="#the-main-decoder">The Main Decoder</a></li>
+  <li><a href="#inference-what-happens-at-test-time">Inference: What Happens at Test Time</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-is-act">What Is ACT?</h2>
+
+<p>In robotics, a policy is simply the function that maps what the robot currently observes to what action it should take next. This post covers <strong>ACT — Action Chunking Transformer</strong>, a policy architecture for robot learning introduced in the paper <em>“Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware”</em> by Tony Z. Zhao, Vikash Kumar, Sergey Levine, and Chelsea Finn.</p>
+
+<p>ACT is an example of <strong>imitation learning</strong>: rather than programming a robot with explicit rules, we show it how to perform a task by recording human demonstrations, and train a neural network to replicate that behaviour. The network learns to map what the robot currently sees and feels — camera images and joint states — to a sequence of future actions.</p>
+
+<p>Throughout this post, we will ground the explanation in a single concrete task: <strong>a robotic arm picking up an object and dropping it into a box</strong>.</p>
+
+<hr />
+
+<h2 id="a-quick-refresher-transformers">A Quick Refresher: Transformers</h2>
+
+<p>ACT is built on the transformer architecture, so a brief recap is useful before diving in.</p>
+
+<p>A transformer is a type of neural network designed to process and produce <strong>sequences of information</strong>. It is made up of three core components repeated across multiple layers:</p>
+
+<ul>
+  <li><strong>Embedding layer</strong> — converts raw inputs (tokens, sensor readings, image patches) into dense vector representations</li>
+  <li><strong>Attention layer</strong> — allows each element in the sequence to look at every other element and decide which ones are most relevant to it</li>
+  <li><strong>MLP layer</strong> — a standard feedforward network applied to each position independently</li>
+</ul>
+
+<p>The defining feature of transformers is the <strong>attention mechanism</strong>. In short, attention allows the model to learn <em>context</em> — a word’s meaning depends on the words around it, just as a robot’s next action depends on its current state and recent history. This makes transformers exceptionally powerful for any problem where relationships between elements in a sequence matter.</p>
+
+<p>Transformers were originally developed for language tasks — translation, sentiment analysis, next-word prediction. ACT applies the same machinery to robotics, where the “sequence” is a series of robot actions over time.</p>
+
+<hr />
+
+<h2 id="the-task-and-the-data">The Task and the Data</h2>
+
+<p>Before training any neural network, we need data. For our task — picking up an object and dropping it into a box — data collection works as follows.</p>
+
+<p>Several cameras are positioned around the robot arm to capture video from multiple viewpoints. A human operator then <strong>teleoperates</strong> the arm, physically controlling it to perform the task repeatedly while the cameras record. In addition to the video, the joint and motor states of the arm are logged at each timestep — these capture the precise configuration and movement of the robot.</p>
+
+<p><img src="/assets/images/diagram_data_pipeline.svg" alt="Data Pipeline Diagram" /></p>
+
+<p>The result is a dataset of many demonstration episodes. Each episode is a sequence of (image frames, joint states, actions) tuples. This dataset is what ACT is trained on.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Human demonstrations are imperfect. Operators may move slightly inconsistently across different recordings of the same task — a small shake here, a slightly different grip angle there. A robust policy must learn the underlying task, not overfit to these human inconsistencies.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="what-act-actually-does">What ACT Actually Does</h2>
+
+<p>It helps to be precise about ACT’s inputs and outputs before examining the architecture.</p>
+
+<p>At each timestep, ACT receives:</p>
+<ul>
+  <li><strong>Camera images</strong> — the current visual state of the scene</li>
+  <li><strong>Current robot joint states</strong> — the robot’s physical configuration right now</li>
+  <li><strong>Past actions</strong> — what the robot has done recently</li>
+</ul>
+
+<p>From these, ACT predicts: <strong>a short sequence of future joint actions</strong> — not just the next single action, but a chunk of several actions ahead.</p>
+
+<p>This is the “action chunking” in the name, and it is a deliberate design choice. Real-world robot movements are smooth and continuous — the arm does not jerk from position to position one step at a time. By predicting a whole chunk of actions at once, the policy enforces <strong>temporal coherence</strong>: the predicted sequence is internally consistent rather than composed of individually-noisy single-step predictions. Chunking also reduces the number of forward passes through the model needed to complete a task, which saves computation.</p>
+
+<p><img src="/assets/images/diagram_action_chunking.svg" alt="Action Chunking Diagram" /></p>
+
+<hr />
+
+<h2 id="act-architecture-overview">ACT Architecture Overview</h2>
+
+<p>ACT has three main components:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Role</th>
+      <th>Active During</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>VAE Encoder</strong></td>
+      <td>Introduces controlled variation to prevent overfitting</td>
+      <td>Training only</td>
+    </tr>
+    <tr>
+      <td><strong>Main Encoder</strong></td>
+      <td>Produces a rich contextual representation of the current state</td>
+      <td>Training &amp; inference</td>
+    </tr>
+    <tr>
+      <td><strong>Main Decoder</strong></td>
+      <td>Predicts the sequence of future actions</td>
+      <td>Training &amp; inference</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The VAE encoder is only used during training. At inference time, it is replaced by a fixed zero vector. We will explain exactly why below.</p>
+
+<hr />
+
+<h2 id="the-vae-encoder">The VAE Encoder</h2>
+
+<p>The VAE (Variational Autoencoder) Encoder is the most conceptually novel component of ACT. Its purpose is to prevent the model from <strong>overfitting to the imperfections in human demonstrations</strong>.</p>
+
+<h3 id="the-problem-it-solves">The Problem It Solves</h3>
+
+<p>Human teleoperators are not perfectly consistent. Across many recordings of the same task, the same action might be executed with slightly different timing, speed, or path. If we train the model to exactly reproduce these demonstrations, it will learn to mimic the noise as well as the task. The VAE encoder addresses this by injecting learned, controlled randomness into the training process.</p>
+
+<h3 id="the-cls-token">The CLS Token</h3>
+
+<p>The input to the VAE encoder is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[CLS, joint states, image features, past actions]
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">image features</code> here refers to the output of a <strong>CNN</strong> (Convolutional Neural Network) applied to the camera frames — the raw images are first compressed into compact feature vectors before being passed to the transformer.</p>
+
+<p><code class="language-plaintext highlighter-rouge">CLS</code> is the <strong>classification token</strong> — a single learned vector that the encoder uses to summarise the entire input sequence. It begins as a randomly initialized vector and is updated through training. The CLS token’s final representation is used as the basis for generating the latent distribution.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Past actions are represented as a matrix of numbers — one row per recent timestep, one column per joint. For a robot with 6 joints tracking the last 5 timesteps, this is a 5×6 matrix where each value is a joint angle. This matrix is embedded into tokens before being passed into the VAE encoder alongside the CLS token, joint states, and image features.</p>
+</blockquote>
+
+<h3 id="the-latent-distribution">The Latent Distribution</h3>
+
+<p>Rather than producing a single fixed summary of the input, the VAE encoder produces a <strong>probability distribution</strong> — a range of possible summaries, each slightly different. This is what introduces controlled variation.</p>
+
+<p>Specifically, the encoder uses the CLS token’s output to predict two vectors via learned weights:</p>
+
+<ul>
+  <li><strong>μ (mu)</strong> — the mean of the distribution</li>
+  <li><strong>log(σ²)</strong> — the log variance of the distribution</li>
+</ul>
+
+<p>Together, μ and σ define a Gaussian distribution in latent space. During training, we <strong>sample</strong> a latent vector <code class="language-plaintext highlighter-rouge">z</code> from this distribution rather than using a single fixed value. Think of <code class="language-plaintext highlighter-rouge">z</code> as a compressed, slightly-varied summary of the current situation and past actions.</p>
+
+<p>By sampling from a distribution rather than computing a deterministic encoding, the model is forced to be robust to small variations in input — it cannot over-rely on exact reproduction of any one demonstration.</p>
+
+<p><img src="/assets/images/diagram_vae_encoder.svg" alt="VAE Encoder Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> The VAE encoder is trained jointly with the rest of ACT using two loss terms: the standard action prediction loss, plus a <strong>KL divergence</strong> term that keeps the learned distribution close to a standard Gaussian. This prevents the distribution from collapsing to a single point (which would defeat the purpose of sampling).</p>
+</blockquote>
+
+<hr />
+
+<h2 id="the-main-encoder">The Main Encoder</h2>
+
+<p>The main encoder takes the latent vector <code class="language-plaintext highlighter-rouge">z</code> produced by the VAE encoder and combines it with the current state information:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[z, joint states, image features]
+</code></pre></div></div>
+
+<p>This input is passed through <strong>self-attention</strong> and MLP layers — standard transformer blocks — to produce <strong>contextualized representations</strong> of the current state. “Contextualized” means that each element of the input has been allowed to attend to every other element: the image features can influence how joint states are interpreted, <code class="language-plaintext highlighter-rouge">z</code> can influence the representation of both, and so on.</p>
+
+<p>The output of the main encoder is a rich, context-aware representation of the robot’s current situation, which is then passed to the decoder.</p>
+
+<hr />
+
+<h2 id="the-main-decoder">The Main Decoder</h2>
+
+<p>The main decoder takes a set of <strong>query tokens</strong> as input:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[query tokens]
+</code></pre></div></div>
+
+<p>Each query token corresponds to one future timestep in the predicted action chunk. If we want to predict a chunk of 10 future actions, we pass in 10 query tokens — one per predicted step. These tokens are learned positional embeddings that start with no task-specific information; their content is entirely shaped by what the decoder learns during training.</p>
+
+<p>The decoder processes these queries in two stages:</p>
+
+<p><strong>Self-attention</strong> is applied first across the query tokens themselves. This ensures the predicted sequence is internally coherent — the action predicted at step 3 is aware of what was predicted at steps 1 and 2, so the chunk reads as one smooth, continuous motion rather than a series of disconnected predictions.</p>
+
+<p><strong>Cross-attention</strong> is then applied between the query tokens and the main encoder’s output. This is the bridge between the two components: each query token reaches into the encoder’s contextualised state representation — which encodes what the robot currently sees, its joint configuration, and the latent vector <code class="language-plaintext highlighter-rouge">z</code> — and uses that information to decide what action to predict at its timestep. Without this cross-attention step, the decoder would be predicting actions blind, with no knowledge of the current scene.</p>
+
+<p>The decoder then outputs a predicted sequence of future joint positions — one per query token — which is compared against the ground truth actions from the demonstration. The resulting loss is propagated back through the decoder, main encoder, and VAE encoder via backpropagation to update all weights.</p>
+
+<p><img src="/assets/images/diagram_act_architecture.svg" alt="ACT Architecture Overview" /></p>
+
+<hr />
+
+<h2 id="inference-what-happens-at-test-time">Inference: What Happens at Test Time</h2>
+
+<p>At inference time — when the trained model is deployed on the real robot — the VAE encoder is <strong>switched off entirely</strong>. In its place, the latent vector <code class="language-plaintext highlighter-rouge">z</code> is fixed to the zero vector <code class="language-plaintext highlighter-rouge">z = 0</code>.</p>
+
+<p>This works because the main encoder and decoder have been trained to operate robustly across a range of <code class="language-plaintext highlighter-rouge">z</code> values.</p>
+
+<p>The inference loop then runs as follows:</p>
+
+<ol>
+  <li>Cameras capture the current scene; the CNN extracts image features</li>
+  <li>Current joint states are read from the robot</li>
+  <li>The main encoder combines <code class="language-plaintext highlighter-rouge">[0, joint states, image features]</code> into a contextual representation
+    <blockquote>
+      <p><strong>Note:</strong> Past actions are not passed to the main encoder — they were only ever an input to the VAE encoder during training. Since the VAE encoder is off at inference, past actions play no role.</p>
+    </blockquote>
+  </li>
+  <li>The main decoder produces a chunk of predicted future actions</li>
+  <li>The robot executes the first action (or a weighted average of actions in the chunk)</li>
+  <li>The loop repeats at the next timestep</li>
+</ol>
+
+<p>This approach — predict a chunk, execute the first step, predict again — allows the robot to continuously replan while still benefiting from the smoothness that chunking provides.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="what-each-component-does">What Each Component Does</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Input</th>
+      <th>Output</th>
+      <th>Training Only?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CNN</strong></td>
+      <td>Raw camera images</td>
+      <td>Compact image feature vectors</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>VAE Encoder</strong></td>
+      <td>CLS, joint states, image features, past actions</td>
+      <td>Latent vector <code class="language-plaintext highlighter-rouge">z</code> (sampled from μ, σ)</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>Main Encoder</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">z</code>, joint states, image features</td>
+      <td>Contextualised state representation</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Main Decoder</strong></td>
+      <td>Query tokens + encoder output</td>
+      <td>Predicted sequence of future actions</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="key-concepts">Key Concepts</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Action Chunking</strong></td>
+      <td>Predicts multiple future actions at once for smooth, coherent motion</td>
+    </tr>
+    <tr>
+      <td><strong>Latent Distribution</strong></td>
+      <td>Introduces controlled variation during training to prevent overfitting</td>
+    </tr>
+    <tr>
+      <td><strong>CLS Token</strong></td>
+      <td>A single learned vector that summarises the entire input sequence</td>
+    </tr>
+    <tr>
+      <td><strong>Cross-Attention</strong></td>
+      <td>Allows predicted actions to be grounded in the current observed state</td>
+    </tr>
+    <tr>
+      <td><strong>VAE at Inference</strong></td>
+      <td>Replaced by <code class="language-plaintext highlighter-rouge">z = 0</code>; the model uses its “average” prediction</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jaisree David Ravikumar</name></author><category term="Robotics" /><category term="Transformers" /><category term="Imitation Learning" /><summary type="html"><![CDATA[]]></summary></entry><entry><title type="html">Intro to Transformers</title><link href="http://localhost:4000/2025/01/25/introtransformer.html" rel="alternate" type="text/html" title="Intro to Transformers" /><published>2025-01-25T00:00:00-08:00</published><updated>2025-01-25T00:00:00-08:00</updated><id>http://localhost:4000/2025/01/25/introtransformer</id><content type="html" xml:base="http://localhost:4000/2025/01/25/introtransformer.html"><![CDATA[<hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-is-a-transformer">What Is a Transformer?</a></li>
+  <li><a href="#rnns-vs-transformers">RNNs vs Transformers</a></li>
+  <li><a href="#the-embedding-layer">The Embedding Layer</a></li>
+  <li><a href="#the-attention-layer">The Attention Layer</a></li>
+  <li><a href="#queries-keys-and-values">Queries, Keys, and Values</a></li>
+  <li><a href="#self-attention-vs-cross-attention">Self-Attention vs Cross-Attention</a></li>
+  <li><a href="#multi-head-attention">Multi-Head Attention</a></li>
+  <li><a href="#the-full-forward-pass">The Full Forward Pass</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-is-a-transformer">What Is a Transformer?</h2>
+
+<p>If you have been following developments in AI over the past few years, you have almost certainly encountered the word <em>transformer</em>. It is the architecture behind GPT, BERT, and virtually every modern large language model. But what exactly is a transformer, why is it so powerful, and how does it work?</p>
+
+<p>This post builds directly on the neural networks guide. We have already seen how a vanilla neural network maps a fixed input to a fixed output — for instance, predicting whether a patient has diabetes from ten health metrics. The key limitation of that approach is that it produces a <strong>single output for a single input</strong>. Real language tasks — translation, text generation, summarization — require models that process and produce <em>sequences</em>. That need is what gave rise to transformers.</p>
+
+<p>The transformer architecture was introduced in the 2017 paper <em>“Attention Is All You Need”</em> by Vaswani et al., and has since become the foundation of virtually every modern language model.</p>
+
+<p>A transformer is a neural network designed to process and generate <strong>sequences of information</strong>. It is made up of three core components, repeated across multiple layers:</p>
+
+<ul>
+  <li><strong>Embedding layer</strong> — converts raw tokens (words or subwords) into dense numerical vectors</li>
+  <li><strong>Attention layer</strong> — allows each token to incorporate context from every other token in the sequence</li>
+  <li><strong>MLP layer</strong> — a standard feedforward network applied to each token’s representation independently</li>
+</ul>
+
+<p>Throughout this post, we will ground the explanation in a single task: <strong>next-word prediction</strong> — given a partial sentence, predict what word comes next.</p>
+
+<hr />
+
+<h2 id="rnns-vs-transformers">RNNs vs Transformers</h2>
+
+<p>Before transformers, the dominant architecture for sequence tasks was the <strong>Recurrent Neural Network (RNN)</strong>. Understanding where RNNs fell short is the clearest way to see what transformers solved.</p>
+
+<p>An RNN processes a sequence <strong>one token at a time</strong>, left to right. Each step takes the current token and a hidden state carried forward from the previous step, and produces a new hidden state. This means the model must compress everything it has seen so far into a single vector before moving to the next token — a significant bottleneck for long sequences.</p>
+
+<p>A transformer processes <strong>all tokens in the sequence simultaneously</strong>, in parallel. Rather than passing information through a sequential chain, every token attends directly to every other token in a single operation. This has two major consequences:</p>
+
+<ul>
+  <li><strong>Speed</strong> — parallel processing maps naturally to GPU hardware, making transformers dramatically faster to train than RNNs</li>
+  <li><strong>Long-range dependencies</strong> — a token at position 1 and a token at position 100 attend to each other directly, with no information loss from the intervening steps</li>
+</ul>
+
+<p><img src="/assets/images/diagram_rnn_vs_transformer.svg" alt="RNN vs Transformer Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> RNNs process tokens sequentially, so training cannot be parallelized across the sequence. Transformers process all tokens at once, enabling efficient use of GPU parallelism.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="the-embedding-layer">The Embedding Layer</h2>
+
+<p>Neural networks operate on numbers, not words. The embedding layer is responsible for converting each token into a numerical vector that the rest of the network can work with.</p>
+
+<h3 id="why-not-just-use-integer-ids">Why Not Just Use Integer IDs?</h3>
+
+<p>Before the embedding layer can do anything, each word must be converted to an integer ID by mapping it against a vocabulary — a dictionary of every token the model knows. But raw integers have no useful geometry — the fact that “cat” is ID 1 and “mat” is ID 5 tells the model nothing about whether they are related.</p>
+
+<h3 id="one-hot-encoding-a-naive-approach">One-Hot Encoding: A Naive Approach</h3>
+
+<p>An early approach was <strong>one-hot encoding</strong>: represent each word as a vector of all zeros, with a single 1 at the index corresponding to that word’s ID. With a vocabulary of 10,000 words, “cat” might be:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[0, 1, 0, 0, 0, ... 0]   ← 10,000 values, all zero except index 1
+</code></pre></div></div>
+
+<p>This has two serious problems. First, the vectors are enormous — 10,000 dimensions for every single word. Second, and more fundamentally, one-hot vectors carry no information about meaning. “Dog” and “puppy” are just as different from each other as “dog” and “democracy” — there is no similarity captured.</p>
+
+<h3 id="dense-embeddings">Dense Embeddings</h3>
+
+<p>The embedding layer solves both problems by mapping each token ID to a <strong>dense vector</strong> — a short list of real numbers, typically 256 to 1024 values, learned during training.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>one-hot:  [0, 0, 1, 0, 0, ... 0]           ← 10,000 dimensions, mostly zeros
+embedding: [0.21, -0.54, 0.83, 0.12, ...]  ← 512 dimensions, all meaningful
+</code></pre></div></div>
+
+<p>These vectors are stored in an <strong>embedding matrix</strong> — one row per token in the vocabulary. Initially the values are random. As the model trains, the embedding matrix is updated via gradient descent alongside all other weights, and the vectors gradually adjust so that words used in similar contexts end up pointing in similar directions.</p>
+
+<p>Similarity between two word vectors is measured using the <strong>dot product</strong> — a single number computed by multiplying corresponding elements and summing the results. A high dot product means the vectors are aligned, indicating the words are semantically related. This is why a well-trained embedding space places “dog” and “puppy” close together, and far from “democracy”.</p>
+
+<p><img src="/assets/images/diagram_embedding.svg" alt="Embedding Diagram" /></p>
+
+<hr />
+
+<h2 id="the-attention-layer">The Attention Layer</h2>
+
+<p>The embedding layer encodes the <em>meaning</em> of individual words, but not their <em>context</em>. The word “model” means something very different in “fashion model” versus “neural network model” — yet both would receive the same embedding vector coming out of the embedding layer. The <strong>attention layer</strong> resolves this by updating each token’s representation based on its relationship to all other tokens in the sequence.</p>
+
+<h3 id="a-concrete-example">A Concrete Example</h3>
+
+<p>Take the sentence: <strong>“There is a fluffy pink rock.”</strong></p>
+
+<p>The noun is “rock” and the adjectives are “fluffy” and “pink”. The attention layer needs to figure out that “fluffy” and “pink” modify “rock” — and update the vector for “rock” so that it carries the meaning of “fluffy pink rock”.</p>
+
+<p>Here is how that happens.</p>
+
+<h3 id="step-1--attention-scores">Step 1 — Attention Scores</h3>
+
+<p>For each token in the sequence, the model computes an <strong>attention score</strong> against every other token. These scores measure how relevant each token is to each other token. Higher score = more relevant.</p>
+
+<p>Each token in the sequence has an embedding vector — a list of numbers representing its meaning. To compute how relevant any token is to “rock”, we take the <strong>dot product</strong> of their two vectors:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>attention_score(xᵢ, x_query) = xᵢ · x_query
+</code></pre></div></div>
+
+<p>For example, the embedding vector for “fluffy” points in a similar direction to the embedding vector for “rock” — both are associated with physical, tangible objects. Their dot product is therefore high (0.90). The embedding vector for “There” points in a very different direction — it is a filler word with no physical meaning — so its dot product with “rock” is low (0.01). We repeat this for every token in the sentence, giving us one raw score per token representing how relevant it is to “rock”.</p>
+
+<p>The raw attention scores for our sentence might look like this — the key insight is that “rock” has high scores with “fluffy” and “pink”, since adjectives are strongly associated with the noun they modify:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>         There   is     a    fluffy  pink   rock
+There  [  0.00  0.00  0.00   0.00   0.00   0.00 ]
+is     [  0.10  0.00  0.00   0.00   0.00   0.00 ]
+a      [  0.05  0.10  0.00   0.00   0.00   0.00 ]
+fluffy [  0.05  0.05  0.10   0.00   0.00   0.00 ]
+pink   [  0.05  0.05  0.10   0.30   0.00   0.00 ]
+rock   [  0.01  0.01  0.01   0.90   0.80   0.01 ]
+                             ^^^^   ^^^^
+</code></pre></div></div>
+
+<blockquote>
+  <p><strong>Note:</strong> The lower triangle is zeroed out — this is called <strong>causal masking</strong>, a technique that prevents earlier tokens from being influenced by later ones. It is used in GPT-style next-word prediction models. We cover this in depth in the LLM internals post.</p>
+</blockquote>
+
+<h3 id="step-2--softmax-normalization">Step 2 — Softmax Normalization</h3>
+
+<p>Raw attention scores are converted into <strong>attention weights</strong> using the softmax function, so that the weights for each token sum to 1. This turns the scores into a proper probability distribution — how much attention should “rock” pay to each other word?</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rock's attention weights (after softmax → sums to 1.0):
+
+There: 0.01,  is: 0.01,  a: 0.01,  fluffy: 0.47,  pink: 0.42,  rock: 0.08
+</code></pre></div></div>
+
+<p>“fluffy” and “pink” dominate, which is exactly what we want.</p>
+
+<h3 id="step-3--weighted-sum-context-vector">Step 3 — Weighted Sum (Context Vector)</h3>
+
+<p>Finally, the model computes a <strong>context vector</strong> for “rock” by taking a weighted sum of all token vectors, using the attention weights:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>context("rock") = 0.01·v(There) + 0.01·v(is) + 0.01·v(a)
+                + 0.47·v(fluffy) + 0.42·v(pink) + 0.08·v(rock)
+</code></pre></div></div>
+
+<p>This context vector is the new, enriched representation of “rock” — a blend of all tokens, dominated by “fluffy” and “pink”. The same process runs for every token in the sequence, producing an updated representation for each one.</p>
+
+<p><img src="/assets/images/diagram_attention_score.svg" alt="Attention Score Diagram" /></p>
+
+<hr />
+
+<h2 id="queries-keys-and-values">Queries, Keys, and Values</h2>
+
+<p>The attention mechanism above computed scores by comparing token vectors directly against each other. In practice, transformers use a more powerful formulation that gives the model three separate learned projections per token — <strong>Queries, Keys, and Values</strong> — each with its own weight matrix learned during training.</p>
+
+<ul>
+  <li><strong>Query (Q)</strong> — <em>“What am I looking for?”</em> — the token asking the question</li>
+  <li><strong>Key (K)</strong> — <em>“What do I contain?”</em> — every token advertising its content</li>
+  <li><strong>Value (V)</strong> — <em>“What should I pass forward if selected?”</em> — the actual information to aggregate</li>
+</ul>
+
+<p>For each input token embedding <code class="language-plaintext highlighter-rouge">x</code>, three vectors are computed:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Q = x · Wq
+K = x · Wk
+V = x · Wv
+</code></pre></div></div>
+
+<p>Where <code class="language-plaintext highlighter-rouge">Wq</code>, <code class="language-plaintext highlighter-rouge">Wk</code>, and <code class="language-plaintext highlighter-rouge">Wv</code> are learned weight matrices. The attention score between a query and all keys is computed as a dot product, scaled by √dₖ to prevent gradients from vanishing as vector dimensionality grows:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Attention(Q, K, V) = softmax( QKᵀ / √dₖ ) · V
+</code></pre></div></div>
+
+<p>The improvement over the simpler version is that the model now has three separate learned lenses for each token — it can learn <em>what to ask</em>, <em>what to advertise</em>, and <em>what to contribute</em> independently, all tuned by gradient descent.</p>
+
+<hr />
+
+<h2 id="self-attention-vs-cross-attention">Self-Attention vs Cross-Attention</h2>
+
+<p>The attention mechanism described above is <strong>self-attention</strong>: the queries, keys, and values all come from the <em>same</em> sequence. Each token attends to every other token within the same input, learning how words within a sentence relate to one another.</p>
+
+<p><strong>Cross-attention</strong> is used when the model needs to align information from <em>two different sequences</em>. The queries come from one sequence, while the keys and values come from another. This is how encoder-decoder transformers connect understanding of the input to generation of the output — the decoder queries the encoder’s representations using cross-attention at each generation step.</p>
+
+<p>Common use cases for cross-attention:</p>
+
+<ul>
+  <li><strong>Language translation</strong> — decoder attends to the encoder’s representation of the source sentence</li>
+  <li><strong>Image captioning</strong> — language decoder attends to visual features extracted from the image</li>
+  <li><strong>ACT (robotics)</strong> — the action decoder attends to the encoder’s representation of the robot’s current state</li>
+</ul>
+
+<hr />
+
+<h2 id="multi-head-attention">Multi-Head Attention</h2>
+
+<p>A single attention operation produces one view of which tokens are relevant to which. But language contains many simultaneous relationships — syntactic, semantic, positional — and a single head cannot specialize in all of them at once.</p>
+
+<p><strong>Multi-head attention</strong> runs several attention operations in parallel, each with its own independent <code class="language-plaintext highlighter-rouge">Wq</code>, <code class="language-plaintext highlighter-rouge">Wk</code>, <code class="language-plaintext highlighter-rouge">Wv</code> weight matrices. Each <strong>head</strong> learns to focus on a different type of relationship.</p>
+
+<p>If the model dimension is 512 and there are 8 heads, each head operates in a 64-dimensional subspace — computationally similar to a single full-dimensional attention operation, but producing richer representations because the heads specialize independently.</p>
+
+<p>In practice, one head might learn to track subject-verb relationships, another might connect pronouns to their referents, and another might attend to nearby positional context. We cannot tell the heads what to focus on — this specialization emerges entirely from training.</p>
+
+<hr />
+
+<h2 id="the-full-forward-pass">The Full Forward Pass</h2>
+
+<p>Now we can put the full picture together. Given the partial sentence <strong>“There was a”</strong>, here is what happens at each stage:</p>
+
+<h3 id="1-tokenization-and-embedding">1. Tokenization and Embedding</h3>
+
+<p>Each word is converted to a token ID, then looked up in the embedding matrix to produce a dense vector. Positional encodings are added to each vector to give the model information about the order of tokens — without this, the model would treat “cat sat on” and “on sat cat” identically.</p>
+
+<h3 id="2-attention-layers">2. Attention Layers</h3>
+
+<p>The token vectors pass through multiple stacked attention layers. At each layer, every token attends to every other token (subject to causal masking), and each token’s vector is updated to reflect the context of the full sequence. After several layers, the representation of “a” has been enriched by its relationship to “There” and “was”.</p>
+
+<h3 id="3-mlp-layers">3. MLP Layers</h3>
+
+<p>After each attention layer, the updated vectors pass through a <strong>feedforward MLP</strong> applied independently to each token. The MLP refines each representation further — it is where much of the model’s factual knowledge is believed to be stored.</p>
+
+<h3 id="4-output">4. Output</h3>
+
+<p>The final vector for the last token — “a” — is passed through a linear layer that projects it into the vocabulary space (one score per word in the vocabulary), followed by softmax to produce a probability distribution. The highest-probability word is the prediction.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Input:  "There was a"
+Output probabilities: { "rock": 0.25, "dog": 0.10, "time": 0.18, ... }
+Predicted next word:  "rock"
+</code></pre></div></div>
+
+<p>The predicted word is appended to the sequence, and the entire process repeats — this is how transformers generate text one token at a time.</p>
+
+<p><img src="/assets/images/diagram_transformer_forward_pass.svg" alt="Transformer Forward Pass Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> Throughout this post, references to the model “learning” or “training” mean the same thing: weight matrices — the embedding matrix <code class="language-plaintext highlighter-rouge">WE</code>, query matrix <code class="language-plaintext highlighter-rouge">Wq</code>, key matrix <code class="language-plaintext highlighter-rouge">Wk</code>, value matrix <code class="language-plaintext highlighter-rouge">Wv</code>, and all MLP weights — being updated via gradient descent and backpropagation as described in the neural networks guide.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="core-components">Core Components</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Embedding layer</strong></td>
+      <td>Maps token IDs to dense vectors; learns semantic similarity</td>
+    </tr>
+    <tr>
+      <td><strong>Attention layer</strong></td>
+      <td>Updates each token’s representation using context from all other tokens</td>
+    </tr>
+    <tr>
+      <td><strong>MLP layer</strong></td>
+      <td>Refines representations independently per token; stores factual knowledge</td>
+    </tr>
+    <tr>
+      <td><strong>Positional encoding</strong></td>
+      <td>Adds order information to token embeddings</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="key-concepts">Key Concepts</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>One-Line Definition</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Dot product</strong></td>
+      <td>Measures similarity between two vectors — higher means more aligned</td>
+    </tr>
+    <tr>
+      <td><strong>Softmax</strong></td>
+      <td>Converts raw scores into weights that sum to 1</td>
+    </tr>
+    <tr>
+      <td><strong>Context vector</strong></td>
+      <td>Weighted sum of all token vectors; the enriched output of attention</td>
+    </tr>
+    <tr>
+      <td><strong>Q, K, V</strong></td>
+      <td>Separate learned projections controlling what each token queries, advertises, and contributes</td>
+    </tr>
+    <tr>
+      <td><strong>Causal masking</strong></td>
+      <td>Prevents tokens from attending to future positions during next-word prediction</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>Jaisree David Ravikumar</name></author><category term="Transformers" /><category term="Neural Networks" /><category term="NLP" /><category term="Attention" /><summary type="html"><![CDATA[]]></summary></entry></feed>

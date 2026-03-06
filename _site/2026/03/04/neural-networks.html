@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>The Complete Guide to Neural Networks | J.aiTech</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="The Complete Guide to Neural Networks" />
+<meta name="author" content="Jaisree David Ravikumar" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="AI • Robotics • Intelligent Systems" />
+<meta property="og:description" content="AI • Robotics • Intelligent Systems" />
+<link rel="canonical" href="http://localhost:4000/2026/03/04/neural-networks.html" />
+<meta property="og:url" content="http://localhost:4000/2026/03/04/neural-networks.html" />
+<meta property="og:site_name" content="J.aiTech" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2026-03-04T00:00:00-08:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="The Complete Guide to Neural Networks" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jaisree David Ravikumar"},"dateModified":"2026-03-04T00:00:00-08:00","datePublished":"2026-03-04T00:00:00-08:00","description":"AI • Robotics • Intelligent Systems","headline":"The Complete Guide to Neural Networks","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2026/03/04/neural-networks.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/images/profile.webp"},"name":"Jaisree David Ravikumar"},"url":"http://localhost:4000/2026/03/04/neural-networks.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="J.aiTech" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">J.aiTech</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/">Home</a><a class="page-link" href="/about/">About</a><a class="page-link" href="/posts/">Posts</a><a class="page-link" href="/projects/">Projects</a><a class="page-link" href="/competitions/">Competitions</a><a class="page-link" href="/certifications/">Certifications</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">The Complete Guide to Neural Networks</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2026-03-04T00:00:00-08:00" itemprop="datePublished">Mar 4, 2026
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#the-ai-landscape">The AI Landscape</a></li>
+  <li><a href="#how-machines-learn-supervised-vs-unsupervised-learning">How Machines Learn: Supervised vs Unsupervised Learning</a></li>
+  <li><a href="#from-linear-regression-to-neural-networks">From y = mx + b to Neural Networks</a></li>
+  <li><a href="#what-is-a-neural-network">What Is a Neural Network?</a></li>
+  <li><a href="#a-concrete-example-predicting-diabetes">A Concrete Example: Predicting Diabetes</a></li>
+  <li><a href="#activation-functions-the-brains-onoff-switch">Activation Functions: The Brain’s On/Off Switch</a></li>
+  <li><a href="#a-primer-on-derivatives">A Primer on Derivatives</a></li>
+  <li><a href="#learning-from-mistakes-loss-backpropagation--gradient-descent">Learning From Mistakes: Loss, Backpropagation &amp; Gradient Descent</a></li>
+  <li><a href="#backpropagation-a-full-worked-example">Backpropagation: A Full Worked Example</a></li>
+  <li><a href="#gradient-descent-variants">Gradient Descent Variants</a></li>
+  <li><a href="#common-layer-types">Building Blocks: Common Layer Types</a></li>
+  <li><a href="#skip-connections-and-resnets">Skip Connections and ResNets</a></li>
+  <li><a href="#beyond-binary-classification">Beyond Binary Classification</a></li>
+  <li><a href="#summary">Summary Reference Tables</a></li>
+</ol>
+
+<hr />
+
+<h2 id="the-ai-landscape">The AI Landscape</h2>
+
+<p>You’ve probably heard the terms <em>artificial intelligence</em>, <em>machine learning</em>, and <em>deep learning</em> thrown around — sometimes interchangeably. But what does each one actually mean, and how do they relate to each other?</p>
+
+<p>Artificial intelligence is the broadest term. It refers to any system or technique designed to mimic human intelligence. Under the AI umbrella, two major branches emerge: <strong>rule-based methods</strong> and <strong>machine learning (ML)</strong>.</p>
+
+<p>Rule-based systems operate on explicit if-then logic written by humans — they follow instructions. Machine learning, on the other hand, allows systems to <em>learn patterns from data</em>. ML includes techniques like linear regression, support vector machines, and at its deepest level — <strong>deep learning</strong>.</p>
+
+<p>Deep learning uses multi-layered networks to learn increasingly abstract representations of data. And it is within deep learning that <strong>neural networks</strong> live.</p>
+
+<p><img src="/assets/images/diagram_ai_hierarchy.svg" alt="AI/ML Hierarchy Diagram" /></p>
+
+<hr />
+
+<h2 id="how-machines-learn-supervised-vs-unsupervised-learning">How Machines Learn: Supervised vs Unsupervised Learning</h2>
+
+<p>Before diving into neural networks, it’s important to understand the two dominant styles of machine learning, because they shape how you design and train a model.</p>
+
+<h3 id="supervised-learning">Supervised Learning</h3>
+
+<p>In supervised learning, the training data comes with <strong>labels</strong> — the correct answers. The model is trained to map inputs to those known outputs, and its performance is measured by how close its predictions are to the true labels.</p>
+
+<p>To make this concrete, imagine a spreadsheet of patient health records. Each row contains measurements for one patient — things like blood pressure, cholesterol, BMI, and age. The final column contains a label: <code class="language-plaintext highlighter-rouge">0</code> meaning the patient does not have diabetes, <code class="language-plaintext highlighter-rouge">1</code> meaning they do. The model’s job is to learn, from thousands of such rows, how to predict that label for a brand new patient it has never seen. The label is the “supervision” — it acts as the teacher, telling the model when it’s right or wrong. We will use this exact example throughout the guide to make the mechanics of neural networks as tangible as possible.</p>
+
+<p>Common supervised learning tasks include:</p>
+<ul>
+  <li><strong>Classification</strong> — predicting a category (e.g. spam vs not spam, diabetes vs no diabetes)</li>
+  <li><strong>Regression</strong> — predicting a continuous number (e.g. house price, temperature forecast)</li>
+</ul>
+
+<h3 id="unsupervised-learning">Unsupervised Learning</h3>
+
+<p>In unsupervised learning, there are <strong>no labels</strong>. The model receives only raw input data and must find its own structure, patterns, or groupings within it.</p>
+
+<p>Take the same patient spreadsheet, but remove the diabetes column entirely. Without a label to predict, the model cannot be supervised. However, it might still discover something useful — for instance, that patients naturally cluster into distinct groups based on similar health profiles. This is called <strong>clustering</strong>. Another common technique is <strong>dimensionality reduction</strong>, where a model compresses high-dimensional data into a smaller representation while preserving meaningful structure.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th> </th>
+      <th>Supervised</th>
+      <th>Unsupervised</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Labels</strong></td>
+      <td>Required</td>
+      <td>Not present</td>
+    </tr>
+    <tr>
+      <td><strong>Goal</strong></td>
+      <td>Predict output</td>
+      <td>Find structure</td>
+    </tr>
+    <tr>
+      <td><strong>Examples</strong></td>
+      <td>Classification, Regression</td>
+      <td>Clustering, Dimensionality reduction</td>
+    </tr>
+    <tr>
+      <td><strong>Feedback</strong></td>
+      <td>Loss against true label</td>
+      <td>Internal criteria (e.g. cluster tightness)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Neural networks can be used for both cases, though the most widely understood and deployed applications — including everything covered in this guide — are supervised.</p>
+
+<hr />
+
+<h2 id="from-linear-regression-to-neural-networks">From Linear Regression to Neural Networks</h2>
+
+<h3 id="the-simplest-model-y--mx--b">The Simplest Model: y = mx + b</h3>
+
+<p>Before neural networks existed, statisticians used <strong>linear regression</strong> — one of the simplest machine learning techniques. Its formula is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>y = mx + b
+</code></pre></div></div>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">x</code> is the input feature (e.g. a patient’s age)</li>
+  <li><code class="language-plaintext highlighter-rouge">m</code> is the weight (slope) — how much <code class="language-plaintext highlighter-rouge">y</code> changes per unit of <code class="language-plaintext highlighter-rouge">x</code></li>
+  <li><code class="language-plaintext highlighter-rouge">b</code> is the bias (intercept) — the baseline value of <code class="language-plaintext highlighter-rouge">y</code> when <code class="language-plaintext highlighter-rouge">x</code> is zero</li>
+  <li><code class="language-plaintext highlighter-rouge">y</code> is the prediction</li>
+</ul>
+
+<p>Training this model means finding the values of <code class="language-plaintext highlighter-rouge">m</code> and <code class="language-plaintext highlighter-rouge">b</code> that make the line fit the data as well as possible. The result is a straight line drawn through a scatter of data points.</p>
+
+<p><strong>The key limitation?</strong> Life is not linear. Real-world relationships — like those between health metrics and disease risk — are curved, interacting, and conditional. A single straight line cannot capture them.</p>
+
+<h3 id="scaling-up-multiple-inputs">Scaling Up: Multiple Inputs</h3>
+
+<p>Now suppose our patient has not one feature but ten. We extend the formula:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>y = w₁x₁ + w₂x₂ + w₃x₃ + ... + w₁₀x₁₀ + b
+</code></pre></div></div>
+
+<p>This is called <strong>multiple linear regression</strong>. It has one weight per feature, plus a bias. It can use all ten health metrics simultaneously to produce a prediction. But it still fits only a flat hyperplane through the data — it cannot model curves or interactions between features.</p>
+
+<h3 id="the-neural-network-as-a-massively-extended-version">The Neural Network as a Massively Extended Version</h3>
+
+<p>A neural network takes this idea to its logical extreme. Instead of one set of weights mapping inputs to an output, it stacks <em>multiple layers</em> of such computations. Between each layer, it applies a non-linear <strong>activation function</strong> (more on this shortly).</p>
+
+<p>A single hidden layer node does exactly this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>z = w₁x₁ + w₂x₂ + ... + wₙxₙ + b    ← same as linear regression
+h = activation(z)                  ← this is what makes it powerful
+</code></pre></div></div>
+
+<p>With enough nodes and layers, and with non-linear activation functions in between, a neural network can approximate <em>any</em> function — no matter how complex.</p>
+
+<hr />
+
+<h2 id="what-is-a-neural-network">What Is a Neural Network?</h2>
+
+<p>A neural network is a machine learning model inspired by the human brain. Just as the brain is made up of neurons connected by synapses, a neural network has <strong>nodes</strong> (neurons) connected by <strong>weights</strong> (synaptic strengths).</p>
+
+<p>These nodes are organized into three types of layers:</p>
+
+<ul>
+  <li><strong>Input layer</strong> — receives the raw data, one node per feature</li>
+  <li><strong>Hidden layers</strong> — where the network learns intermediate representations</li>
+  <li><strong>Output layer</strong> — produces the final prediction</li>
+</ul>
+
+<p>There are many types of neural networks, each suited to different tasks:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Type</th>
+      <th>Best For</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>MLP</strong> (Multilayer Perceptron)</td>
+      <td>Structured / tabular data</td>
+    </tr>
+    <tr>
+      <td><strong>CNN</strong> (Convolutional Neural Network)</td>
+      <td>Image processing &amp; classification</td>
+    </tr>
+    <tr>
+      <td><strong>RNN</strong> (Recurrent Neural Network)</td>
+      <td>Sequential data (e.g. time series, audio)</td>
+    </tr>
+    <tr>
+      <td><strong>Transformer</strong></td>
+      <td>Language, sequences, generative AI</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p><strong>Note</strong>: An MLP is the foundational type of neural network: fully-connected layers of nodes stacked in sequence, with no special structure. Every other architecture (CNNs, RNNs, Transformers) is a neural network that adds constraints or structure on top of this basic idea. When people say “neural network” without qualification, they usually mean an MLP.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="a-concrete-example-predicting-diabetes">A Concrete Example: Predicting Diabetes</h2>
+
+<p>Now that we understand what a neural network is structurally, let’s bring it to life with the patient health example introduced earlier. Recall the spreadsheet: each row is a patient, with <strong>10 health metric columns</strong> — blood pressure, cholesterol, BMI, age, and so on — and a final label column (<code class="language-plaintext highlighter-rouge">0</code> = no diabetes, <code class="language-plaintext highlighter-rouge">1</code> = diabetes). We want to train an MLP that, given a new patient’s 10 measurements, predicts whether they have diabetes.</p>
+
+<h3 id="setting-up-the-network">Setting Up the Network</h3>
+
+<p>Since there are 10 features, the <strong>input layer has 10 nodes</strong> — one per feature. The output layer has <strong>1 node</strong> outputting a probability between 0 and 1.</p>
+
+<h3 id="the-forward-pass">The Forward Pass</h3>
+
+<p>When we feed a patient’s row into the network, the data flows forward through each layer in sequence. At every hidden layer node, the incoming values are:</p>
+
+<ol>
+  <li>Multiplied by their respective weights</li>
+  <li>Summed together</li>
+  <li>Added a bias term</li>
+  <li>Passed through an <strong>activation function</strong></li>
+</ol>
+
+<p>At the output layer, a <strong>sigmoid</strong> activation squashes the result to a probability. An output of <code class="language-plaintext highlighter-rouge">0.85</code> means an estimated <strong>85% chance</strong> the patient has diabetes.</p>
+
+<p>This end-to-end journey from input to prediction is called the <strong>forward pass</strong>.</p>
+
+<p><img src="/assets/images/diagram_neural_network.svg" alt="Neural Network Architecture Diagram" /></p>
+
+<hr />
+
+<h2 id="activation-functions-the-brains-onoff-switch">Activation Functions: The Brain’s On/Off Switch</h2>
+
+<p>Activation functions are arguably the most important ingredient in a neural network. Without them, no matter how many layers you stack, the entire network collapses into a single linear transformation — functionally identical to plain linear regression. Let’s understand exactly why they matter.</p>
+
+<h3 id="the-biological-analogy">The Biological Analogy</h3>
+
+<p>In the brain, a biological neuron only fires — passes a signal to the next neuron — when its incoming signals are strong enough to exceed a threshold. Below the threshold, it stays silent. Activation functions mimic this behaviour: they decide <strong>how strongly a node should “fire”</strong>, i.e. how large the output signal passed to the next layer should be.</p>
+
+<p>Think of each activation function as a <strong>gate</strong>. It receives a weighted sum of inputs and then determines:</p>
+<ul>
+  <li>Whether the neuron activates at all</li>
+  <li>If so, with what strength</li>
+</ul>
+
+<h3 id="why-non-linearity-is-essential">Why Non-Linearity Is Essential</h3>
+
+<p>Consider what happens without any activation function. Each layer performs:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = W · input + b
+</code></pre></div></div>
+
+<p>This is a linear operation. If you stack two such layers:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Layer 2(Layer 1(x)) = W₂(W₁x + b₁) + b₂ = (W₂W₁)x + (W₂b₁ + b₂)
+</code></pre></div></div>
+
+<p>The result is still just <code class="language-plaintext highlighter-rouge">Wx + b</code> — a single linear layer. No matter how deep the network goes, it can only ever model a straight line through data. You lose all expressive power of the depth.</p>
+
+<p>When you insert a non-linear activation function between layers, the combined function becomes genuinely more complex with each added layer. This is what allows neural networks to model curves, decision boundaries, and intricate real-world patterns.</p>
+
+<h3 id="activation-functions-in-practice-where-to-use-what">Activation Functions in Practice: Where to Use What</h3>
+
+<p>A useful mental model: <strong>hidden layers</strong> need activation functions that allow rich learning; <strong>output layers</strong> need activation functions whose range matches the prediction task.</p>
+
+<ul>
+  <li><strong>After every hidden layer</strong> → use <strong>ReLU</strong> by default</li>
+  <li><strong>Output for binary classification</strong> → use <strong>Sigmoid</strong> (outputs a probability between 0 and 1)</li>
+  <li><strong>Output for multi-class classification</strong> → use <strong>Softmax</strong> (outputs a probability distribution over all classes)</li>
+  <li><strong>Output for regression</strong> → use <strong>no activation</strong> (linear), since the output can be any real number</li>
+  <li><strong>Skip connections in ResNets</strong> → use <strong>no activation</strong> (linear identity pass-through)</li>
+</ul>
+
+<p>There is also a notable exception: <strong>ResNet-style skip connections</strong> intentionally bypass the activation function, passing the raw input directly to a later layer. We’ll cover this in detail in the ResNet section.</p>
+
+<p><img src="/assets/images/diagram_activation_functions.svg" alt="Activation Functions Diagram" /></p>
+
+<h3 id="relu-rectified-linear-unit">ReLU (Rectified Linear Unit)</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = max(0, x)
+</code></pre></div></div>
+
+<p>ReLU is the default choice for hidden layers. It is computationally simple: it outputs <code class="language-plaintext highlighter-rouge">x</code> if <code class="language-plaintext highlighter-rouge">x</code> is positive, and <code class="language-plaintext highlighter-rouge">0</code> otherwise. This zero-ing out of negative values is what introduces non-linearity.</p>
+
+<p><strong>Why ReLU over functions like Tanh?</strong> It solves the <strong>vanishing gradient problem</strong>. In deep networks, gradients are multiplied together as they propagate backwards. Sigmoid and Tanh squash their outputs into small ranges ([0,1] and [−1,1] respectively), so their gradients are always less than 1. Multiplying many small gradients together causes the product to shrink exponentially as it travels toward earlier layers — the gradient effectively <em>vanishes</em>, and early layers stop learning. ReLU has a gradient of exactly <code class="language-plaintext highlighter-rouge">1</code> for all positive inputs, so it does not diminish the gradient as it passes through, keeping early layers trainable in deep networks.</p>
+
+<p>A minor drawback: if a node’s input is consistently negative, ReLU outputs 0 and the gradient is also 0 — the node never activates or learns. This is called the <strong>dying ReLU problem</strong>. <strong>Leaky ReLU</strong> addresses this by using a small slope (typically 0.01) for negative inputs instead of flat zero.</p>
+
+<h3 id="sigmoid">Sigmoid</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = 1 / (1 + e⁻ˣ)
+</code></pre></div></div>
+
+<p>Sigmoid squashes any input to a value between 0 and 1 — making it a natural probability. It is the standard choice for the <strong>output node of a binary classification problem</strong>. Its smooth S-curve is differentiable everywhere.</p>
+
+<p>The downside in hidden layers is the vanishing gradient: for large positive or negative inputs, the sigmoid saturates (output approaches 0 or 1), and its gradient approaches 0. This makes it a poor choice for hidden layers in deep networks.</p>
+
+<h3 id="tanh-hyperbolic-tangent">Tanh (Hyperbolic Tangent)</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = (eˣ − e⁻ˣ) / (eˣ + e⁻ˣ)
+</code></pre></div></div>
+
+<p>Tanh is similar to sigmoid but maps inputs to the range (−1, 1). Because tanh outputs both positive and negative values, its gradients can push weights in either direction during training — unlike sigmoid, which only outputs positive values and causes weight updates to all move the same way, making it preferable to sigmoid in hidden layers. However, it still saturates and causes vanishing gradients in very deep networks, so ReLU is usually preferred.</p>
+
+<h3 id="softmax">Softmax</h3>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(xᵢ) = eˣⁱ / Σⱼ eˣʲ
+</code></pre></div></div>
+
+<p>Softmax is used at the <strong>output layer of multi-class classification</strong> problems. It takes a vector of raw scores (called logits) and converts them into a probability distribution: each output is between 0 and 1, and all outputs sum to exactly 1.0. The class with the highest probability is the model’s prediction.</p>
+
+<p>For example, in an image classifier with 5 animal classes, softmax might output <code class="language-plaintext highlighter-rouge">[cat: 0.03, dog: 0.12, bird: 0.78, fish: 0.04, frog: 0.03]</code>.</p>
+
+<h3 id="the-differentiability-requirement">The Differentiability Requirement</h3>
+
+<p>There is a mathematical requirement that is easy to overlook: activation functions must be <strong>differentiable</strong> (or at least differentiable almost everywhere). The reason is backpropagation. When the network computes gradients to update weights, it uses the <strong>chain rule of calculus</strong>, which requires multiplying derivatives at each layer. If an activation function has no derivative, the gradient cannot flow backwards through it, and learning breaks down.</p>
+
+<p>This is why a simple step function (0 if input &lt; 0, else 1) is not used in practice — it is not differentiable at 0 and has zero gradient everywhere else, meaning the network would receive no learning signal. ReLU is technically not differentiable exactly at zero, but it has well-defined derivatives everywhere else and works extremely well in practice.</p>
+
+<hr />
+
+<h2 id="a-primer-on-derivatives">A Primer on Derivatives</h2>
+
+<p><img src="/assets/images/diagram_limit_derivative.svg" alt="Limit Derivative Diagram" /></p>
+
+<p>Before we can fully understand backpropagation, we need to understand <strong>derivatives</strong>. If you’re already comfortable with calculus, feel free to skim this section — but if not, this foundation will make the rest of the guide click.</p>
+
+<h3 id="what-is-a-derivative">What Is a Derivative?</h3>
+
+<p>A derivative measures <strong>how much a function’s output changes when you change its input by an infinitely small amount</strong>. Informally, it’s the <em>slope</em> of a function at a specific point.</p>
+
+<p>For a simple function like:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x) = x²
+</code></pre></div></div>
+
+<p>The derivative is written as <code class="language-plaintext highlighter-rouge">f'(x)</code> or <code class="language-plaintext highlighter-rouge">df/dx</code>, and it equals <code class="language-plaintext highlighter-rouge">2x</code>. This tells us:</p>
+
+<ul>
+  <li>At <code class="language-plaintext highlighter-rouge">x = 3</code>, the slope is <code class="language-plaintext highlighter-rouge">2(3) = 6</code> — for a tiny increase in <code class="language-plaintext highlighter-rouge">x</code>, the output increases roughly 6 times as fast</li>
+  <li>At <code class="language-plaintext highlighter-rouge">x = 0</code>, the slope is <code class="language-plaintext highlighter-rouge">0</code> — the function is at a flat minimum there</li>
+  <li>At <code class="language-plaintext highlighter-rouge">x = −2</code>, the slope is <code class="language-plaintext highlighter-rouge">−4</code> — the function is decreasing as <code class="language-plaintext highlighter-rouge">x</code> increases</li>
+</ul>
+
+<h3 id="derivative-rules-youll-need">Derivative Rules You’ll Need</h3>
+
+<p><strong>Power rule:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>d/dx [xⁿ] = n · xⁿ⁻¹
+
+Examples:
+  d/dx [x²]  = 2x
+  d/dx [x³]  = 3x²
+  d/dx [5x]  = 5
+  d/dx [c]   = 0   (c is a constant)
+</code></pre></div></div>
+
+<p><strong>Chain rule</strong> — used when functions are nested inside each other:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>If y = f(g(x)),  then  dy/dx = f'(g(x)) · g'(x)
+
+Example:
+  y = (3x + 1)²
+  Let u = 3x + 1, so y = u²
+  dy/du = 2u,   du/dx = 3
+  dy/dx = 2u · 3 = 6(3x + 1)
+</code></pre></div></div>
+
+<p>The chain rule is the mathematical foundation of backpropagation. Because a neural network is a deeply nested composition of functions, computing the gradient of the loss with respect to an early-layer weight requires multiplying the chain of local derivatives all the way from the output back to that weight.</p>
+
+<h3 id="derivatives-of-common-activation-functions">Derivatives of Common Activation Functions</h3>
+
+<p>These are the derivatives you’ll encounter in backpropagation:</p>
+
+<p><strong>ReLU:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x)  = max(0, x)
+f'(x) = 1  if x &gt; 0
+        0  if x ≤ 0
+</code></pre></div></div>
+<p>The derivative is simply 1 for positive inputs and 0 otherwise — a perfect pass-through for positive gradients.</p>
+
+<p><strong>Sigmoid:</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>f(x)  = σ(x) = 1 / (1 + e⁻ˣ)
+f'(x) = σ(x) · (1 − σ(x))
+</code></pre></div></div>
+<p>If σ(x) = 0.8, then f’(x) = 0.8 × 0.2 = 0.16. Note that this is always between 0 and 0.25, which is why gradients shrink when passing through many sigmoid layers.</p>
+
+<p><strong>MSE Loss (Looking Ahead to Loss Functions):</strong></p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = (ŷ − y)²
+dL/dŷ = 2(ŷ − y)
+</code></pre></div></div>
+
+<hr />
+
+<h2 id="learning-from-mistakes-loss-backpropagation--gradient-descent">Learning From Mistakes: Loss, Backpropagation &amp; Gradient Descent</h2>
+
+<h3 id="the-loss-function">The Loss Function</h3>
+
+<p>To measure how wrong a prediction is, we use a <strong>loss function</strong>. It calculates the error between the prediction <code class="language-plaintext highlighter-rouge">ŷ</code> and the true label <code class="language-plaintext highlighter-rouge">y</code>.</p>
+
+<p><strong>Mean Squared Error (MSE)</strong> — used for regression:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = (ŷ − y)²
+</code></pre></div></div>
+
+<p><strong>Binary Cross-Entropy</strong> — used for binary classification (e.g. our diabetes example):</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>L = −[y·log(ŷ) + (1−y)·log(1−ŷ)]
+</code></pre></div></div>
+
+<p>The bigger the loss, the further off the model is. Training aims to minimize this value.</p>
+
+<h3 id="backward-pass-backpropagation">Backward Pass (Backpropagation)</h3>
+
+<p>Once the loss is computed, the network needs to figure out which weights contributed to the error and by how much. This is done through <strong>backpropagation</strong> — the process of applying the chain rule recursively from the output layer back to the input layer.</p>
+
+<p>At each layer, backpropagation computes the <strong>gradient</strong> of the loss with respect to every weight. A gradient is the generalization of a derivative to multi-variable functions — it points in the direction of steepest increase in loss.</p>
+
+<h3 id="gradient-descent">Gradient Descent</h3>
+
+<p><img src="/assets/images/gradient_descent.png" alt="Gradient Descent Diagram" />
+<em>Image from analyticsvidhya</em></p>
+
+<p>With gradients computed, each weight is updated using the <strong>gradient descent</strong> rule:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>W_new = W_old − η · (∂L / ∂W_old)
+</code></pre></div></div>
+
+<ul>
+  <li><strong>W</strong> — the weight being updated</li>
+  <li><strong>η (eta)</strong> — the <em>learning rate</em>, controlling step size</li>
+  <li><strong>∂L/∂W</strong> — the gradient of the loss with respect to the weight</li>
+</ul>
+
+<p>The sign of the gradient tells the network which direction to move:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Gradient sign</th>
+      <th>Meaning</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Positive</td>
+      <td>Increasing W increases loss</td>
+      <td>Decrease W</td>
+    </tr>
+    <tr>
+      <td>Negative</td>
+      <td>Increasing W decreases loss</td>
+      <td>Increase W</td>
+    </tr>
+    <tr>
+      <td>Near zero</td>
+      <td>W is near-optimal</td>
+      <td>Small / no change</td>
+    </tr>
+  </tbody>
+</table>
+
+<hr />
+
+<h2 id="backpropagation-a-full-worked-example">Backpropagation: A Full Worked Example</h2>
+
+<p>Let’s walk through a minimal network step by step with real numbers, so the mathematics becomes fully concrete.</p>
+
+<p><strong>The network:</strong></p>
+<ul>
+  <li>1 input node: <code class="language-plaintext highlighter-rouge">x = 2</code></li>
+  <li>1 hidden node with <strong>ReLU</strong> activation</li>
+  <li>1 output node (no activation — regression output)</li>
+  <li>Weights: <code class="language-plaintext highlighter-rouge">w₁ = 0.5</code> (input → hidden), <code class="language-plaintext highlighter-rouge">w₂ = 0.8</code> (hidden → output)</li>
+  <li>No bias terms for simplicity</li>
+  <li>Loss: <strong>MSE</strong> → <code class="language-plaintext highlighter-rouge">L = (ŷ − y)²</code></li>
+  <li>True label: <code class="language-plaintext highlighter-rouge">y = 1.0</code></li>
+  <li>Learning rate: <code class="language-plaintext highlighter-rouge">η = 0.1</code></li>
+</ul>
+
+<p><img src="/assets/images/diagram_backprop_math.svg" alt="Backpropagation Worked Example" /></p>
+
+<h3 id="weight-updates">Weight Updates</h3>
+
+<p>With <code class="language-plaintext highlighter-rouge">η = 0.1</code>:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>w₂_new = w₂ − η · dL/dw₂ = 0.8 − 0.1 × (−0.4) = 0.84
+w₁_new = w₁ − η · dL/dw₁ = 0.5 − 0.1 × (−0.64) = 0.564
+</code></pre></div></div>
+
+<p>Both weights increased — which makes sense, because both gradients were negative, meaning increasing the weights would reduce the loss. If we ran the forward pass again with these new weights:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>z₁ = 2 × 0.564 = 1.128
+h  = ReLU(1.128) = 1.128
+ŷ  = 1.128 × 0.84 = 0.948
+L  = (0.948 − 1.0)² = 0.0027
+</code></pre></div></div>
+
+<p>The loss dropped from <code class="language-plaintext highlighter-rouge">0.04</code> to <code class="language-plaintext highlighter-rouge">0.0027</code> after just one update. Over many iterations, the network converges toward <code class="language-plaintext highlighter-rouge">ŷ ≈ 1.0</code>.</p>
+
+<hr />
+
+<h2 id="gradient-descent-variants">Gradient Descent Variants</h2>
+
+<p>In the example above, we updated weights after computing the gradient on a single data point. In practice, there are three strategies for choosing <em>how much data to use</em> before each weight update. In other words <strong>when to update weights</strong>.</p>
+
+<h3 id="batch-gradient-descent">Batch Gradient Descent</h3>
+
+<p>Compute the gradient using the <strong>entire dataset</strong> before making a single weight update. This produces a very accurate gradient estimate, leading to smooth, stable convergence. However, it requires loading all the data into memory at once and is extremely slow for large datasets with millions of rows.</p>
+
+<h3 id="stochastic-gradient-descent-sgd">Stochastic Gradient Descent (SGD)</h3>
+
+<p>Compute the gradient and update weights using <strong>one randomly selected sample</strong> at a time. This is extremely fast and updates happen frequently, but the gradient estimate is very noisy — the loss curve zigzags unpredictably rather than descending smoothly. The noise can sometimes be beneficial, helping the model escape shallow local minima.</p>
+
+<h3 id="mini-batch-gradient-descent">Mini-Batch Gradient Descent</h3>
+
+<p>A compromise: compute the gradient over a <strong>small random batch</strong> of samples (typically 32, 64, 128, or 256 rows) and update weights after each batch. This is the standard approach used in virtually all modern deep learning. It:</p>
+
+<ul>
+  <li>Is fast and memory-efficient</li>
+  <li>Produces a reasonably accurate gradient estimate</li>
+  <li>Works naturally with GPU parallelism, which can process an entire batch simultaneously</li>
+</ul>
+
+<hr />
+
+<h2 id="common-layer-types">Common Layer Types</h2>
+
+<p>Neural networks are assembled from specialized building blocks. Each layer type is designed to exploit a particular structure in the data or to regularize the model during training.</p>
+
+<p><img src="/assets/images/diagram_layer_types.svg" alt="Common Layer Types" /></p>
+
+<h3 id="dense-fully-connected-layer">Dense (Fully Connected) Layer</h3>
+
+<p>The fundamental building block we’ve used throughout this guide. Every node in the layer is connected to every node in the next layer. Each connection has its own learnable weight. Dense layers are used when the input features don’t have a meaningful spatial or sequential structure — such as tabular data (like our diabetes CSV).</p>
+
+<h3 id="convolutional-layer-conv2d">Convolutional Layer (Conv2D)</h3>
+
+<p>A convolutional layer applies a small learnable <strong>filter</strong> (e.g. 3×3 pixels) that slides across the input — typically an image — and computes a dot product at each position. This detects local spatial patterns: edges, corners, textures at early layers, and progressively more abstract features (eyes, wheels, fur) at deeper layers.</p>
+
+<p>A key advantage of convolutions is <strong>parameter sharing</strong>: the same filter is reused across all positions of the image, dramatically reducing the number of weights compared to a fully connected layer applied to an image. A 256×256 image as input to a dense layer would require 65,536 weights per node; a single 3×3 convolutional filter requires only 9.</p>
+
+<h3 id="pooling-layer-maxpool--avgpool">Pooling Layer (MaxPool / AvgPool)</h3>
+
+<p>Pooling layers reduce the spatial dimensions of the feature maps produced by convolutional layers. <strong>Max pooling</strong> takes the maximum value within each small patch (e.g. 2×2), discarding fine spatial detail while retaining the strongest activations. <strong>Average pooling</strong> takes the average instead.</p>
+
+<p>Pooling serves two purposes: it reduces computational load and memory usage, and it makes the network partially <strong>translation-invariant</strong> — a slightly shifted object in an image still produces similar feature activations after pooling.</p>
+
+<h3 id="flatten-layer">Flatten Layer</h3>
+
+<p>A flatten layer reshapes a multi-dimensional tensor into a 1D vector. It is used as the <strong>bridge between convolutional layers and dense layers</strong> in image classification networks. After a CNN has extracted spatial features from an image through convolutional and pooling layers, the flatten layer unrolls those features into a vector that a dense layer can process.</p>
+
+<h3 id="dropout-layer">Dropout Layer</h3>
+
+<p>Dropout is a <strong>regularization technique</strong> that randomly sets a fraction of node outputs to zero during training (typically 20–50%). Each training step, a different random subset of nodes is silenced. At inference time, dropout is disabled and all nodes are active.</p>
+
+<p>Dropout prevents overfitting by forcing the network to learn redundant representations — no single node can be relied upon to carry all the information. It acts like training an ensemble of many slightly different sub-networks simultaneously.</p>
+
+<h3 id="batch-normalization">Batch Normalization</h3>
+
+<p>Batch normalization normalises the activations of a layer across the current mini-batch to have approximately zero mean and unit variance. It is typically inserted <strong>before or after the activation function</strong> in hidden layers.</p>
+
+<p>Benefit of batch normalization:</p>
+<ul>
+  <li><strong>Stabilizes training</strong> by keeping the inputs to each layer on a consistent scale as weights update</li>
+</ul>
+
+<hr />
+
+<h2 id="skip-connections-and-resnets">Skip Connections and ResNets</h2>
+
+<p>As neural networks get deeper — tens or even hundreds of layers — a new problem emerges: gradients struggle to propagate all the way back to early layers during backpropagation. Even with ReLU, the repeated multiplication of gradients across many layers can cause them to shrink toward zero, starving early layers of the learning signal. This is called the <strong>vanishing gradient problem</strong> in deep networks.</p>
+
+<p><strong>Residual Networks (ResNets)</strong>, introduced by He et al. in 2015, solved this with a simple but powerful idea: <strong>skip connections</strong> (also called residual connections or identity shortcuts).</p>
+
+<p>Instead of a block of layers learning the function <code class="language-plaintext highlighter-rouge">F(x)</code>, the block learns the <em>residual</em> <code class="language-plaintext highlighter-rouge">F(x)</code>, and the input <code class="language-plaintext highlighter-rouge">x</code> is <strong>added directly</strong> to the block’s output:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>output = F(x) + x
+</code></pre></div></div>
+
+<p>This addition bypasses the block entirely. The gradient during backpropagation can now flow through two paths: through the layers in the block, <em>or</em> directly through the skip connection. The skip connection has a gradient of exactly <code class="language-plaintext highlighter-rouge">1</code> with respect to <code class="language-plaintext highlighter-rouge">x</code> (since <code class="language-plaintext highlighter-rouge">d/dx [F(x) + x] = F'(x) + 1</code>), which ensures that even if <code class="language-plaintext highlighter-rouge">F'(x)</code> vanishes, a gradient of <code class="language-plaintext highlighter-rouge">1</code> always flows back unimpeded.</p>
+
+<p>Skip connections also make it easier for layers to learn identity mappings (i.e. “don’t change anything here”), which is useful when a layer doesn’t need to transform the data further.</p>
+
+<p>The skip connection passes the input through untouched — no activation, no transformation. The conv layers and the skip connection are then added together, and a single activation is applied to the combined result.</p>
+
+<p>ResNets enabled training of networks with 50, 100, even 152 layers — depths that were previously impossible to train reliably. They are foundational to modern computer vision and influenced architecture design across all of deep learning.</p>
+
+<hr />
+
+<h2 id="beyond-binary-classification">Beyond Binary Classification</h2>
+
+<p>So far we’ve focused on a binary classification problem (diabetes: yes or no). Neural networks are far more flexible. The same principles apply to:</p>
+
+<ul>
+  <li><strong>Multi-class classification</strong> — the output layer uses Softmax over N nodes, one per class (e.g. recognising 1,000 ImageNet categories)</li>
+  <li><strong>Regression</strong> — the output layer has one (or more) nodes with no activation function, predicting continuous values</li>
+  <li><strong>Image processing</strong> — CNNs apply convolutional + pooling layers to extract spatial hierarchies of features before a Dense output</li>
+  <li><strong>Sequence modelling</strong> — RNNs and Transformers process variable-length sequences</li>
+</ul>
+
+<p>One key limitation of vanilla MLPs is that they produce a single output for a single input. This is what motivated <strong>Recurrent Neural Networks (RNNs)</strong> and later <strong>Transformers</strong> — architectures capable of processing and producing <em>sequences</em> of data, which brought upon modern NLP, speech recognition, and generative AI.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="architecture-decisions">Architecture Decisions</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Output activation</th>
+      <th>Loss function</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Binary classification</td>
+      <td>Sigmoid</td>
+      <td>Binary cross-entropy</td>
+    </tr>
+    <tr>
+      <td>Multi-class classification</td>
+      <td>Softmax</td>
+      <td>Categorical cross-entropy</td>
+    </tr>
+    <tr>
+      <td>Regression</td>
+      <td>None (linear)</td>
+      <td>MSE</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="activation-function-quick-reference">Activation Function Quick Reference</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Function</th>
+      <th>Range</th>
+      <th>Typical use</th>
+      <th>Key property</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ReLU</td>
+      <td>[0, ∞)</td>
+      <td>Hidden layers</td>
+      <td>Solves vanishing gradient</td>
+    </tr>
+    <tr>
+      <td>Leaky ReLU</td>
+      <td>(−∞, ∞)</td>
+      <td>Hidden layers</td>
+      <td>Fixes dying ReLU</td>
+    </tr>
+    <tr>
+      <td>Sigmoid</td>
+      <td>(0, 1)</td>
+      <td>Binary output</td>
+      <td>Output is probability</td>
+    </tr>
+    <tr>
+      <td>Tanh</td>
+      <td>(−1, 1)</td>
+      <td>Hidden layers</td>
+      <td>Zero-centred</td>
+    </tr>
+    <tr>
+      <td>Softmax</td>
+      <td>(0, 1), sums to 1</td>
+      <td>Multi-class output</td>
+      <td>Probability distribution</td>
+    </tr>
+    <tr>
+      <td>Linear</td>
+      <td>(−∞, ∞)</td>
+      <td>Regression output, skip connections</td>
+      <td>No transformation</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="core-concepts">Core Concepts</h3>
+
+<p><img src="/assets/images/diagram_forward_backward.svg" alt="Forward &amp; Backward Pass Diagram" /></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Forward Pass</strong></td>
+      <td>Data flows input → output to produce a prediction</td>
+    </tr>
+    <tr>
+      <td><strong>Loss Function</strong></td>
+      <td>Measures how wrong the prediction is</td>
+    </tr>
+    <tr>
+      <td><strong>Backpropagation</strong></td>
+      <td>Chain rule applied backwards; computes gradients for every weight</td>
+    </tr>
+    <tr>
+      <td><strong>Gradient Descent</strong></td>
+      <td>Updates weights in the direction that reduces loss</td>
+    </tr>
+    <tr>
+      <td><strong>Activation Function</strong></td>
+      <td>Introduces non-linearity; acts as a gate on each neuron’s output</td>
+    </tr>
+    <tr>
+      <td><strong>Dropout</strong></td>
+      <td>Regularization by randomly silencing nodes during training</td>
+    </tr>
+    <tr>
+      <td><strong>Batch Normalization</strong></td>
+      <td>Normalises activations for stable, faster training</td>
+    </tr>
+    <tr>
+      <td><strong>Skip Connection</strong></td>
+      <td>Bypasses layers to preserve gradient flow in deep networks</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div><a class="u-url" href="/2026/03/04/neural-networks.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">J.aiTech</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name" style="color:#000;">Jaisree David Ravikumar</li><li style="color:#000; list-style:none;">AI • Robotics • Intelligent Systems</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

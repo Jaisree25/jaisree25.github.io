@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" width="860" height="340" font-family="Arial, sans-serif">
+  <rect width="860" height="340" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">RNN vs Transformer</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2940b0"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: RNN ══ -->
+  <rect x="20" y="44" width="390" height="270" rx="10" fill="#fff4f4" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="215" y="68" text-anchor="middle" font-size="15" font-weight="bold" fill="#c1121f">RNN — Sequential Processing</text>
+  <text x="215" y="86" text-anchor="middle" font-size="12" fill="#888">one token at a time, left to right</text>
+
+  <!-- Token boxes -->
+  <!-- t=1 -->
+  <rect x="42"  y="140" width="60" height="40" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="72"  y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">The</text>
+  <!-- t=2 -->
+  <rect x="122" y="140" width="60" height="40" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="152" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">cat</text>
+  <!-- t=3 -->
+  <rect x="202" y="140" width="60" height="40" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="232" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">sat</text>
+  <!-- t=4 -->
+  <rect x="282" y="140" width="60" height="40" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="312" y="165" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">on</text>
+
+  <!-- Sequential arrows -->
+  <line x1="102" y1="160" x2="120" y2="160" stroke="#c1121f" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="182" y1="160" x2="200" y2="160" stroke="#c1121f" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="262" y1="160" x2="280" y2="160" stroke="#c1121f" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Hidden state label -->
+  <text x="112" y="150" text-anchor="middle" font-size="9" fill="#c1121f" font-style="italic">h₁→</text>
+  <text x="192" y="150" text-anchor="middle" font-size="9" fill="#c1121f" font-style="italic">h₂→</text>
+  <text x="272" y="150" text-anchor="middle" font-size="9" fill="#c1121f" font-style="italic">h₃→</text>
+
+  <!-- Time labels -->
+  <text x="72"  y="200" text-anchor="middle" font-size="11" fill="#aaa">t=1</text>
+  <text x="152" y="200" text-anchor="middle" font-size="11" fill="#aaa">t=2</text>
+  <text x="232" y="200" text-anchor="middle" font-size="11" fill="#aaa">t=3</text>
+  <text x="312" y="200" text-anchor="middle" font-size="11" fill="#aaa">t=4</text>
+
+  <!-- Bottleneck note -->
+  <rect x="60" y="220" width="280" height="36" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1"/>
+  <text x="200" y="235" text-anchor="middle" font-size="11" fill="#c1121f">Must compress all past context into</text>
+  <text x="200" y="250" text-anchor="middle" font-size="11" fill="#c1121f">a single hidden state vector — bottleneck</text>
+
+  <text x="215" y="294" text-anchor="middle" font-size="12" fill="#c1121f">Cannot be parallelized · slow to train</text>
+
+  <!-- ══ RIGHT: Transformer ══ -->
+  <rect x="450" y="44" width="390" height="270" rx="10" fill="#f0fff8" stroke="#087255" stroke-width="1.5"/>
+  <text x="645" y="68" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">Transformer — Parallel Processing</text>
+  <text x="645" y="86" text-anchor="middle" font-size="12" fill="#888">all tokens processed simultaneously</text>
+
+  <!-- Token boxes -->
+  <rect x="472" y="130" width="60" height="40" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="502" y="155" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">The</text>
+  <rect x="562" y="130" width="60" height="40" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="592" y="155" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">cat</text>
+  <rect x="652" y="130" width="60" height="40" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="682" y="155" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">sat</text>
+  <rect x="742" y="130" width="60" height="40" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="772" y="155" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">on</text>
+
+  <!-- All-to-all attention lines -->
+  <line x1="502" y1="170" x2="592" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+  <line x1="502" y1="170" x2="682" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+  <line x1="502" y1="170" x2="772" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+  <line x1="592" y1="170" x2="682" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+  <line x1="592" y1="170" x2="772" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+  <line x1="682" y1="170" x2="772" y2="170" stroke="#087255" stroke-width="1.2" opacity="0.6"/>
+
+  <!-- Curved attention arcs above -->
+  <path d="M 502,130 Q 547,100 592,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.5"/>
+  <path d="M 502,130 Q 592,85  682,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.4"/>
+  <path d="M 502,130 Q 637,72  772,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.3"/>
+  <path d="M 592,130 Q 637,100 682,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.5"/>
+  <path d="M 592,130 Q 682,85  772,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.4"/>
+  <path d="M 682,130 Q 727,100 772,130" fill="none" stroke="#087255" stroke-width="1.5" opacity="0.5"/>
+
+  <!-- Attention label -->
+  <text x="637" y="96" text-anchor="middle" font-size="10" fill="#087255" font-style="italic">attention</text>
+
+  <!-- Benefit note -->
+  <rect x="490" y="220" width="280" height="36" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1"/>
+  <text x="630" y="235" text-anchor="middle" font-size="11" fill="#087255">Every token attends to every other</text>
+  <text x="630" y="250" text-anchor="middle" font-size="11" fill="#087255">token directly — no bottleneck</text>
+
+  <text x="645" y="294" text-anchor="middle" font-size="12" fill="#087255">Fully parallelizable · fast to train on GPUs</text>
+</svg>

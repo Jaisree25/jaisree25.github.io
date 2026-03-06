@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" width="860" height="420" font-family="Arial, sans-serif">
+  <rect width="860" height="420" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Multi-Head Attention</text>
+  <text x="430" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">h parallel attention heads, each learning different relationships · outputs concatenated then projected</text>
+
+  <defs>
+    <marker id="arr"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- Input -->
+  <rect x="310" y="58" width="240" height="40" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="2"/>
+  <text x="430" y="83" text-anchor="middle" font-size="14" font-weight="bold" fill="#2940b0">Input token embeddings  X</text>
+
+  <!-- Three arrows fanning out to 3 heads -->
+  <line x1="350" y1="98" x2="170" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="430" y1="98" x2="430" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="510" y1="98" x2="690" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- Head 1 -->
+  <rect x="60"  y="140" width="220" height="110" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="170" y="162" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Head 1</text>
+  <rect x="72"  y="170" width="196" height="28" rx="5" fill="white" stroke="#7b2d8b" stroke-width="1"/>
+  <text x="170" y="189" text-anchor="middle" font-size="11" fill="#7b2d8b">Wq₁, Wk₁, Wv₁  (unique)</text>
+  <text x="170" y="218" text-anchor="middle" font-size="11" fill="#555" font-style="italic">learns: subject-verb links</text>
+  <text x="170" y="234" text-anchor="middle" font-size="10" fill="#888">"cat" ↔ "sat"</text>
+
+  <!-- Head 2 -->
+  <rect x="320" y="140" width="220" height="110" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="430" y="162" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Head 2</text>
+  <rect x="332" y="170" width="196" height="28" rx="5" fill="white" stroke="#7b2d8b" stroke-width="1"/>
+  <text x="430" y="189" text-anchor="middle" font-size="11" fill="#7b2d8b">Wq₂, Wk₂, Wv₂  (unique)</text>
+  <text x="430" y="218" text-anchor="middle" font-size="11" fill="#555" font-style="italic">learns: modifier links</text>
+  <text x="430" y="234" text-anchor="middle" font-size="10" fill="#888">"fluffy" ↔ "rock"</text>
+
+  <!-- Head 3 (= head h) -->
+  <rect x="580" y="140" width="220" height="110" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="690" y="162" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Head h</text>
+  <rect x="592" y="170" width="196" height="28" rx="5" fill="white" stroke="#7b2d8b" stroke-width="1"/>
+  <text x="690" y="189" text-anchor="middle" font-size="11" fill="#7b2d8b">Wqₕ, Wkₕ, Wvₕ  (unique)</text>
+  <text x="690" y="218" text-anchor="middle" font-size="11" fill="#555" font-style="italic">learns: positional proximity</text>
+  <text x="690" y="234" text-anchor="middle" font-size="10" fill="#888">nearby tokens attend together</text>
+
+  <!-- Dots between head 2 and h -->
+  <text x="542" y="200" text-anchor="middle" font-size="20" fill="#aaa">· · ·</text>
+
+  <!-- Arrows down to concat -->
+  <line x1="170" y1="250" x2="310" y2="298" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="430" y1="250" x2="430" y2="298" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr)"/>
+  <line x1="690" y1="250" x2="550" y2="298" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- Concat box -->
+  <rect x="200" y="300" width="460" height="40" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="430" y="318" text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">Concat(head₁, head₂, ..., headₕ)</text>
+  <text x="430" y="334" text-anchor="middle" font-size="11" fill="#c07a00">all head outputs joined into one wide vector</text>
+
+  <!-- Arrow down to Wo -->
+  <line x1="430" y1="340" x2="430" y2="366" stroke="#e07b00" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="452" y="358" font-size="11" fill="#888" font-style="italic">× Wo</text>
+
+  <!-- Output box -->
+  <rect x="260" y="368" width="340" height="40" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="2"/>
+  <text x="430" y="386" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">MultiHead output</text>
+  <text x="430" y="402" text-anchor="middle" font-size="11" fill="#087255">same shape as input — richer representation</text>
+</svg>

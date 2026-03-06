@@ -1,5 +1,5 @@
-title: "Jaisree’s — Research"
-description: "AI • Robotics • Systems — notes, papers, projects"
+title: "J.aiTech"
+description: "AI • Robotics • Intelligent Systems"
 url: "https://jaisree25.github.io"
 theme: minima
 
@@ -34,15 +34,20 @@ plugins:
   - jekyll-sitemap
   - jekyll-seo-tag
 
+sass:
+  quiet_deps: true
+  silence_deprecations: [import]
+
 markdown: kramdown
 kramdown:
   math_engine: mathjax
   input: GFM
 
 header_pages:
+  - index.md
   - about.md
-  - projects.md
   - posts.md
+  - projects.md
   - competitions.md 
   - certifications.md 
  

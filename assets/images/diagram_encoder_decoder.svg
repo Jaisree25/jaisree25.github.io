@@ -1,0 +1,118 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 460" width="860" height="460" font-family="Arial, sans-serif">
+  <rect width="860" height="460" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Transformer Architecture Variants</text>
+
+  <defs>
+    <marker id="arr"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2940b0"/></marker>
+    <marker id="arr-p" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#7b2d8b"/></marker>
+  </defs>
+
+  <!-- ══ COL 1: Encoder-Only ══ -->
+  <rect x="20" y="44" width="248" height="400" rx="10" fill="#fff4f4" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="144" y="66" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">Encoder-Only</text>
+  <text x="144" y="82" text-anchor="middle" font-size="11" fill="#888">BERT, RoBERTa</text>
+
+  <!-- Input -->
+  <rect x="36"  y="94" width="216" height="30" rx="6" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="144" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#2940b0">Input tokens</text>
+  <line x1="144" y1="124" x2="144" y2="148" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+  <!-- Encoder blocks (bidirectional) -->
+  <rect x="36"  y="150" width="216" height="50" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="144" y="170" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Encoder Block ×N</text>
+  <text x="144" y="186" text-anchor="middle" font-size="10" fill="#c1121f">bidirectional self-attention</text>
+  <line x1="144" y1="200" x2="144" y2="220" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <rect x="36"  y="222" width="216" height="50" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="144" y="242" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Encoder Block ×N</text>
+  <text x="144" y="258" text-anchor="middle" font-size="10" fill="#c1121f">bidirectional self-attention</text>
+  <line x1="144" y1="272" x2="144" y2="292" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- Bidirectional indicator -->
+  <text x="144" y="310" text-anchor="middle" font-size="10" fill="#888" font-style="italic">↔ all tokens see all tokens</text>
+
+  <!-- Classification head -->
+  <line x1="144" y1="316" x2="144" y2="336" stroke="#555" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="56"  y="338" width="176" height="30" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="144" y="358" text-anchor="middle" font-size="11" font-weight="bold" fill="#087255">Classification head</text>
+  <line x1="144" y1="368" x2="144" y2="388" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <rect x="56"  y="390" width="176" height="38" rx="6" fill="#099268" stroke="#065f46" stroke-width="1.5"/>
+  <text x="144" y="406" text-anchor="middle" font-size="11" font-weight="bold" fill="white">label / entity tag</text>
+  <text x="144" y="422" text-anchor="middle" font-size="10" fill="#d1faf0">sentiment, NER, similarity</text>
+
+  <!-- ══ COL 2: Decoder-Only ══ -->
+  <rect x="306" y="44" width="248" height="400" rx="10" fill="#f0fff8" stroke="#087255" stroke-width="1.5"/>
+  <text x="430" y="66" text-anchor="middle" font-size="14" font-weight="bold" fill="#087255">Decoder-Only</text>
+  <text x="430" y="82" text-anchor="middle" font-size="11" fill="#888">GPT, LLaMA, Mistral</text>
+
+  <!-- Input -->
+  <rect x="322" y="94" width="216" height="30" rx="6" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="430" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#2940b0">Input tokens</text>
+  <line x1="430" y1="124" x2="430" y2="148" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+  <!-- Decoder blocks (causal) -->
+  <rect x="322" y="150" width="216" height="50" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="430" y="170" text-anchor="middle" font-size="12" font-weight="bold" fill="#087255">Decoder Block ×N</text>
+  <text x="430" y="186" text-anchor="middle" font-size="10" fill="#087255">causal self-attention</text>
+  <line x1="430" y1="200" x2="430" y2="220" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <rect x="322" y="222" width="216" height="50" rx="6" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="430" y="242" text-anchor="middle" font-size="12" font-weight="bold" fill="#087255">Decoder Block ×N</text>
+  <text x="430" y="258" text-anchor="middle" font-size="10" fill="#087255">causal self-attention</text>
+  <line x1="430" y1="272" x2="430" y2="292" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <!-- Causal indicator -->
+  <text x="430" y="310" text-anchor="middle" font-size="10" fill="#888" font-style="italic">→ each token sees only the past</text>
+
+  <!-- Linear + softmax -->
+  <line x1="430" y1="316" x2="430" y2="336" stroke="#555" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="342" y="338" width="176" height="30" rx="6" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="430" y="358" text-anchor="middle" font-size="11" font-weight="bold" fill="#c07a00">Linear + Softmax</text>
+  <line x1="430" y1="368" x2="430" y2="388" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <rect x="342" y="390" width="176" height="38" rx="6" fill="#099268" stroke="#065f46" stroke-width="1.5"/>
+  <text x="430" y="406" text-anchor="middle" font-size="11" font-weight="bold" fill="white">next token prediction</text>
+  <text x="430" y="422" text-anchor="middle" font-size="10" fill="#d1faf0">generation, chat, code</text>
+
+  <!-- ══ COL 3: Encoder-Decoder ══ -->
+  <rect x="592" y="44" width="248" height="400" rx="10" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="716" y="66" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">Encoder-Decoder</text>
+  <text x="716" y="82" text-anchor="middle" font-size="11" fill="#888">T5, BART, original transformer</text>
+
+  <!-- Input -->
+  <rect x="608" y="94" width="216" height="30" rx="6" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="716" y="114" text-anchor="middle" font-size="12" font-weight="bold" fill="#2940b0">Input tokens (source)</text>
+  <line x1="716" y1="124" x2="716" y2="148" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+  <!-- Encoder block -->
+  <rect x="608" y="150" width="216" height="50" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="716" y="170" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Encoder ×N</text>
+  <text x="716" y="186" text-anchor="middle" font-size="10" fill="#c1121f">bidirectional self-attention</text>
+
+  <!-- Cross-attention arrow from encoder to decoder -->
+  <line x1="716" y1="200" x2="716" y2="218" stroke="#c1121f" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="716" y="216" text-anchor="middle" font-size="10" fill="#888" font-style="italic">rich source representation</text>
+
+  <!-- Decoder block with cross-attn -->
+  <rect x="608" y="222" width="216" height="66" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="716" y="242" text-anchor="middle" font-size="12" font-weight="bold" fill="#7b2d8b">Decoder ×N</text>
+  <text x="716" y="258" text-anchor="middle" font-size="10" fill="#7b2d8b">causal self-attention</text>
+  <text x="716" y="274" text-anchor="middle" font-size="10" fill="#7b2d8b">+ cross-attention ← encoder</text>
+  <line x1="716" y1="288" x2="716" y2="308" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr-p)"/>
+
+  <!-- Cross-attention indicator -->
+  <text x="716" y="322" text-anchor="middle" font-size="10" fill="#888" font-style="italic">decoder queries encoder output</text>
+
+  <!-- Output -->
+  <line x1="716" y1="328" x2="716" y2="348" stroke="#555" stroke-width="1.8" marker-end="url(#arr)"/>
+  <rect x="628" y="350" width="176" height="30" rx="6" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="716" y="370" text-anchor="middle" font-size="11" font-weight="bold" fill="#c07a00">Linear + Softmax</text>
+  <line x1="716" y1="380" x2="716" y2="398" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <rect x="628" y="400" width="176" height="38" rx="6" fill="#099268" stroke="#065f46" stroke-width="1.5"/>
+  <text x="716" y="416" text-anchor="middle" font-size="11" font-weight="bold" fill="white">output sequence</text>
+  <text x="716" y="432" text-anchor="middle" font-size="10" fill="#d1faf0">translation, summarization</text>
+</svg>

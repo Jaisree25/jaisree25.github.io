@@ -1,0 +1,134 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 1620" width="860" height="1620" font-family="Arial, sans-serif">
+  <rect width="860" height="1620" fill="#f8faff" rx="14"/>
+
+  <!-- Title -->
+  <text x="430" y="34" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">Backpropagation: Worked Example</text>
+  <text x="430" y="56" text-anchor="middle" font-size="14" fill="#333">x = 2  ·  w₁ = 0.5  ·  w₂ = 0.8  ·  y = 1.0  ·  η = 0.1  ·  Loss = MSE = (ŷ − y)²</text>
+
+  <!-- Network diagram -->
+  <circle cx="80"  cy="98" r="30" fill="#dde4ff" stroke="#4361ee" stroke-width="2.5"/>
+  <text x="80"  y="93"  text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">x</text>
+  <text x="80"  y="110" text-anchor="middle" font-size="13" fill="#2940b0">= 2</text>
+  <line x1="110" y1="98" x2="148" y2="98" stroke="#7b2d8b" stroke-width="2"/>
+  <rect x="148" y="83" width="80" height="28" rx="6" fill="white" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="188" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">w₁ = 0.5</text>
+  <line x1="228" y1="98" x2="264" y2="98" stroke="#7b2d8b" stroke-width="2"/>
+  <circle cx="294" cy="98" r="30" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2.5"/>
+  <text x="294" y="93"  text-anchor="middle" font-size="12" font-weight="bold" fill="#7b2d8b">ReLU</text>
+  <text x="294" y="110" text-anchor="middle" font-size="12" fill="#7b2d8b">h = 1.0</text>
+  <line x1="324" y1="98" x2="362" y2="98" stroke="#c1121f" stroke-width="2"/>
+  <rect x="362" y="83" width="80" height="28" rx="6" fill="white" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="402" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">w₂ = 0.8</text>
+  <line x1="442" y1="98" x2="478" y2="98" stroke="#c1121f" stroke-width="2"/>
+  <circle cx="508" cy="98" r="30" fill="#ffe5ec" stroke="#c1121f" stroke-width="2.5"/>
+  <text x="508" y="93"  text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">ŷ</text>
+  <text x="508" y="110" text-anchor="middle" font-size="13" fill="#c1121f">= 0.8</text>
+  <rect x="554" y="77" width="88" height="42" rx="8" fill="#d1faf0" stroke="#099268" stroke-width="2"/>
+  <text x="598" y="95"  text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">y = 1.0</text>
+  <text x="598" y="112" text-anchor="middle" font-size="12" fill="#087255">true label</text>
+  <rect x="654" y="77" width="188" height="42" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="748" y="95"  text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">L = (ŷ − y)²</text>
+  <text x="748" y="112" text-anchor="middle" font-size="12" fill="#c07a00">= 0.04  (MSE)</text>
+  <line x1="20" y1="146" x2="840" y2="146" stroke="#ddd" stroke-width="1.5"/>
+
+  <!-- FORWARD PASS header -->
+  <rect x="20" y="152" width="820" height="34" rx="6" fill="#2940b0"/>
+  <text x="430" y="176" text-anchor="middle" font-size="17" font-weight="bold" fill="white">① FORWARD PASS</text>
+
+  <!-- Fwd Step 1  y=194..314 -->
+  <rect x="20" y="194" width="820" height="120" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="36" y="220" font-size="15" font-weight="bold" fill="#2940b0">Step 1 — Pre-activation of hidden node</text>
+  <line x1="20" y1="228" x2="840" y2="228" stroke="#a8baf8" stroke-width="1.2"/>
+  <text x="430" y="250" text-anchor="middle" font-size="16" fill="#333" font-style="italic">z₁  =  x · w₁</text>
+  <text x="430" y="274" text-anchor="middle" font-size="18" fill="#2940b0">z₁  =  2  ×  0.5</text>
+  <line x1="270" y1="282" x2="590" y2="282" stroke="#4361ee" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="304" text-anchor="middle" font-size="23" font-weight="bold" fill="#2940b0">z₁  =  1.0</text>
+
+  <!-- Fwd Step 2  y=322..442 -->
+  <rect x="20" y="322" width="820" height="120" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="36" y="348" font-size="15" font-weight="bold" fill="#7b2d8b">Step 2 — Apply ReLU activation</text>
+  <line x1="20" y1="356" x2="840" y2="356" stroke="#c8a0e0" stroke-width="1.2"/>
+  <text x="430" y="378" text-anchor="middle" font-size="16" fill="#333" font-style="italic">h  =  ReLU(z₁)  =  max(0, z₁)</text>
+  <text x="430" y="402" text-anchor="middle" font-size="18" fill="#7b2d8b">h  =  max(0,  1.0)</text>
+  <line x1="270" y1="410" x2="590" y2="410" stroke="#7b2d8b" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="432" text-anchor="middle" font-size="23" font-weight="bold" fill="#7b2d8b">h  =  1.0</text>
+
+  <!-- Fwd Step 3  y=450..570 -->
+  <rect x="20" y="450" width="820" height="120" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="36" y="476" font-size="15" font-weight="bold" fill="#c1121f">Step 3 — Output prediction</text>
+  <line x1="20" y1="484" x2="840" y2="484" stroke="#f0a8b8" stroke-width="1.2"/>
+  <text x="430" y="506" text-anchor="middle" font-size="16" fill="#333" font-style="italic">ŷ  =  h · w₂</text>
+  <text x="430" y="530" text-anchor="middle" font-size="18" fill="#c1121f">ŷ  =  1.0  ×  0.8</text>
+  <line x1="270" y1="538" x2="590" y2="538" stroke="#c1121f" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="560" text-anchor="middle" font-size="23" font-weight="bold" fill="#c1121f">ŷ  =  0.8</text>
+
+  <!-- Fwd Step 4  y=578..698 -->
+  <rect x="20" y="578" width="820" height="120" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="36" y="604" font-size="15" font-weight="bold" fill="#c07a00">Step 4 — Compute MSE loss</text>
+  <line x1="20" y1="612" x2="840" y2="612" stroke="#e8c870" stroke-width="1.2"/>
+  <text x="430" y="634" text-anchor="middle" font-size="16" fill="#333" font-style="italic">L  =  (ŷ − y)²</text>
+  <text x="430" y="658" text-anchor="middle" font-size="18" fill="#c07a00">L  =  (0.8 − 1.0)²  =  (−0.2)²</text>
+  <line x1="270" y1="666" x2="590" y2="666" stroke="#e07b00" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="688" text-anchor="middle" font-size="23" font-weight="bold" fill="#c07a00">L  =  0.04</text>
+
+  <!-- BACKWARD PASS header -->
+  <rect x="20" y="706" width="820" height="34" rx="6" fill="#c1121f"/>
+  <text x="430" y="730" text-anchor="middle" font-size="17" font-weight="bold" fill="white">② BACKWARD PASS — Chain Rule</text>
+
+  <!-- Bwd Step 5  y=748..898 -->
+  <rect x="20" y="748" width="820" height="150" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="36" y="774" font-size="15" font-weight="bold" fill="#c1121f">Step 5 — Gradient of loss w.r.t. prediction ŷ</text>
+  <line x1="20" y1="782" x2="840" y2="782" stroke="#f0a8b8" stroke-width="1.2"/>
+  <text x="430" y="806" text-anchor="middle" font-size="17" fill="#333" font-style="italic">dL/dŷ  =  d/dŷ [(ŷ − y)²]  =  2(ŷ − y)</text>
+  <text x="430" y="830" text-anchor="middle" font-size="18" fill="#555" font-style="italic">dL/dŷ  =  2(ŷ − y)</text>
+  <text x="430" y="856" text-anchor="middle" font-size="18" fill="#c1121f">dL/dŷ  =  2 × (0.8 − 1.0)</text>
+  <line x1="270" y1="864" x2="590" y2="864" stroke="#c1121f" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="888" text-anchor="middle" font-size="23" font-weight="bold" fill="#c1121f">dL/dŷ  =  −0.4</text>
+
+  <!-- Bwd Step 6  y=906..1056 -->
+  <rect x="20" y="906" width="820" height="150" rx="8" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="36" y="932" font-size="15" font-weight="bold" fill="#c1121f">Step 6 — Gradient for output weight w₂</text>
+  <line x1="20" y1="940" x2="840" y2="940" stroke="#f0a8b8" stroke-width="1.2"/>
+  <text x="430" y="964" text-anchor="middle" font-size="17" fill="#333" font-style="italic">dL/dw₂  =  dL/dŷ · dŷ/dw₂     where  dŷ/dw₂ = h  (since ŷ = h·w₂)</text>
+  <text x="430" y="988" text-anchor="middle" font-size="18" fill="#555" font-style="italic">dL/dw₂  =  dL/dŷ · h</text>
+  <text x="430" y="1014" text-anchor="middle" font-size="18" fill="#c1121f">dL/dw₂  =  −0.4  ×  1.0</text>
+  <line x1="270" y1="1022" x2="590" y2="1022" stroke="#c1121f" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="1046" text-anchor="middle" font-size="23" font-weight="bold" fill="#c1121f">dL/dw₂  =  −0.4</text>
+
+  <!-- Bwd Step 7  y=1064..1214 -->
+  <rect x="20" y="1064" width="820" height="150" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="36" y="1090" font-size="15" font-weight="bold" fill="#7b2d8b">Step 7 — Gradient back through hidden activation h</text>
+  <line x1="20" y1="1098" x2="840" y2="1098" stroke="#c8a0e0" stroke-width="1.2"/>
+  <text x="430" y="1122" text-anchor="middle" font-size="17" fill="#333" font-style="italic">dL/dh  =  dL/dŷ · dŷ/dh     where  dŷ/dh = w₂  (since ŷ = h·w₂)</text>
+  <text x="430" y="1146" text-anchor="middle" font-size="18" fill="#555" font-style="italic">dL/dh  =  dL/dŷ · w₂</text>
+  <text x="430" y="1172" text-anchor="middle" font-size="18" fill="#7b2d8b">dL/dh  =  −0.4  ×  0.8</text>
+  <line x1="270" y1="1180" x2="590" y2="1180" stroke="#7b2d8b" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="1204" text-anchor="middle" font-size="23" font-weight="bold" fill="#7b2d8b">dL/dh  =  −0.32</text>
+
+  <!-- Bwd Step 8  y=1222..1372 -->
+  <rect x="20" y="1222" width="820" height="150" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="36" y="1248" font-size="15" font-weight="bold" fill="#7b2d8b">Step 8 — Pass gradient through ReLU</text>
+  <line x1="20" y1="1256" x2="840" y2="1256" stroke="#c8a0e0" stroke-width="1.2"/>
+  <text x="430" y="1280" text-anchor="middle" font-size="17" fill="#333" font-style="italic">dL/dz₁  =  dL/dh · dh/dz₁     where  dh/dz₁ = ReLU′(z₁) = 1  (since z₁ &gt; 0)</text>
+  <text x="430" y="1304" text-anchor="middle" font-size="18" fill="#555" font-style="italic">dL/dz₁  =  dL/dh · ReLU′(z₁)</text>
+  <text x="430" y="1330" text-anchor="middle" font-size="18" fill="#7b2d8b">dL/dz₁  =  −0.32  ×  1</text>
+  <line x1="270" y1="1338" x2="590" y2="1338" stroke="#7b2d8b" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="1362" text-anchor="middle" font-size="23" font-weight="bold" fill="#7b2d8b">dL/dz₁  =  −0.32</text>
+
+  <!-- Bwd Step 9  y=1380..1530 -->
+  <rect x="20" y="1380" width="820" height="150" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="36" y="1406" font-size="15" font-weight="bold" fill="#2940b0">Step 9 — Gradient for input weight w₁</text>
+  <line x1="20" y1="1414" x2="840" y2="1414" stroke="#a8baf8" stroke-width="1.2"/>
+  <text x="430" y="1438" text-anchor="middle" font-size="17" fill="#333" font-style="italic">dL/dw₁  =  dL/dz₁ · dz₁/dw₁     where  dz₁/dw₁ = x  (since z₁ = x·w₁)</text>
+  <text x="430" y="1462" text-anchor="middle" font-size="18" fill="#555" font-style="italic">dL/dw₁  =  dL/dz₁ · x</text>
+  <text x="430" y="1488" text-anchor="middle" font-size="18" fill="#2940b0">dL/dw₁  =  −0.32  ×  2</text>
+  <line x1="270" y1="1496" x2="590" y2="1496" stroke="#4361ee" stroke-width="1.5" opacity="0.5"/>
+  <text x="430" y="1520" text-anchor="middle" font-size="23" font-weight="bold" fill="#2940b0">dL/dw₁  =  −0.64</text>
+
+  <!-- Weight Update footer -->
+  <rect x="20" y="1538" width="820" height="68" rx="8" fill="#099268" stroke="#065f46" stroke-width="2"/>
+  <text x="430" y="1562" text-anchor="middle" font-size="17" font-weight="bold" fill="white">Weight Update:  w  ←  w − η · dL/dw</text>
+  <text x="215" y="1592" text-anchor="middle" font-size="16" font-weight="bold" fill="white">w₁ ← 0.5 − 0.1×(−0.64)  =  0.564</text>
+  <text x="430" y="1592" text-anchor="middle" font-size="16" fill="#d1faf0">·</text>
+  <text x="645" y="1592" text-anchor="middle" font-size="16" font-weight="bold" fill="white">w₂ ← 0.8 − 0.1×(−0.40)  =  0.840</text>
+</svg>

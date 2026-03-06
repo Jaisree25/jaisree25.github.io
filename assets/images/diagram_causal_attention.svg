@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" width="860" height="400" font-family="Arial, sans-serif">
+  <rect width="860" height="400" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Causal Attention — Masking Future Tokens</text>
+  <text x="430" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Tokens: "The  cat  sat  on  the  mat"</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: Before masking ══ -->
+  <rect x="20" y="58" width="380" height="316" rx="10" fill="#fff4f4" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="210" y="80" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">Before Masking</text>
+  <text x="210" y="96" text-anchor="middle" font-size="11" fill="#888">all tokens can attend to all tokens</text>
+
+  <!-- Column headers -->
+  <text x="110" y="118" text-anchor="middle" font-size="11" fill="#555">The</text>
+  <text x="150" y="118" text-anchor="middle" font-size="11" fill="#555">cat</text>
+  <text x="190" y="118" text-anchor="middle" font-size="11" fill="#555">sat</text>
+  <text x="230" y="118" text-anchor="middle" font-size="11" fill="#555">on</text>
+  <text x="270" y="118" text-anchor="middle" font-size="11" fill="#555">the</text>
+  <text x="310" y="118" text-anchor="middle" font-size="11" fill="#555">mat</text>
+
+  <!-- Row labels -->
+  <text x="64" y="143" text-anchor="end" font-size="11" fill="#555">The</text>
+  <text x="64" y="175" text-anchor="end" font-size="11" fill="#555">cat</text>
+  <text x="64" y="207" text-anchor="end" font-size="11" fill="#555">sat</text>
+  <text x="64" y="239" text-anchor="end" font-size="11" fill="#555">on</text>
+  <text x="64" y="271" text-anchor="end" font-size="11" fill="#555">the</text>
+  <text x="64" y="303" text-anchor="end" font-size="11" fill="#555">mat</text>
+
+  <!-- Grid cells — all filled (full attention) -->
+  <!-- Define cell function: col positions 90,130,170,210,250,290 ; row y 128,160,192,224,256,288 -->
+  <!-- Row 1: The -->
+  <rect x="90"  y="128" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="145" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="130" y="128" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="145" text-anchor="middle" font-size="10" fill="#2940b0">0.3</text>
+  <rect x="170" y="128" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="186" y="145" text-anchor="middle" font-size="10" fill="#c1121f">0.5</text>
+  <rect x="210" y="128" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="226" y="145" text-anchor="middle" font-size="10" fill="#c1121f">0.2</text>
+  <rect x="250" y="128" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="266" y="145" text-anchor="middle" font-size="10" fill="#c1121f">0.4</text>
+  <rect x="290" y="128" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="306" y="145" text-anchor="middle" font-size="10" fill="#c1121f">0.1</text>
+  <!-- Row 2: cat -->
+  <rect x="90"  y="160" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="177" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="130" y="160" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="177" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+  <rect x="170" y="160" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="186" y="177" text-anchor="middle" font-size="10" fill="#c1121f">0.7</text>
+  <rect x="210" y="160" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="226" y="177" text-anchor="middle" font-size="10" fill="#c1121f">0.3</text>
+  <rect x="250" y="160" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="266" y="177" text-anchor="middle" font-size="10" fill="#c1121f">0.5</text>
+  <rect x="290" y="160" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="306" y="177" text-anchor="middle" font-size="10" fill="#c1121f">0.2</text>
+  <!-- Row 3: sat -->
+  <rect x="90"  y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="130" y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="170" y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="186" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="210" y="192" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="226" y="209" text-anchor="middle" font-size="10" fill="#c1121f">0.6</text>
+  <rect x="250" y="192" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="266" y="209" text-anchor="middle" font-size="10" fill="#c1121f">0.4</text>
+  <rect x="290" y="192" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="306" y="209" text-anchor="middle" font-size="10" fill="#c1121f">0.3</text>
+  <!-- Row 4: on -->
+  <rect x="90"  y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.2</text>
+  <rect x="130" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="170" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="186" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="210" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="226" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+  <rect x="250" y="224" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="266" y="241" text-anchor="middle" font-size="10" fill="#c1121f">0.7</text>
+  <rect x="290" y="224" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="306" y="241" text-anchor="middle" font-size="10" fill="#c1121f">0.5</text>
+  <!-- Row 5: the -->
+  <rect x="90"  y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.1</text>
+  <rect x="130" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.3</text>
+  <rect x="170" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="186" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="210" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="226" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="250" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="266" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="290" y="256" width="32" height="24" rx="3" fill="#ffe5ec" stroke="#c1121f" stroke-width="0.5"/><text x="306" y="273" text-anchor="middle" font-size="10" fill="#c1121f">0.6</text>
+  <!-- Row 6: mat -->
+  <rect x="90"  y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="106" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.2</text>
+  <rect x="130" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="146" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="170" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="186" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.5</text>
+  <rect x="210" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="226" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="250" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="266" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="290" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="306" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+
+  <!-- Legend for left -->
+  <rect x="68" y="328" width="14" height="14" rx="2" fill="#dde4ff" stroke="#4361ee" stroke-width="1"/>
+  <text x="86" y="340" font-size="11" fill="#555">allowed</text>
+  <rect x="155" y="328" width="14" height="14" rx="2" fill="#ffe5ec" stroke="#c1121f" stroke-width="1"/>
+  <text x="173" y="340" font-size="11" fill="#c1121f">future tokens (will be masked)</text>
+  <text x="210" y="362" text-anchor="middle" font-size="11" fill="#c1121f" font-style="italic">upper triangle = peeking at the future</text>
+
+  <!-- Arrow between panels -->
+  <line x1="405" y1="218" x2="438" y2="218" stroke="#555" stroke-width="2.5" marker-end="url(#arr)"/>
+  <text x="421" y="210" text-anchor="middle" font-size="10" fill="#888">mask</text>
+  <text x="421" y="222" text-anchor="middle" font-size="10" fill="#888">upper</text>
+  <text x="421" y="234" text-anchor="middle" font-size="10" fill="#888">triangle</text>
+
+  <!-- ══ RIGHT: After masking ══ -->
+  <rect x="442" y="58" width="398" height="316" rx="10" fill="#f0fff8" stroke="#087255" stroke-width="1.5"/>
+  <text x="641" y="80" text-anchor="middle" font-size="14" font-weight="bold" fill="#087255">After Causal Masking</text>
+  <text x="641" y="96" text-anchor="middle" font-size="11" fill="#888">each token sees only itself and the past</text>
+
+  <!-- Column headers -->
+  <text x="534" y="118" text-anchor="middle" font-size="11" fill="#555">The</text>
+  <text x="574" y="118" text-anchor="middle" font-size="11" fill="#555">cat</text>
+  <text x="614" y="118" text-anchor="middle" font-size="11" fill="#555">sat</text>
+  <text x="654" y="118" text-anchor="middle" font-size="11" fill="#555">on</text>
+  <text x="694" y="118" text-anchor="middle" font-size="11" fill="#555">the</text>
+  <text x="734" y="118" text-anchor="middle" font-size="11" fill="#555">mat</text>
+
+  <!-- Row labels -->
+  <text x="488" y="143" text-anchor="end" font-size="11" fill="#555">The</text>
+  <text x="488" y="175" text-anchor="end" font-size="11" fill="#555">cat</text>
+  <text x="488" y="207" text-anchor="end" font-size="11" fill="#555">sat</text>
+  <text x="488" y="239" text-anchor="end" font-size="11" fill="#555">on</text>
+  <text x="488" y="271" text-anchor="end" font-size="11" fill="#555">the</text>
+  <text x="488" y="303" text-anchor="end" font-size="11" fill="#555">mat</text>
+
+  <!-- Row 1: The — only sees itself -->
+  <rect x="514" y="128" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="145" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="554" y="128" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="570" y="145" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="594" y="128" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="610" y="145" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="634" y="128" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="650" y="145" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="674" y="128" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="690" y="145" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="714" y="128" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="730" y="145" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <!-- Row 2: cat -->
+  <rect x="514" y="160" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="177" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="554" y="160" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="570" y="177" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+  <rect x="594" y="160" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="610" y="177" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="634" y="160" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="650" y="177" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="674" y="160" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="690" y="177" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="714" y="160" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="730" y="177" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <!-- Row 3: sat -->
+  <rect x="514" y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="554" y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="570" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="594" y="192" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="610" y="209" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="634" y="192" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="650" y="209" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="674" y="192" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="690" y="209" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="714" y="192" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="730" y="209" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <!-- Row 4: on -->
+  <rect x="514" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.2</text>
+  <rect x="554" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="570" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="594" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="610" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="634" y="224" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="650" y="241" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+  <rect x="674" y="224" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="690" y="241" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <rect x="714" y="224" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="730" y="241" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <!-- Row 5: the -->
+  <rect x="514" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.1</text>
+  <rect x="554" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="570" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.3</text>
+  <rect x="594" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="610" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="634" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="650" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="674" y="256" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="690" y="273" text-anchor="middle" font-size="10" fill="#2940b0">0.8</text>
+  <rect x="714" y="256" width="32" height="24" rx="3" fill="#e8e8e8" stroke="#ccc" stroke-width="0.5"/><text x="730" y="273" text-anchor="middle" font-size="11" fill="#bbb">—</text>
+  <!-- Row 6: mat -->
+  <rect x="514" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="530" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.2</text>
+  <rect x="554" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="570" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.4</text>
+  <rect x="594" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="610" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.5</text>
+  <rect x="634" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="650" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.6</text>
+  <rect x="674" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="690" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.7</text>
+  <rect x="714" y="288" width="32" height="24" rx="3" fill="#dde4ff" stroke="#4361ee" stroke-width="0.5"/><text x="730" y="305" text-anchor="middle" font-size="10" fill="#2940b0">0.9</text>
+
+  <!-- Legend for right -->
+  <rect x="490" y="328" width="14" height="14" rx="2" fill="#dde4ff" stroke="#4361ee" stroke-width="1"/>
+  <text x="508" y="340" font-size="11" fill="#555">visible (past + self)</text>
+  <rect x="650" y="328" width="14" height="14" rx="2" fill="#e8e8e8" stroke="#ccc" stroke-width="1"/>
+  <text x="668" y="340" font-size="11" fill="#888">masked (future)</text>
+  <text x="641" y="362" text-anchor="middle" font-size="11" fill="#087255" font-style="italic">"mat" can see all  ·  "The" can only see itself</text>
+</svg>

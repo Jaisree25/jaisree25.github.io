@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" width="860" height="540" font-family="Arial, sans-serif">
+  <rect width="860" height="540" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Transformer Forward Pass — Next-Word Prediction</text>
+  <text x="430" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Input: "There was a"  →  Predict: ?</text>
+
+  <defs>
+    <marker id="arr"   markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2940b0"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- ══ ROW 1: Input tokens ══ -->
+  <text x="30" y="84" font-size="11" fill="#999" font-style="italic">input</text>
+  <rect x="200" y="64" width="100" height="40" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="250" y="89" text-anchor="middle" font-size="15" font-weight="bold" fill="#2940b0">There</text>
+  <rect x="380" y="64" width="100" height="40" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="430" y="89" text-anchor="middle" font-size="15" font-weight="bold" fill="#2940b0">was</text>
+  <rect x="560" y="64" width="100" height="40" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="610" y="89" text-anchor="middle" font-size="15" font-weight="bold" fill="#2940b0">a</text>
+
+  <!-- Arrows down to embedding -->
+  <line x1="250" y1="104" x2="250" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+  <line x1="430" y1="104" x2="430" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+  <line x1="610" y1="104" x2="610" y2="138" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+  <!-- ══ ROW 2: Embedding + Positional Encoding ══ -->
+  <text x="30" y="170" font-size="11" fill="#999" font-style="italic">embed</text>
+  <rect x="130" y="140" width="600" height="44" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="2"/>
+  <text x="430" y="158" text-anchor="middle" font-size="14" font-weight="bold" fill="#c07a00">Embedding Layer + Positional Encoding</text>
+  <text x="430" y="175" text-anchor="middle" font-size="11" fill="#c07a00">token IDs → dense vectors  ·  position info added to each vector</text>
+
+  <!-- Arrow down -->
+  <line x1="430" y1="184" x2="430" y2="218" stroke="#e07b00" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ══ ROW 3: Transformer Block (repeated N times) ══ -->
+  <text x="30" y="258" font-size="11" fill="#999" font-style="italic">×N</text>
+  <rect x="130" y="220" width="600" height="100" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="2"/>
+  <text x="430" y="242" text-anchor="middle" font-size="14" font-weight="bold" fill="#7b2d8b">Transformer Block  (repeated N times)</text>
+
+  <!-- Attention sub-box -->
+  <rect x="150" y="252" width="256" height="52" rx="6" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="278" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Multi-Head Attention</text>
+  <text x="278" y="290" text-anchor="middle" font-size="11" fill="#2940b0">each token attends to all others</text>
+
+  <!-- MLP sub-box -->
+  <rect x="424" y="252" width="286" height="52" rx="6" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="567" y="272" text-anchor="middle" font-size="13" font-weight="bold" fill="#c1121f">Feedforward MLP</text>
+  <text x="567" y="290" text-anchor="middle" font-size="11" fill="#c1121f">refines each token independently</text>
+
+  <!-- Arrow between attention and MLP -->
+  <line x1="406" y1="278" x2="422" y2="278" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- Arrow down -->
+  <line x1="430" y1="320" x2="430" y2="354" stroke="#7b2d8b" stroke-width="1.8" marker-end="url(#arr)"/>
+  <text x="445" y="342" font-size="10" fill="#888" font-style="italic">final token vector for "a"</text>
+
+  <!-- ══ ROW 4: Linear projection ══ -->
+  <text x="30" y="385" font-size="11" fill="#999" font-style="italic">project</text>
+  <rect x="230" y="356" width="400" height="44" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="430" y="374" text-anchor="middle" font-size="14" font-weight="bold" fill="#c07a00">Linear Layer</text>
+  <text x="430" y="391" text-anchor="middle" font-size="11" fill="#c07a00">project to vocabulary size (e.g. 50,257 scores)</text>
+
+  <line x1="430" y1="400" x2="430" y2="434" stroke="#e07b00" stroke-width="1.8" marker-end="url(#arr)"/>
+
+  <!-- ══ ROW 5: Softmax ══ -->
+  <text x="30" y="462" font-size="11" fill="#999" font-style="italic">probs</text>
+  <rect x="230" y="436" width="400" height="44" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="430" y="454" text-anchor="middle" font-size="14" font-weight="bold" fill="#087255">Softmax</text>
+  <text x="430" y="471" text-anchor="middle" font-size="11" fill="#087255">scores → probability distribution over vocabulary</text>
+
+  <line x1="430" y1="480" x2="430" y2="506" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <!-- ══ Output ══ -->
+  <rect x="280" y="508" width="300" height="24" rx="6" fill="#099268" stroke="#065f46" stroke-width="1.5"/>
+  <text x="430" y="525" text-anchor="middle" font-size="13" font-weight="bold" fill="white">Predicted next word: "rock"  (p = 0.25)</text>
+</svg>

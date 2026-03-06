@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 340" width="860" height="340" font-family="Arial, sans-serif">
+  <rect width="860" height="340" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Tokenization Pipeline</text>
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+  </defs>
+
+  <!-- Step 1: Raw text -->
+  <rect x="20" y="50" width="160" height="56" rx="8" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="100" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#2940b0">Raw Text</text>
+  <text x="100" y="94" text-anchor="middle" font-size="12" fill="#2940b0">"The cat sat"</text>
+
+  <line x1="180" y1="78" x2="210" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="195" y="70" text-anchor="middle" font-size="10" fill="#888">split</text>
+
+  <!-- Step 2: Tokens -->
+  <rect x="212" y="50" width="160" height="56" rx="8" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="292" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#7b2d8b">Tokens</text>
+  <text x="292" y="94" text-anchor="middle" font-size="11" fill="#7b2d8b">["The","cat","sat"]</text>
+
+  <line x1="372" y1="78" x2="402" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="387" y="70" text-anchor="middle" font-size="10" fill="#888">vocab</text>
+
+  <!-- Step 3: Token IDs -->
+  <rect x="404" y="50" width="160" height="56" rx="8" fill="#fff4e0" stroke="#e07b00" stroke-width="1.5"/>
+  <text x="484" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#c07a00">Token IDs</text>
+  <text x="484" y="94" text-anchor="middle" font-size="12" fill="#c07a00">[ 0, 1, 2 ]</text>
+
+  <line x1="564" y1="78" x2="594" y2="78" stroke="#555" stroke-width="2" marker-end="url(#arr)"/>
+  <text x="579" y="70" text-anchor="middle" font-size="10" fill="#888">embed</text>
+
+  <!-- Step 4: Embeddings -->
+  <rect x="596" y="50" width="244" height="56" rx="8" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="718" y="74" text-anchor="middle" font-size="13" font-weight="bold" fill="#087255">Dense Vectors</text>
+  <text x="718" y="94" text-anchor="middle" font-size="11" fill="#087255">[0.21, -0.54, 0.83, ...]</text>
+
+  <!-- BPE section -->
+  <line x1="430" y1="122" x2="430" y2="148" stroke="#aaa" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <text x="430" y="142" text-anchor="middle" font-size="11" fill="#aaa">BPE handles rare/unseen words</text>
+
+  <rect x="20" y="152" width="820" height="100" rx="10" fill="#ffe5ec" stroke="#c1121f" stroke-width="1.5"/>
+  <text x="430" y="174" text-anchor="middle" font-size="14" font-weight="bold" fill="#c1121f">Byte Pair Encoding (BPE) — Subword Tokenization</text>
+
+  <!-- BPE examples -->
+  <rect x="40" y="186" width="230" height="52" rx="6" fill="white" stroke="#c1121f" stroke-width="1"/>
+  <text x="155" y="205" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Common word</text>
+  <text x="155" y="224" text-anchor="middle" font-size="13" fill="#333">"the"  →  [ "the" ]</text>
+
+  <rect x="314" y="186" width="230" height="52" rx="6" fill="white" stroke="#c1121f" stroke-width="1"/>
+  <text x="429" y="205" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Rare word</text>
+  <text x="429" y="224" text-anchor="middle" font-size="13" fill="#333">"unhappiness"  →  ["un","happiness"]</text>
+
+  <rect x="588" y="186" width="230" height="52" rx="6" fill="white" stroke="#c1121f" stroke-width="1"/>
+  <text x="703" y="205" text-anchor="middle" font-size="12" font-weight="bold" fill="#c1121f">Unseen word</text>
+  <text x="703" y="224" text-anchor="middle" font-size="13" fill="#333">"ChatGPT"  →  ["Chat","G","PT"]</text>
+
+  <text x="430" y="282" text-anchor="middle" font-size="12" fill="#555">BPE can represent any word — even ones never seen during training — by splitting into known subword pieces.</text>
+  <text x="430" y="302" text-anchor="middle" font-size="12" fill="#555">GPT-2 vocabulary: 50,257 BPE tokens.</text>
+</svg>

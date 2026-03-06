@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Action Chunking Transformer | J.aiTech</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="Action Chunking Transformer" />
+<meta name="author" content="Jaisree David Ravikumar" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="AI • Robotics • Intelligent Systems" />
+<meta property="og:description" content="AI • Robotics • Intelligent Systems" />
+<link rel="canonical" href="http://localhost:4000/2025/03/10/ACT-transformer.html" />
+<meta property="og:url" content="http://localhost:4000/2025/03/10/ACT-transformer.html" />
+<meta property="og:site_name" content="J.aiTech" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2025-03-10T00:00:00-07:00" />
+<meta name="twitter:card" content="summary" />
+<meta property="twitter:title" content="Action Chunking Transformer" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jaisree David Ravikumar"},"dateModified":"2025-03-10T00:00:00-07:00","datePublished":"2025-03-10T00:00:00-07:00","description":"AI • Robotics • Intelligent Systems","headline":"Action Chunking Transformer","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/2025/03/10/ACT-transformer.html"},"publisher":{"@type":"Organization","logo":{"@type":"ImageObject","url":"http://localhost:4000/assets/images/profile.webp"},"name":"Jaisree David Ravikumar"},"url":"http://localhost:4000/2025/03/10/ACT-transformer.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="icon" type="image/png" href="/assets/images/favicon.png">
+  <link rel="stylesheet" href="/assets/main.css">
+  <link rel="stylesheet" href="/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="J.aiTech" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">J.aiTech</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/">Home</a><a class="page-link" href="/about/">About</a><a class="page-link" href="/posts/">Posts</a><a class="page-link" href="/projects/">Projects</a><a class="page-link" href="/competitions/">Competitions</a><a class="page-link" href="/certifications/">Certifications</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">Action Chunking Transformer</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2025-03-10T00:00:00-07:00" itemprop="datePublished">Mar 10, 2025
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <hr />
+
+<h2 id="table-of-contents">Table of Contents</h2>
+
+<ol>
+  <li><a href="#what-is-act">What Is ACT?</a></li>
+  <li><a href="#a-quick-refresher-transformers">A Quick Refresher: Transformers</a></li>
+  <li><a href="#the-task-and-the-data">The Task and the Data</a></li>
+  <li><a href="#what-act-actually-does">What ACT Actually Does</a></li>
+  <li><a href="#act-architecture-overview">ACT Architecture Overview</a></li>
+  <li><a href="#the-vae-encoder">The VAE Encoder</a></li>
+  <li><a href="#the-main-encoder">The Main Encoder</a></li>
+  <li><a href="#the-main-decoder">The Main Decoder</a></li>
+  <li><a href="#inference-what-happens-at-test-time">Inference: What Happens at Test Time</a></li>
+  <li><a href="#summary">Summary</a></li>
+</ol>
+
+<hr />
+
+<h2 id="what-is-act">What Is ACT?</h2>
+
+<p>In robotics, a policy is simply the function that maps what the robot currently observes to what action it should take next. This post covers <strong>ACT — Action Chunking Transformer</strong>, a policy architecture for robot learning introduced in the paper <em>“Learning Fine-Grained Bimanual Manipulation with Low-Cost Hardware”</em> by Tony Z. Zhao, Vikash Kumar, Sergey Levine, and Chelsea Finn.</p>
+
+<p>ACT is an example of <strong>imitation learning</strong>: rather than programming a robot with explicit rules, we show it how to perform a task by recording human demonstrations, and train a neural network to replicate that behaviour. The network learns to map what the robot currently sees and feels — camera images and joint states — to a sequence of future actions.</p>
+
+<p>Throughout this post, we will ground the explanation in a single concrete task: <strong>a robotic arm picking up an object and dropping it into a box</strong>.</p>
+
+<hr />
+
+<h2 id="a-quick-refresher-transformers">A Quick Refresher: Transformers</h2>
+
+<p>ACT is built on the transformer architecture, so a brief recap is useful before diving in.</p>
+
+<p>A transformer is a type of neural network designed to process and produce <strong>sequences of information</strong>. It is made up of three core components repeated across multiple layers:</p>
+
+<ul>
+  <li><strong>Embedding layer</strong> — converts raw inputs (tokens, sensor readings, image patches) into dense vector representations</li>
+  <li><strong>Attention layer</strong> — allows each element in the sequence to look at every other element and decide which ones are most relevant to it</li>
+  <li><strong>MLP layer</strong> — a standard feedforward network applied to each position independently</li>
+</ul>
+
+<p>The defining feature of transformers is the <strong>attention mechanism</strong>. In short, attention allows the model to learn <em>context</em> — a word’s meaning depends on the words around it, just as a robot’s next action depends on its current state and recent history. This makes transformers exceptionally powerful for any problem where relationships between elements in a sequence matter.</p>
+
+<p>Transformers were originally developed for language tasks — translation, sentiment analysis, next-word prediction. ACT applies the same machinery to robotics, where the “sequence” is a series of robot actions over time.</p>
+
+<hr />
+
+<h2 id="the-task-and-the-data">The Task and the Data</h2>
+
+<p>Before training any neural network, we need data. For our task — picking up an object and dropping it into a box — data collection works as follows.</p>
+
+<p>Several cameras are positioned around the robot arm to capture video from multiple viewpoints. A human operator then <strong>teleoperates</strong> the arm, physically controlling it to perform the task repeatedly while the cameras record. In addition to the video, the joint and motor states of the arm are logged at each timestep — these capture the precise configuration and movement of the robot.</p>
+
+<p><img src="/assets/images/diagram_data_pipeline.svg" alt="Data Pipeline Diagram" /></p>
+
+<p>The result is a dataset of many demonstration episodes. Each episode is a sequence of (image frames, joint states, actions) tuples. This dataset is what ACT is trained on.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Human demonstrations are imperfect. Operators may move slightly inconsistently across different recordings of the same task — a small shake here, a slightly different grip angle there. A robust policy must learn the underlying task, not overfit to these human inconsistencies.</p>
+</blockquote>
+
+<hr />
+
+<h2 id="what-act-actually-does">What ACT Actually Does</h2>
+
+<p>It helps to be precise about ACT’s inputs and outputs before examining the architecture.</p>
+
+<p>At each timestep, ACT receives:</p>
+<ul>
+  <li><strong>Camera images</strong> — the current visual state of the scene</li>
+  <li><strong>Current robot joint states</strong> — the robot’s physical configuration right now</li>
+  <li><strong>Past actions</strong> — what the robot has done recently</li>
+</ul>
+
+<p>From these, ACT predicts: <strong>a short sequence of future joint actions</strong> — not just the next single action, but a chunk of several actions ahead.</p>
+
+<p>This is the “action chunking” in the name, and it is a deliberate design choice. Real-world robot movements are smooth and continuous — the arm does not jerk from position to position one step at a time. By predicting a whole chunk of actions at once, the policy enforces <strong>temporal coherence</strong>: the predicted sequence is internally consistent rather than composed of individually-noisy single-step predictions. Chunking also reduces the number of forward passes through the model needed to complete a task, which saves computation.</p>
+
+<p><img src="/assets/images/diagram_action_chunking.svg" alt="Action Chunking Diagram" /></p>
+
+<hr />
+
+<h2 id="act-architecture-overview">ACT Architecture Overview</h2>
+
+<p>ACT has three main components:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Role</th>
+      <th>Active During</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>VAE Encoder</strong></td>
+      <td>Introduces controlled variation to prevent overfitting</td>
+      <td>Training only</td>
+    </tr>
+    <tr>
+      <td><strong>Main Encoder</strong></td>
+      <td>Produces a rich contextual representation of the current state</td>
+      <td>Training &amp; inference</td>
+    </tr>
+    <tr>
+      <td><strong>Main Decoder</strong></td>
+      <td>Predicts the sequence of future actions</td>
+      <td>Training &amp; inference</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The VAE encoder is only used during training. At inference time, it is replaced by a fixed zero vector. We will explain exactly why below.</p>
+
+<hr />
+
+<h2 id="the-vae-encoder">The VAE Encoder</h2>
+
+<p>The VAE (Variational Autoencoder) Encoder is the most conceptually novel component of ACT. Its purpose is to prevent the model from <strong>overfitting to the imperfections in human demonstrations</strong>.</p>
+
+<h3 id="the-problem-it-solves">The Problem It Solves</h3>
+
+<p>Human teleoperators are not perfectly consistent. Across many recordings of the same task, the same action might be executed with slightly different timing, speed, or path. If we train the model to exactly reproduce these demonstrations, it will learn to mimic the noise as well as the task. The VAE encoder addresses this by injecting learned, controlled randomness into the training process.</p>
+
+<h3 id="the-cls-token">The CLS Token</h3>
+
+<p>The input to the VAE encoder is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[CLS, joint states, image features, past actions]
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">image features</code> here refers to the output of a <strong>CNN</strong> (Convolutional Neural Network) applied to the camera frames — the raw images are first compressed into compact feature vectors before being passed to the transformer.</p>
+
+<p><code class="language-plaintext highlighter-rouge">CLS</code> is the <strong>classification token</strong> — a single learned vector that the encoder uses to summarise the entire input sequence. It begins as a randomly initialized vector and is updated through training. The CLS token’s final representation is used as the basis for generating the latent distribution.</p>
+
+<blockquote>
+  <p><strong>Note:</strong> Past actions are represented as a matrix of numbers — one row per recent timestep, one column per joint. For a robot with 6 joints tracking the last 5 timesteps, this is a 5×6 matrix where each value is a joint angle. This matrix is embedded into tokens before being passed into the VAE encoder alongside the CLS token, joint states, and image features.</p>
+</blockquote>
+
+<h3 id="the-latent-distribution">The Latent Distribution</h3>
+
+<p>Rather than producing a single fixed summary of the input, the VAE encoder produces a <strong>probability distribution</strong> — a range of possible summaries, each slightly different. This is what introduces controlled variation.</p>
+
+<p>Specifically, the encoder uses the CLS token’s output to predict two vectors via learned weights:</p>
+
+<ul>
+  <li><strong>μ (mu)</strong> — the mean of the distribution</li>
+  <li><strong>log(σ²)</strong> — the log variance of the distribution</li>
+</ul>
+
+<p>Together, μ and σ define a Gaussian distribution in latent space. During training, we <strong>sample</strong> a latent vector <code class="language-plaintext highlighter-rouge">z</code> from this distribution rather than using a single fixed value. Think of <code class="language-plaintext highlighter-rouge">z</code> as a compressed, slightly-varied summary of the current situation and past actions.</p>
+
+<p>By sampling from a distribution rather than computing a deterministic encoding, the model is forced to be robust to small variations in input — it cannot over-rely on exact reproduction of any one demonstration.</p>
+
+<p><img src="/assets/images/diagram_vae_encoder.svg" alt="VAE Encoder Diagram" /></p>
+
+<blockquote>
+  <p><strong>Note:</strong> The VAE encoder is trained jointly with the rest of ACT using two loss terms: the standard action prediction loss, plus a <strong>KL divergence</strong> term that keeps the learned distribution close to a standard Gaussian. This prevents the distribution from collapsing to a single point (which would defeat the purpose of sampling).</p>
+</blockquote>
+
+<hr />
+
+<h2 id="the-main-encoder">The Main Encoder</h2>
+
+<p>The main encoder takes the latent vector <code class="language-plaintext highlighter-rouge">z</code> produced by the VAE encoder and combines it with the current state information:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[z, joint states, image features]
+</code></pre></div></div>
+
+<p>This input is passed through <strong>self-attention</strong> and MLP layers — standard transformer blocks — to produce <strong>contextualized representations</strong> of the current state. “Contextualized” means that each element of the input has been allowed to attend to every other element: the image features can influence how joint states are interpreted, <code class="language-plaintext highlighter-rouge">z</code> can influence the representation of both, and so on.</p>
+
+<p>The output of the main encoder is a rich, context-aware representation of the robot’s current situation, which is then passed to the decoder.</p>
+
+<hr />
+
+<h2 id="the-main-decoder">The Main Decoder</h2>
+
+<p>The main decoder takes a set of <strong>query tokens</strong> as input:</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[query tokens]
+</code></pre></div></div>
+
+<p>Each query token corresponds to one future timestep in the predicted action chunk. If we want to predict a chunk of 10 future actions, we pass in 10 query tokens — one per predicted step. These tokens are learned positional embeddings that start with no task-specific information; their content is entirely shaped by what the decoder learns during training.</p>
+
+<p>The decoder processes these queries in two stages:</p>
+
+<p><strong>Self-attention</strong> is applied first across the query tokens themselves. This ensures the predicted sequence is internally coherent — the action predicted at step 3 is aware of what was predicted at steps 1 and 2, so the chunk reads as one smooth, continuous motion rather than a series of disconnected predictions.</p>
+
+<p><strong>Cross-attention</strong> is then applied between the query tokens and the main encoder’s output. This is the bridge between the two components: each query token reaches into the encoder’s contextualised state representation — which encodes what the robot currently sees, its joint configuration, and the latent vector <code class="language-plaintext highlighter-rouge">z</code> — and uses that information to decide what action to predict at its timestep. Without this cross-attention step, the decoder would be predicting actions blind, with no knowledge of the current scene.</p>
+
+<p>The decoder then outputs a predicted sequence of future joint positions — one per query token — which is compared against the ground truth actions from the demonstration. The resulting loss is propagated back through the decoder, main encoder, and VAE encoder via backpropagation to update all weights.</p>
+
+<p><img src="/assets/images/diagram_act_architecture.svg" alt="ACT Architecture Overview" /></p>
+
+<hr />
+
+<h2 id="inference-what-happens-at-test-time">Inference: What Happens at Test Time</h2>
+
+<p>At inference time — when the trained model is deployed on the real robot — the VAE encoder is <strong>switched off entirely</strong>. In its place, the latent vector <code class="language-plaintext highlighter-rouge">z</code> is fixed to the zero vector <code class="language-plaintext highlighter-rouge">z = 0</code>.</p>
+
+<p>This works because the main encoder and decoder have been trained to operate robustly across a range of <code class="language-plaintext highlighter-rouge">z</code> values.</p>
+
+<p>The inference loop then runs as follows:</p>
+
+<ol>
+  <li>Cameras capture the current scene; the CNN extracts image features</li>
+  <li>Current joint states are read from the robot</li>
+  <li>The main encoder combines <code class="language-plaintext highlighter-rouge">[0, joint states, image features]</code> into a contextual representation
+    <blockquote>
+      <p><strong>Note:</strong> Past actions are not passed to the main encoder — they were only ever an input to the VAE encoder during training. Since the VAE encoder is off at inference, past actions play no role.</p>
+    </blockquote>
+  </li>
+  <li>The main decoder produces a chunk of predicted future actions</li>
+  <li>The robot executes the first action (or a weighted average of actions in the chunk)</li>
+  <li>The loop repeats at the next timestep</li>
+</ol>
+
+<p>This approach — predict a chunk, execute the first step, predict again — allows the robot to continuously replan while still benefiting from the smoothness that chunking provides.</p>
+
+<hr />
+
+<h2 id="summary">Summary</h2>
+
+<h3 id="what-each-component-does">What Each Component Does</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Component</th>
+      <th>Input</th>
+      <th>Output</th>
+      <th>Training Only?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>CNN</strong></td>
+      <td>Raw camera images</td>
+      <td>Compact image feature vectors</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>VAE Encoder</strong></td>
+      <td>CLS, joint states, image features, past actions</td>
+      <td>Latent vector <code class="language-plaintext highlighter-rouge">z</code> (sampled from μ, σ)</td>
+      <td>Yes</td>
+    </tr>
+    <tr>
+      <td><strong>Main Encoder</strong></td>
+      <td><code class="language-plaintext highlighter-rouge">z</code>, joint states, image features</td>
+      <td>Contextualised state representation</td>
+      <td>No</td>
+    </tr>
+    <tr>
+      <td><strong>Main Decoder</strong></td>
+      <td>Query tokens + encoder output</td>
+      <td>Predicted sequence of future actions</td>
+      <td>No</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="key-concepts">Key Concepts</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>What It Does</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Action Chunking</strong></td>
+      <td>Predicts multiple future actions at once for smooth, coherent motion</td>
+    </tr>
+    <tr>
+      <td><strong>Latent Distribution</strong></td>
+      <td>Introduces controlled variation during training to prevent overfitting</td>
+    </tr>
+    <tr>
+      <td><strong>CLS Token</strong></td>
+      <td>A single learned vector that summarises the entire input sequence</td>
+    </tr>
+    <tr>
+      <td><strong>Cross-Attention</strong></td>
+      <td>Allows predicted actions to be grounded in the current observed state</td>
+    </tr>
+    <tr>
+      <td><strong>VAE at Inference</strong></td>
+      <td>Replaced by <code class="language-plaintext highlighter-rouge">z = 0</code>; the model uses its “average” prediction</td>
+    </tr>
+  </tbody>
+</table>
+
+  </div><a class="u-url" href="/2025/03/10/ACT-transformer.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">J.aiTech</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name" style="color:#000;">Jaisree David Ravikumar</li><li style="color:#000; list-style:none;">AI • Robotics • Intelligent Systems</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

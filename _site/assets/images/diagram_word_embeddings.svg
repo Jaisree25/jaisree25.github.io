@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 360" width="860" height="360" font-family="Arial, sans-serif">
+  <rect width="860" height="360" fill="#f8faff" rx="14"/>
+  <text x="430" y="28" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">Word Embeddings: Skip-gram vs CBOW</text>
+  <text x="430" y="46" text-anchor="middle" font-size="13" fill="#555" font-style="italic">Sentence: "The cat sat on the mat"  ·  Context window = 2  ·  Query word: "sat"</text>
+
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#555"/></marker>
+    <marker id="arr-b" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#2940b0"/></marker>
+    <marker id="arr-g" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#087255"/></marker>
+  </defs>
+
+  <!-- ══ LEFT: Skip-gram ══ -->
+  <rect x="20" y="60" width="390" height="275" rx="10" fill="#dde4ff" stroke="#4361ee" stroke-width="1.5"/>
+  <text x="215" y="84" text-anchor="middle" font-size="15" font-weight="bold" fill="#2940b0">Skip-gram</text>
+  <text x="215" y="102" text-anchor="middle" font-size="12" fill="#555">Centre word → predict context words</text>
+
+  <!-- Centre word -->
+  <rect x="155" y="118" width="120" height="40" rx="8" fill="#2940b0" stroke="#2940b0" stroke-width="2"/>
+  <text x="215" y="143" text-anchor="middle" font-size="15" font-weight="bold" fill="white">"sat"  (input)</text>
+
+  <!-- Arrows out to context -->
+  <line x1="155" y1="138" x2="88"  y2="188" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+  <line x1="175" y1="158" x2="118" y2="208" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+  <line x1="255" y1="158" x2="298" y2="208" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+  <line x1="275" y1="138" x2="338" y2="188" stroke="#4361ee" stroke-width="1.8" marker-end="url(#arr-b)"/>
+
+  <!-- Context word boxes -->
+  <rect x="38"  y="200" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="78"  y="222" text-anchor="middle" font-size="13" fill="#7b2d8b">"The"</text>
+  <rect x="88"  y="230" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="128" y="252" text-anchor="middle" font-size="13" fill="#7b2d8b">"cat"</text>
+  <rect x="240" y="230" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="280" y="252" text-anchor="middle" font-size="13" fill="#7b2d8b">"on"</text>
+  <rect x="298" y="200" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="338" y="222" text-anchor="middle" font-size="13" fill="#7b2d8b">"the"</text>
+
+  <text x="215" y="284" text-anchor="middle" font-size="12" fill="#555" font-style="italic">context (targets)</text>
+
+  <rect x="40" y="300" width="330" height="22" rx="5" fill="#dde4ff" stroke="#4361ee" stroke-width="1"/>
+  <text x="205" y="316" text-anchor="middle" font-size="11" fill="#2940b0">Better for rare words · smaller datasets</text>
+
+  <!-- ══ RIGHT: CBOW ══ -->
+  <rect x="450" y="60" width="390" height="275" rx="10" fill="#d1faf0" stroke="#087255" stroke-width="1.5"/>
+  <text x="645" y="84" text-anchor="middle" font-size="15" font-weight="bold" fill="#087255">CBOW</text>
+  <text x="645" y="102" text-anchor="middle" font-size="12" fill="#555">Context words → predict centre word</text>
+
+  <!-- Context word boxes -->
+  <rect x="468" y="118" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="508" y="140" text-anchor="middle" font-size="13" fill="#7b2d8b">"The"</text>
+  <rect x="518" y="148" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="558" y="170" text-anchor="middle" font-size="13" fill="#7b2d8b">"cat"</text>
+  <rect x="650" y="148" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="690" y="170" text-anchor="middle" font-size="13" fill="#7b2d8b">"on"</text>
+  <rect x="700" y="118" width="80" height="34" rx="6" fill="#ede9f8" stroke="#7b2d8b" stroke-width="1.5"/>
+  <text x="740" y="140" text-anchor="middle" font-size="13" fill="#7b2d8b">"the"</text>
+
+  <text x="645" y="196" text-anchor="middle" font-size="12" fill="#555" font-style="italic">context (inputs) — averaged together</text>
+
+  <!-- Arrows in to centre -->
+  <line x1="508" y1="152" x2="600" y2="218" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+  <line x1="558" y1="182" x2="618" y2="218" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+  <line x1="690" y1="182" x2="665" y2="218" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+  <line x1="740" y1="152" x2="685" y2="218" stroke="#087255" stroke-width="1.8" marker-end="url(#arr-g)"/>
+
+  <!-- Centre word output -->
+  <rect x="575" y="220" width="140" height="40" rx="8" fill="#087255" stroke="#065f46" stroke-width="2"/>
+  <text x="645" y="245" text-anchor="middle" font-size="15" font-weight="bold" fill="white">"sat"  (target)</text>
+
+  <rect x="470" y="300" width="330" height="22" rx="5" fill="#d1faf0" stroke="#087255" stroke-width="1"/>
+  <text x="635" y="316" text-anchor="middle" font-size="11" fill="#087255">Better for frequent words · faster to train</text>
+</svg>
