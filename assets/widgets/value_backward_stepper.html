@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Value backward stepper</title>
+<style>
+:root{
+  --text:#1f1e1d; --muted:#6b6a65; --faint:#9c9a92; --border:#d3d1c7; --surface:#f5f4ef; --bg:#ffffff;
+  --edge:#888780; --hot:#D85A30;
+  --pu-fill:#EEEDFE; --pu-stroke:#534AB7; --pu-title:#3C3489; --pu-text:#534AB7;
+  --te-fill:#E1F5EE; --te-stroke:#0F6E56; --te-title:#085041; --te-text:#0F6E56;
+  --chip-on-bg:#FAEEDA; --chip-on-text:#854F0B; --chip-on-border:#EF9F27;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --text:#ecebe6; --muted:#b4b2a9; --faint:#888780; --border:#444441; --surface:#2c2c2a; --bg:#1f1e1d;
+    --pu-fill:#3C3489; --pu-stroke:#AFA9EC; --pu-title:#EEEDFE; --pu-text:#CECBF6;
+    --te-fill:#085041; --te-stroke:#5DCAA5; --te-title:#E1F5EE; --te-text:#9FE1CB;
+    --chip-on-bg:#633806; --chip-on-text:#FAC775; --chip-on-border:#BA7517;
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;padding:14px 16px;background:var(--bg);color:var(--text);font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+svg text{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.th{font-size:14px;font-weight:600}
+.ts{font-size:12px}
+.purple rect{fill:var(--pu-fill);stroke:var(--pu-stroke)} .purple .th{fill:var(--pu-title)} .purple .ts{fill:var(--pu-text)}
+.teal rect{fill:var(--te-fill);stroke:var(--te-stroke)} .teal .th{fill:var(--te-title)} .teal .ts{fill:var(--te-text)}
+#topo{font-size:13px;color:var(--muted);margin:6px 0 10px;min-height:28px}
+.chip{display:inline-block;font-family:var(--mono);font-size:13px;padding:1px 9px;border-radius:6px;border:1px solid var(--border);margin:2px 4px 2px 0;color:var(--muted)}
+.chip.on{background:var(--chip-on-bg);color:var(--chip-on-text);border-color:var(--chip-on-border)}
+.chip.done{color:var(--faint);text-decoration:line-through}
+pre{font-family:var(--mono);font-size:13px;line-height:1.55;background:var(--surface);border-radius:8px;padding:10px 12px;margin:0;white-space:pre;overflow-x:auto;color:var(--text)}
+#cap{min-height:76px;margin-top:10px}
+.nav{display:flex;align-items:center;gap:10px;margin-top:8px}
+button{font:inherit;font-size:14px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer}
+button:hover{background:var(--surface)}
+button:disabled{opacity:.35;cursor:default}
+#pos{font-size:13px;color:var(--faint);margin-left:auto}
+</style>
+</head>
+<body>
+<svg id="g" width="100%" viewBox="0 0 680 350" role="img" aria-label="Value objects for L = (x*w + b) squared, with data, grad, children and local grads"></svg>
+<div id="topo"></div>
+<pre id="code"></pre>
+<div id="cap"></div>
+<div class="nav">
+  <button id="prev" onclick="go(-1)">&larr; Back</button>
+  <button id="next" onclick="go(1)">Next &rarr;</button>
+  <span id="pos"></span>
+</div>
+<script>
+const N={
+x:{x:15,y:20,t:"x",d:"2.0",ch:"()",lg:"()",c:"purple"},
+w:{x:15,y:150,t:"w",d:"3.0",ch:"()",lg:"()",c:"purple"},
+p:{x:185,y:85,t:"p = x * w",d:"6.0",ch:"(x, w)",lg:"(3.0, 2.0)",c:"teal"},
+b:{x:185,y:230,t:"b",d:"1.0",ch:"()",lg:"()",c:"purple"},
+s:{x:355,y:155,t:"s = p + b",d:"7.0",ch:"(p, b)",lg:"(1, 1)",c:"teal"},
+L:{x:525,y:155,t:"L = s ** 2",d:"49.0",ch:"(s,)",lg:"(14.0,)",c:"teal"}};
+const E={xp:[145,74,183,122],wp:[145,204,183,160],ps:[325,139,353,190],bs:[325,284,353,232],sL:[495,209,523,209]};
+const S=[
+{ph:"Forward",show:["x","w","b"],code:"x = Value(2.0)\nw = Value(3.0)\nb = Value(1.0)",cap:"Three Value objects are created. Each card is one object with its four fields. They are leaves: nothing made them, so _children and _local_grads are empty, and grad starts at 0."},
+{ph:"Forward",show:["x","w","b","p"],edges:["xp","wp"],code:"p = x * w            # Python calls x.__mul__(w)\n\ndef __mul__(self, other):          # self = x, other = w\n    return Value(self.data * other.data,      # 2.0 * 3.0 = 6.0\n                 (self, other),               # children: (x, w)\n                 (other.data, self.data))     # local grads: (3.0, 2.0)",cap:"A new object p is born. It stores pointers to its parents x and w (the arrows) and the local grads (3.0, 2.0): nudging x by 1 moves p by 3, and nudging w by 1 moves p by 2."},
+{ph:"Forward",show:["x","w","b","p","s"],edges:["xp","wp","ps","bs"],code:"s = p + b            # Python calls p.__add__(b)\n\ndef __add__(self, other):\n    return Value(self.data + other.data,      # 6.0 + 1.0 = 7.0\n                 (self, other),               # children: (p, b)\n                 (1, 1))                      # local grads: (1, 1)",cap:"s is born from p and b. Addition passes nudges through unchanged, so both local grads are 1."},
+{ph:"Forward",show:["x","w","b","p","s","L"],edges:["xp","wp","ps","bs","sL"],code:"L = s ** 2           # Python calls s.__pow__(2)\n\ndef __pow__(self, other):\n    return Value(self.data**other,            # 7.0 ** 2 = 49.0\n                 (self,),                     # children: (s,)\n                 (other * self.data**(other-1),))  # 2 * 7.0 = 14.0",cap:"L is the last node; it plays the role of the loss. Its local grad is 14: near s = 7, the function s squared rises about 14 for every 1 that s rises. The forward pass is finished, and every grad is still 0."},
+{ph:"Backward",show:"all",edges:"all",topo:true,code:"L.backward()\n\n# step 1: build_topo(L) visits children first, then appends the node\ntopo = [x, w, p, b, s, L]\n# reversed(topo) = [L, s, b, p, w, x]   <- the order we will process",cap:"backward() first lists every node so that each node comes after the nodes it was built from. Reversing that list means we start at L and only reach a node after everything that uses it has been handled."},
+{ph:"Backward",show:"all",edges:"all",topo:true,g:{L:1},nw:["L"],code:"self.grad = 1        # L.grad = 1",cap:"Seed the start: L.grad = 1, because L changes 1-for-1 with itself. Everything now trickles from this single 1."},
+{ph:"Backward",show:"all",edges:"all",topo:true,cur:"L",g:{L:1,s:14},nw:["s"],hot:["sL"],code:"v = L\nfor child, local_grad in zip(v._children, v._local_grads):   # (s, 14.0)\n    child.grad += local_grad * v.grad\n#   s.grad    +=   14.0     *   1       -> 14.0",cap:"Process L. It has one child, s, with local grad 14. So s.grad = 14 x 1 = 14. Meaning: nudge s up by 0.01 and L rises by about 0.14."},
+{ph:"Backward",show:"all",edges:"all",topo:true,cur:"s",g:{L:1,s:14,p:14,b:14},nw:["p","b"],hot:["ps","bs"],code:"v = s\n# children (p, b), local grads (1, 1)\n#   p.grad += 1 * 14.0   -> 14.0\n#   b.grad += 1 * 14.0   -> 14.0",cap:"Process s. Each child gets (its local grad) x (s's grad). Both local grads are 1, so p and b each inherit 14. Addition passes the gradient straight through."},
+{ph:"Backward",show:"all",edges:"all",topo:true,cur:"b",g:{L:1,s:14,p:14,b:14},code:"v = b\n# b._children is ()  -> the inner loop runs zero times",cap:"Process b. It's a leaf with no children, so nothing happens. Its grad of 14 is final."},
+{ph:"Backward",show:"all",edges:"all",topo:true,cur:"p",g:{L:1,s:14,p:14,b:14,x:42,w:28},nw:["x","w"],hot:["xp","wp"],code:"v = p\n# children (x, w), local grads (3.0, 2.0)\n#   x.grad += 3.0 * 14.0   -> 42.0\n#   w.grad += 2.0 * 14.0   -> 28.0",cap:"Process p. x.grad = 3 x 14 = 42 and w.grad = 2 x 14 = 28. Look at the path to w: 1, then x14, then x1, then x2, giving 28. A gradient is the local grads multiplied along the path from L."},
+{ph:"Done",show:"all",edges:"all",topo:true,cur:"end",g:{L:1,s:14,p:14,b:14,x:42,w:28},code:"v = w   # no children, nothing to do\nv = x   # no children, nothing to do\n\n# check w.grad = 28 by experiment:\n# w = 3.01  ->  p = 6.02  ->  s = 7.02  ->  L = 49.28   (rose 0.28 = 28 x 0.01)",cap:"Done. Every node now holds how much L would change per tiny nudge of it. In microgpt, x, w and b would be among the 4,192 parameters, and Adam would use these grads to turn each one slightly."}];
+const order=["L","s","b","p","w","x"];
+let i=0;
+function go(d){i=Math.max(0,Math.min(S.length-1,i+d));render();}
+function render(){
+  const s=S[i];
+  const show=s.show==="all"?Object.keys(N):s.show;
+  const edges=s.edges==="all"?Object.keys(E):(s.edges||[]);
+  const g=s.g||{}, nw=s.nw||[], hot=s.hot||[];
+  let o='<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>';
+  let ed='';
+  for(const k in E){
+    if(!edges.includes(k))continue;
+    const e=E[k];
+    if(hot.includes(k)) ed+='<line x1="'+e[2]+'" y1="'+e[3]+'" x2="'+e[0]+'" y2="'+e[1]+'" stroke="var(--hot)" stroke-width="3" marker-end="url(#ar)"/>';
+    else ed+='<line x1="'+e[0]+'" y1="'+e[1]+'" x2="'+e[2]+'" y2="'+e[3]+'" stroke="var(--edge)" stroke-width="1.2" marker-end="url(#ar)"/>';
+  }
+  for(const k in N){
+    if(!show.includes(k))continue;
+    const n=N[k], cx=n.x+70, isNew=nw.includes(k), gv=g[k]!==undefined?g[k]:0;
+    const sw=(isNew||s.cur===k)?2:0.75;
+    o+='<g class="'+n.c+'"><rect x="'+n.x+'" y="'+n.y+'" width="140" height="108" rx="8" stroke-width="'+sw+'"/>';
+    o+='<text class="th" x="'+cx+'" y="'+(n.y+18)+'" text-anchor="middle" dominant-baseline="central">'+n.t+'</text>';
+    o+='<text class="ts" x="'+cx+'" y="'+(n.y+39)+'" text-anchor="middle" dominant-baseline="central">data = '+n.d+'</text>';
+    o+='<text class="'+(isNew?'th':'ts')+'" x="'+cx+'" y="'+(n.y+57)+'" text-anchor="middle" dominant-baseline="central">grad = '+gv+(isNew?'  (new)':'')+'</text>';
+    o+='<text class="ts" x="'+cx+'" y="'+(n.y+75)+'" text-anchor="middle" dominant-baseline="central">children: '+n.ch+'</text>';
+    o+='<text class="ts" x="'+cx+'" y="'+(n.y+93)+'" text-anchor="middle" dominant-baseline="central">local: '+n.lg+'</text></g>';
+  }
+  document.getElementById('g').innerHTML=o+ed;
+  let t='';
+  if(s.topo){
+    t='Processing order, reversed(topo): ';
+    const ci=s.cur==="end"?99:order.indexOf(s.cur);
+    order.forEach((k,j)=>{const cl=s.cur===undefined?'':(j===ci?'on':(j<ci?'done':''));t+='<span class="chip '+cl+'">'+k+'</span>';});
+  } else t='Gray arrows point from each new object to the children it remembers.';
+  document.getElementById('topo').innerHTML=t;
+  document.getElementById('code').textContent=s.code;
+  document.getElementById('cap').textContent=s.cap;
+  document.getElementById('pos').textContent=s.ph+" · step "+(i+1)+" of "+S.length;
+  document.getElementById('prev').disabled=i===0;
+  document.getElementById('next').disabled=i===S.length-1;
+  postHeight();
+}
+function postHeight(){
+  try{parent.postMessage({microgptWidget:"value-stepper",height:Math.ceil(document.body.getBoundingClientRect().height)},"*");}catch(e){}
+}
+window.addEventListener('resize',postHeight);
+render();
+</script>
+</body>
+</html>
