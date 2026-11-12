@@ -40,7 +40,7 @@ The previous post built up attention from scratch: tokens, embeddings, queries, 
 - the Adam optimizer
 - a training loop and an inference loop
 
-We will walk through every part, top to bottom, with a running example: the name **"emma"**. Wherever the code is dense, I will rewrite it as plain loops and push real numbers through it.
+We will walk through every part, top to bottom, with a running example: the name **"emma"**.
 
 > **Note:** You can run the code yourself in Karpathy's [Google Colab notebook](https://colab.research.google.com/drive/1vyN5zo6rqUp_dYNbT4Yrco66zuWCZKoN?usp=sharing). It takes about a minute and needs no installs.
 
@@ -134,7 +134,7 @@ That answer is called the **gradient**. Here is a model with just one knob, `w`.
 | 1.00 | 2.00 | 16.00 |
 | 1.01 | 2.02 | 15.84 |
 
-Turning `w` up by 0.01 lowered the loss by 0.16. So the loss changes about 16 times as fast as `w`, in the opposite direction. The gradient is **-16**, which means "turn this knob up."
+Turning `w` up by 0.01 lowered the loss by 0.16. So the loss changes about 16 times as fast as `w`, in the opposite direction.
 
 That experiment works for one knob. microgpt has 4,192 knobs, and running an experiment on each one at every step would be far too slow. The `Value` class gets the answer to every experiment at once, without running any of them.
 
@@ -259,60 +259,6 @@ The stepper below runs a tiny "neuron", `L = (x*w + b)²`, through the real `Val
   });
 </script>
 
-Because this example is a chain, you can see the gradient trickle back one hop at a time. Each node's gradient is its parent's gradient times the number on the arrow:
-
-```
-L.grad = 1
-   |  x 14   (local grad of s ** 2 at s = 7)
-s.grad = 14
-   |  x 1    (addition passes it through)
-p.grad = 14
-   |  x 2    (local grad of x * w with respect to w is x = 2)
-w.grad = 28
-```
-
-You can check this by experiment: set `w = 3.01` and `L` becomes 49.28, up by 0.28, which is 28 × 0.01.
-
-### Try It Yourself
-
-Run this in the Colab notebook after the cell that defines `Value`. It prints every `+=` as it happens:
-
-```python
-x, w, b = Value(2.0), Value(3.0), Value(1.0)
-p = x * w
-s = p + b
-L = s ** 2
-names = {x:'x', w:'w', b:'b', p:'p', s:'s', L:'L'}
-
-topo, visited = [], set()
-def build_topo(v):
-    if v not in visited:
-        visited.add(v)
-        for c in v._children: build_topo(c)
-        topo.append(v)
-build_topo(L)
-print("topo:", [names[v] for v in topo])
-
-L.grad = 1
-for v in reversed(topo):
-    for child, lg in zip(v._children, v._local_grads):
-        child.grad += lg * v.grad
-        print(f"at {names[v]}: {names[child]}.grad += {lg} * {v.grad}  ->  {child.grad}")
-```
-
-Output:
-
-```
-topo: ['x', 'w', 'p', 'b', 's', 'L']
-at L: s.grad += 14.0 * 1  ->  14.0
-at s: p.grad += 1 * 14.0  ->  14.0
-at s: b.grad += 1 * 14.0  ->  14.0
-at p: x.grad += 3.0 * 14.0  ->  42.0
-at p: w.grad += 2.0 * 14.0  ->  28.0
-```
-
-> **Note:** In microgpt the graph is the same idea, just much bigger. The leaves are the 4,192 parameters. The middle is every add, multiply, `exp` and `log` inside the model, tens of thousands of nodes for a single name. The last node is the loss. One call to `loss.backward()` applies the same one-line rule to all of them.
-
 ---
 
 ## The Parameters
@@ -376,7 +322,7 @@ def softmax(logits):
     return [e / total for e in exps]
 ```
 
-It exponentiates each score and divides by the total, so the results are positive and add up to 1. Subtracting the maximum first does not change the answer, but it prevents `exp` from overflowing on big numbers.
+It exponentiates each score and divides by the total, so the results are positive and add up to 1. 
 
 ```
 [2, 1, 0]  ->  [0.665, 0.245, 0.090]
@@ -502,10 +448,6 @@ Two things to notice about that result:
 
 When the model moves on to the second `m`, it computes one new q, k and v, appends k and v to the cache (now 4 entries), and repeats the three steps. The three earlier rows are reused as they are. Even though it is the same letter, the second `m` gets a different query, because its position embedding is different.
 
-> **Note:** The cache is also what stops the model from cheating. Notes are only written when a token is processed, so when predicting the letter after the second `m`, the answer `a` is simply not on the shelf yet. Large implementations process all positions at once and need an explicit causal mask instead. More on that [below](#kv-cache-vs-causal-mask-the-pytorch-version).
-
-> **Note:** During training, the cached keys and values are live `Value` objects, so gradients flow back through the shelf. If the model guessed badly at position 3 partly because `e`'s note was unhelpful, `loss.backward()` sends gradient into that key and value, and from there into `attn_wk` and `attn_wv`. That is how the model learns what notes to write.
-
 ---
 
 ## Multi-Head Attention, Line by Line
@@ -625,8 +567,8 @@ The block doesn't replace `x`, it **nudges** it.
 
 ### Why Residuals Matter
 
-1. **Each block only has to learn an edit.** Without the residual, the block would need to output a complete new representation that still remembers the original letter. With it, the block only outputs "what to add." If it has nothing useful to say, it can output roughly zeros and `x` passes through unharmed.
-2. **Gradients get an express lane.** Remember that `a + b` has local grads `(1, 1)`. In `backward()`, the gradient flows into the `x_residual` copy completely unchanged, without squeezing through every multiply inside the block. This is why models with 100 layers can train at all: the error signal reaches the early layers along the main road.
+**Each block only has to learn an edit.** Without the residual, the block would need to output a complete new representation that still remembers the original letter. With it, the block only outputs "what to add." If it has nothing useful to say, it can output roughly zeros and `x` passes through unharmed.
+**Gradients get an express lane.** Remember that `a + b` has local grads `(1, 1)`. In `backward()`, the gradient flows into the `x_residual` copy completely unchanged, without squeezing through every multiply inside the block.
 
 ---
 
@@ -642,8 +584,8 @@ x = [a + b for a, b in zip(x, x_residual)]       # second residual
 ```
 
 - **`mlp_fc1`** expands 16 numbers to 64. Each of the 64 outputs acts as a detector for some learned pattern.
-- **`relu`** switches off the detectors that didn't fire: `[1.2, -0.5, 0.3, -2.0]` becomes `[1.2, 0, 0.3, 0]`. This bend matters: two linear layers in a row with nothing between them collapse into a single linear layer, so without relu the extra layer would add nothing.
-- **`mlp_fc2`** packs the results back into 16 numbers so they can be added onto the main road.
+- **`relu`** switches off the detectors that didn't fire: `[1.2, -0.5, 0.3, -2.0]` becomes `[1.2, 0, 0.3, 0]`.
+- **`mlp_fc2`** packs the results back into 16 numbers so they can be added.
 
 > **Note:** Attention is **communication**: the current token gathers information from earlier tokens. The MLP is **computation**: each token processes what it now has, on its own. A transformer alternates the two.
 
@@ -719,13 +661,9 @@ for i, p in enumerate(params):
     p.grad = 0
 ```
 
-- `loss.backward()` fills in `.grad` for all 4,192 parameters.
-- `lr_t` is the step size. It shrinks steadily from 0.01 toward 0: big steps early, careful steps late.
-- `m` is a running average of each parameter's gradient (85% memory, 15% new). It smooths out noise from individual names, like a ball rolling with momentum.
-- `v` is a running average of the squared gradient, which measures how large this parameter's gradients usually are.
-- `m_hat` and `v_hat` correct for `m` and `v` starting at zero. At the first step, `m = 0.15 × grad`, and dividing by 0.15 gives back exactly `grad`.
-- The update moves each parameter against its gradient, scaled so every parameter takes a sensibly sized step.
-- `p.grad = 0` resets the gradient, because `backward()` uses `+=` and leftovers would pile up into the next step.
+`loss.backward()` fills in `.grad` for all 4,192 parameters. The loop after it is Karpathy's from-scratch implementation of the [Adam optimizer](https://arxiv.org/abs/1412.6980): it uses each parameter's gradient to nudge that parameter in the direction that lowers the loss, with a learning rate that shrinks from 0.01 toward 0 over training.
+
+The last line, `p.grad = 0`, resets every gradient before the next step. Because `backward()` adds with `+=`, leftover gradients would otherwise pile up from one name to the next.
 
 > **Note:** Adam's `v` buffer and the attention `v` (value) are completely different things that happen to share a name.
 
@@ -759,8 +697,6 @@ Start with BOS and an empty cache. At each step, get the scores, divide them by 
 | 0.5 | 0.867, 0.117, 0.016 | sharper, safer choices |
 | close to 0 | 1, 0, 0 | always the top choice |
 
-> **Note:** A generated name like "karia" is a hallucination in exactly the same sense as ChatGPT stating a false fact: a statistically plausible continuation with no notion of whether it's real.
-
 ---
 
 ## KV Cache vs Causal Mask: The PyTorch Version
@@ -788,29 +724,6 @@ position 4 (a)            Y    Y    Y    Y    Y
 ```
 
 Each row is exactly what microgpt's shelf held at that step. The math is identical; the GPU just computes all the rows in parallel.
-
-Here is the transformer block from that version ([full script](/assets/code/microgpt_torch.py)). `n_embd` and `n_head` are the same settings as before:
-
-```python
-norm = lambda x: F.rms_norm(x, (n_embd,), eps=1e-5)
-
-class Block(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.qkv = nn.Linear(n_embd, 3 * n_embd, bias=False)  # wq, wk, wv in one matrix
-        self.wo = nn.Linear(n_embd, n_embd, bias=False)
-        self.mlp = nn.Sequential(nn.Linear(n_embd, 4 * n_embd, bias=False), nn.ReLU(),
-                                 nn.Linear(4 * n_embd, n_embd, bias=False))
-    def forward(self, x):                                      # x: (T, n_embd), all positions at once
-        T = x.shape[0]
-        q, k, v = self.qkv(norm(x)).split(n_embd, dim=-1)
-        q, k, v = (t.view(T, n_head, -1).transpose(0, 1) for t in (q, k, v))  # split into heads
-        y = F.scaled_dot_product_attention(q, k, v, is_causal=True)          # mask replaces the cache
-        x = x + self.wo(y.transpose(0, 1).reshape(T, n_embd))
-        return x + self.mlp(norm(x))
-```
-
-> **Note:** The short version is what you'd write in practice, but it hides the two things this post was about. `loss.backward()` becomes a black box, and attention becomes a single function call. microgpt is long precisely because it shows everything.
 
 ---
 
@@ -846,22 +759,5 @@ None of these change the core loop: predict the next token, measure the surprise
 | **Residual** | Adds each block's output onto the main road instead of replacing it |
 | **MLP** | Per-token computation: expand, relu, shrink |
 | **Adam** | Uses smoothed gradients to nudge every parameter |
-
-### The Two Rules of Backpropagation
-
-| Rule | In Code | Example |
-|---|---|---|
-| Multiply along a path | `local_grad * v.grad` | 1 × 14 × 1 × 2 = 28 |
-| Add across paths | `+=` | 1 (direct) + 3 (via c) = 4 |
-
-### The Worked Numbers
-
-| Example | Result |
-|---|---|
-| softmax of [2, 1, 0] | [0.665, 0.245, 0.090] |
-| rmsnorm of [3, 4] | [0.85, 1.13] |
-| attention at the first m (2-number vectors) | weights 14% / 58% / 28%, output [0.42, 1.44] |
-| one head at the first m (4-number slices) | weights 19% / 51% / 31%, output [0.19, 0.51, 0.31, 0.31] |
-| gradients for L = (x*w + b)² | x 42, w 28, b 14 |
 
 All credit for microgpt goes to Andrej Karpathy. Read his [original post](https://karpathy.github.io/2026/02/12/microgpt/) and the [full source](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95).
