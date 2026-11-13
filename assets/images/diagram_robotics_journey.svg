@@ -1,0 +1,81 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 1010" width="760" height="1010" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+  <rect x="0" y="0" width="760" height="1010" rx="16" fill="#ffffff"/>
+
+  <!-- Title -->
+  <text x="40" y="52" font-size="24" font-weight="700" fill="#1f2328">My Robotics Journey</text>
+  <text x="40" y="78" font-size="14" fill="#59636e">From a movie robot to a first-place Physical AI build</text>
+
+  <!-- Legend -->
+  <g font-size="13" fill="#1f2328">
+    <circle cx="46" cy="110" r="6" fill="#2563eb"/><text x="58" y="114">Learning</text>
+    <circle cx="146" cy="110" r="6" fill="#ea580c"/><text x="158" y="114">Building</text>
+    <circle cx="246" cy="110" r="6" fill="#7c3aed"/><text x="258" y="114">Research</text>
+    <circle cx="346" cy="110" r="6" fill="#16a34a"/><text x="358" y="114">Hackathons</text>
+  </g>
+
+  <!-- Spine -->
+  <line x1="170" y1="150" x2="170" y2="975" stroke="#d0d7de" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Milestones: date column on the left, dot on the spine, card on the right -->
+  <g font-size="13">
+    <!-- 1 -->
+    <text x="150" y="176" text-anchor="end" font-weight="600" fill="#59636e">Childhood</text>
+    <circle cx="170" cy="171" r="9" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="176" font-size="16" font-weight="700" fill="#1f2328">Hooked by Enthiran</text>
+    <text x="196" y="198" fill="#59636e">Rewatched it countless times and wondered how anyone builds a robot</text>
+
+    <!-- 2 -->
+    <text x="150" y="266" text-anchor="end" font-weight="600" fill="#59636e">Middle school</text>
+    <circle cx="170" cy="261" r="9" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="266" font-size="16" font-weight="700" fill="#1f2328">Donkey Car drives itself</text>
+    <text x="196" y="288" fill="#59636e">Trained a camera-driven RC car; learned neural networks and CNNs</text>
+
+    <!-- 3 -->
+    <text x="150" y="356" text-anchor="end" font-weight="600" fill="#59636e">Late 2022</text>
+    <circle cx="170" cy="351" r="9" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="356" font-size="16" font-weight="700" fill="#1f2328">ChatGPT leads me to Transformers</text>
+    <text x="196" y="378" fill="#59636e">Dug into attention, the idea behind modern LLMs</text>
+
+    <!-- 4 -->
+    <text x="150" y="446" text-anchor="end" font-weight="600" fill="#59636e">2024</text>
+    <circle cx="170" cy="441" r="9" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="446" font-size="16" font-weight="700" fill="#1f2328">LeRobot SO-100 arm</text>
+    <text x="196" y="468" fill="#59636e">Printed and built it, trained ACT to pick up carrots, first merged PR</text>
+
+    <!-- 5 -->
+    <text x="150" y="536" text-anchor="end" font-weight="600" fill="#59636e">Sep 2025</text>
+    <circle cx="170" cy="531" r="9" fill="#7c3aed" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="536" font-size="16" font-weight="700" fill="#1f2328">AIEA Lab, UC Santa Cruz</text>
+    <text x="196" y="558" fill="#59636e">LiDAR scene classification over 23K+ frames; scene-flow models</text>
+
+    <!-- 6 -->
+    <text x="150" y="626" text-anchor="end" font-weight="600" fill="#59636e">Oct 2025</text>
+    <circle cx="170" cy="621" r="9" fill="#16a34a" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="626" font-size="16" font-weight="700" fill="#1f2328">Embodied AI Hackathon: ASGARD</text>
+    <text x="196" y="648" fill="#59636e">First hardware hackathon; Jetson Thor, Isaac Sim, voice commands</text>
+
+    <!-- 7 -->
+    <text x="150" y="716" text-anchor="end" font-weight="600" fill="#59636e">Spring 2026</text>
+    <circle cx="170" cy="711" r="9" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="716" font-size="16" font-weight="700" fill="#1f2328">NVIDIA GTC</text>
+    <text x="196" y="738" fill="#59636e">Learned sim-to-real techniques like GapONet</text>
+
+    <!-- 8 -->
+    <text x="150" y="806" text-anchor="end" font-weight="600" fill="#59636e">Summer 2026</text>
+    <circle cx="170" cy="801" r="9" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+    <text x="196" y="806" font-size="16" font-weight="700" fill="#1f2328">xArm6 builds a Chipotle-style bowl</text>
+    <text x="196" y="828" fill="#59636e">Fusion 360 → Gazebo + ROS + MoveIt → real arm, sim-to-real</text>
+
+    <!-- 9: highlighted -->
+    <rect x="186" y="868" width="540" height="78" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+    <text x="150" y="896" text-anchor="end" font-weight="600" fill="#59636e">Fall 2026</text>
+    <circle cx="170" cy="891" r="11" fill="#16a34a" stroke="#ffffff" stroke-width="3"/>
+    <text x="202" y="896" font-size="16" font-weight="700" fill="#1f2328">1st place, Physical AI: FollowMe</text>
+    <text x="202" y="918" fill="#59636e">SF Tech Week AI Hackathon at UCSC. SO-101 arm, camera</text>
+    <text x="202" y="936" fill="#59636e">tracking and inverse kinematics keep the phone on you</text>
+
+    <!-- Next -->
+    <circle cx="170" cy="975" r="6" fill="#ffffff" stroke="#d0d7de" stroke-width="3"/>
+    <text x="196" y="980" font-style="italic" fill="#59636e">Next: more experiments and research…</text>
+  </g>
+</svg>
