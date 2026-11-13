@@ -23,7 +23,7 @@ tags: [Robotics, LeRobot, Physical AI, Sim-to-Real, ROS, Hackathons]
 
 ## My Journey at a Glance
 
-![Timeline of my robotics journey](/assets/images/diagram_robotics_journey.svg)
+![Timeline of my robotics journey](/assets/images/diagram_robotics_journey_horizontal.svg)
 
 Every step on this timeline started the same way: I saw something that seemed like magic and needed to know how it actually worked.
 
