@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 430" width="1200" height="430" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect width="1200" height="430" rx="16" fill="#ffffff"/>
+<text x="40" y="54" font-size="30" font-weight="700" fill="#1f2328">My Robotics Journey</text>
+<g font-size="16" fill="#1f2328">
+<circle cx="47" cy="88" r="7" fill="#2563eb"/><text x="60" y="93">Learning</text>
+<circle cx="177" cy="88" r="7" fill="#ea580c"/><text x="190" y="93">Building</text>
+<circle cx="307" cy="88" r="7" fill="#7c3aed"/><text x="320" y="93">Research</text>
+<circle cx="437" cy="88" r="7" fill="#16a34a"/><text x="450" y="93">Hackathons</text>
+</g>
+<line x1="50" y1="260" x2="1150" y2="260" stroke="#d0d7de" stroke-width="4" stroke-linecap="round"/>
+<path d="M1150 251 L1166 260 L1150 269 Z" fill="#d0d7de"/>
+<text x="1166" y="244" text-anchor="end" font-size="15" font-style="italic" fill="#59636e">Next…</text>
+<line x1="150.0" y1="260" x2="150.0" y2="238" stroke="#ea580c" stroke-width="2"/>
+<circle cx="150.0" cy="260" r="11" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+<text x="150.0" y="232" text-anchor="middle" font-size="15" font-weight="600" fill="#ea580c">Middle school</text>
+<text x="150.0" y="158" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">Donkey Car</text>
+<text x="150.0" y="182" text-anchor="middle" font-size="15" fill="#59636e">Self-driving RC car;</text>
+<text x="150.0" y="204" text-anchor="middle" font-size="15" fill="#59636e">learned NNs and CNNs</text>
+<line x1="278.57" y1="260" x2="278.57" y2="282" stroke="#2563eb" stroke-width="2"/>
+<circle cx="278.57" cy="260" r="11" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+<text x="278.57" y="302" text-anchor="middle" font-size="15" font-weight="600" fill="#2563eb">Late 2022</text>
+<text x="278.57" y="332" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">ChatGPT → Transformers</text>
+<text x="278.57" y="356" text-anchor="middle" font-size="15" fill="#59636e">Dug into attention, the</text>
+<text x="278.57" y="378" text-anchor="middle" font-size="15" fill="#59636e">idea behind modern LLMs</text>
+<line x1="407.14" y1="260" x2="407.14" y2="238" stroke="#ea580c" stroke-width="2"/>
+<circle cx="407.14" cy="260" r="11" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+<text x="407.14" y="232" text-anchor="middle" font-size="15" font-weight="600" fill="#ea580c">2024</text>
+<text x="407.14" y="158" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">LeRobot SO-100 arm</text>
+<text x="407.14" y="182" text-anchor="middle" font-size="15" fill="#59636e">Built it, trained ACT,</text>
+<text x="407.14" y="204" text-anchor="middle" font-size="15" fill="#59636e">first merged PR</text>
+<line x1="535.71" y1="260" x2="535.71" y2="282" stroke="#7c3aed" stroke-width="2"/>
+<circle cx="535.71" cy="260" r="11" fill="#7c3aed" stroke="#ffffff" stroke-width="3"/>
+<text x="535.71" y="302" text-anchor="middle" font-size="15" font-weight="600" fill="#7c3aed">Sep 2025</text>
+<text x="535.71" y="332" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">AIEA Lab, UCSC</text>
+<text x="535.71" y="356" text-anchor="middle" font-size="15" fill="#59636e">LiDAR scene classification</text>
+<text x="535.71" y="378" text-anchor="middle" font-size="15" fill="#59636e">and scene-flow research</text>
+<line x1="664.28" y1="260" x2="664.28" y2="238" stroke="#16a34a" stroke-width="2"/>
+<circle cx="664.28" cy="260" r="11" fill="#16a34a" stroke="#ffffff" stroke-width="3"/>
+<text x="664.28" y="232" text-anchor="middle" font-size="15" font-weight="600" fill="#16a34a">Oct 2025</text>
+<text x="664.28" y="158" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">ASGARD</text>
+<text x="664.28" y="182" text-anchor="middle" font-size="15" fill="#59636e">Embodied AI Hackathon:</text>
+<text x="664.28" y="204" text-anchor="middle" font-size="15" fill="#59636e">Jetson Thor, Isaac Sim</text>
+<line x1="792.8499999999999" y1="260" x2="792.8499999999999" y2="282" stroke="#2563eb" stroke-width="2"/>
+<circle cx="792.8499999999999" cy="260" r="11" fill="#2563eb" stroke="#ffffff" stroke-width="3"/>
+<text x="792.8499999999999" y="302" text-anchor="middle" font-size="15" font-weight="600" fill="#2563eb">Spring 2026</text>
+<text x="792.8499999999999" y="332" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">NVIDIA GTC</text>
+<text x="792.8499999999999" y="356" text-anchor="middle" font-size="15" fill="#59636e">Sim-to-real techniques</text>
+<text x="792.8499999999999" y="378" text-anchor="middle" font-size="15" fill="#59636e">like GapONet</text>
+<line x1="921.42" y1="260" x2="921.42" y2="238" stroke="#ea580c" stroke-width="2"/>
+<circle cx="921.42" cy="260" r="11" fill="#ea580c" stroke="#ffffff" stroke-width="3"/>
+<text x="921.42" y="232" text-anchor="middle" font-size="15" font-weight="600" fill="#ea580c">Summer 2026</text>
+<text x="921.42" y="158" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">xArm6 Chipotle bowl</text>
+<text x="921.42" y="182" text-anchor="middle" font-size="15" fill="#59636e">Gazebo + ROS + MoveIt,</text>
+<text x="921.42" y="204" text-anchor="middle" font-size="15" fill="#59636e">then sim-to-real</text>
+<rect x="927.99" y="278" width="244" height="112" rx="10" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+<line x1="1049.99" y1="260" x2="1049.99" y2="282" stroke="#16a34a" stroke-width="2"/>
+<circle cx="1049.99" cy="260" r="13" fill="#16a34a" stroke="#ffffff" stroke-width="3"/>
+<text x="1049.99" y="302" text-anchor="middle" font-size="15" font-weight="600" fill="#16a34a">Fall 2026</text>
+<text x="1049.99" y="332" text-anchor="middle" font-size="18" font-weight="700" fill="#1f2328">1st place: FollowMe</text>
+<text x="1049.99" y="356" text-anchor="middle" font-size="15" fill="#59636e">Physical AI track, SF Tech</text>
+<text x="1049.99" y="378" text-anchor="middle" font-size="15" fill="#59636e">Week AI Hackathon</text>
+</svg>
