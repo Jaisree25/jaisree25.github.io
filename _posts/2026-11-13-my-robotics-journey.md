@@ -138,17 +138,3 @@ This project taught me a lot, but above all it taught me why **sim-to-real trans
 I haven't stopped. Most recently, at the SF Tech Week AI Hackathon hosted at UC Santa Cruz, my team won **1st place in Physical AI** with [FollowMe](https://devpost.com/software/followme-amd-smart-phone-holder), an AMD-powered smart phone holder that tracks and follows you as you move. We built it on a LeRobot SO-101 arm. A camera feed tracks where the person is, and inverse kinematics turns that position into the joint angles that move the arm to keep the phone pointed at them.
 
 I'm still learning something new about this field every day, and it's moving faster than ever. Next, I plan to keep running experiments and doing research in robotics, and to keep asking the same question that got me started with a little car on a track: *how does this actually work?*
-
----
-
-## Summary
-
-| Milestone | What I Learned |
-|---|---|
-| **Donkey Car** | Neural networks and CNNs can turn camera images into driving |
-| **Transformers** | Attention lets a model choose what to focus on |
-| **LeRobot SO-100** | Teleoperation, datasets, ACT, and contributing to open source |
-| **ASGARD** | VLA policies, Jetson Thor, Isaac Sim, and audio-driven robots |
-| **AIEA Lab** | LiDAR data pipelines and scene-flow models |
-| **xArm6 bowl** | CAD, Gazebo, ROS, MoveIt, RViz, and sim-to-real transfer |
-| **FollowMe** | Camera tracking and inverse kinematics on a real arm |
