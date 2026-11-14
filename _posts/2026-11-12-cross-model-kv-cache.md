@@ -12,17 +12,15 @@ tags: [Transformers, LLM, Attention, KV Cache, Inference]
 2. [The Big Picture](#the-big-picture)
 3. [Background: Heads and GQA](#background-heads-and-gqa)
 4. [Prefill and Decode](#prefill-and-decode)
-5. [How Big Is the KV Cache?](#how-big-is-the-kv-cache)
-6. [RoPE: Turning Position Into an Angle](#rope-turning-position-into-an-angle)
-7. [The Problem: Every Switch Pays for Prefill Again](#the-problem-every-switch-pays-for-prefill-again)
-8. [Is the Link Simple? A Straight-Line Test](#is-the-link-simple-a-straight-line-test)
-9. [The Translator](#the-translator)
-10. [Why Ridge and Not Plain OLS](#why-ridge-and-not-plain-ols)
-11. [Calibration, Step by Step](#calibration-step-by-step)
-12. [How They Tested](#how-they-tested)
-13. [Results](#results)
-14. [When a Straight Line Is Not Enough](#when-a-straight-line-is-not-enough)
-15. [Summary](#summary)
+5. [RoPE: Turning Position Into an Angle](#rope-turning-position-into-an-angle)
+6. [The Problem: Every Switch Pays for Prefill Again](#the-problem-every-switch-pays-for-prefill-again)
+7. [Is the Link Simple? A Linear Test](#is-the-link-simple-a-linear-test)
+8. [The Mapper](#the-mapper)
+9. [Why Ridge and Not Plain OLS](#why-ridge-and-not-plain-ols)
+10. [Calibration, Step by Step](#calibration-step-by-step)
+11. [How They Tested](#how-they-tested)
+12. [Results](#results)
+13. [Summary](#summary)
 
 ---
 
@@ -32,15 +30,7 @@ The last post walked through microgpt and showed where the KV cache comes from: 
 
 > If a small model has already filled its shelf, can a bigger model read from it?
 
-Normally the answer is no. The keys and values are made by one model's weights, so another model can't use them. The paper [Cross-Model KV Cache Transfer in LLM Families](https://arxiv.org/abs/2608.03893) by Taekyung Heo and colleagues at NVIDIA shows that, for models in the same family, you can convert one model's cache into the other's with a simple straight-line rule. The big model then skips reading the prompt and goes straight to writing.
-
-We will cover:
-
-- how attention heads and the KV cache are laid out in Qwen3
-- what RoPE does to keys, and why the paper removes it
-- how a straight-line fit (OLS) showed the idea could work
-- the translator itself, and why it uses ridge regression
-- what worked, what failed, and why
+Normally the answer is no. The keys and values are made by one model's weights, so another model can't use them. The paper [Cross-Model KV Cache Transfer in LLM Families](https://arxiv.org/abs/2608.03893) by Taekyung Heo and colleagues at NVIDIA shows that, for models in the same family, you can convert one model's cache into the other's with a simple linear rule. The big model then skips reading the prompt and goes straight to writing.
 
 ---
 
@@ -50,7 +40,7 @@ We will cover:
 
 The small model (the **source**) reads the prompt as usual and builds its KV cache. A **linear mapper** converts that cache into the shape and meaning the big model (the **target**) expects. The big model then starts writing its answer from the converted cache. The dashed path, where the big model reads the whole prompt itself, is skipped.
 
-The mapper is not a neural network. It is a set of weight tables found with one formula, with no training loop.
+The mapper is not a neural network. It is a set of weight matrices found with one formula, with no training loop.
 
 ---
 
@@ -60,13 +50,15 @@ A layer has many heads. They all look at the same input, but each one learns to 
 
 ### Attention Inside One Layer
 
+A token's hidden state is the list of numbers that stands for that token inside the model. It's "hidden" because you never see it from outside, and it changes at every layer as the token picks up context.
+
 Each token's hidden state is turned into a query (Q), a key (K) and a value (V). For each head, attention computes:
 
 ```
 softmax(q · Kᵀ / √d) · V
 ```
 
-The heads' outputs are glued together and projected back to the hidden size. This is the same thing microgpt did, just with bigger numbers.
+Each head's output is a blend of the values, weighted by how well each key matched the query. The heads' outputs are glued together and projected back to the hidden size.
 
 ### Grouped-Query Attention
 
@@ -91,21 +83,7 @@ Running a model on a prompt has two phases.
 | **Prefill** | One forward pass over the whole prompt (T tokens) at once. Every layer computes and stores K and V for every token. | Compute. Cost grows with model size × prompt length. |
 | **Decode** | One new token at a time. Each new token computes only its own Q, K and V, adds its K and V to the cache, and attends over everything cached so far. | Memory speed. Reading the cache is the slow part. |
 
-The key point for this post: **the output of prefill is the KV cache.** Once you have the cache, prefill's job is done.
-
----
-
-## How Big Is the KV Cache?
-
-Per layer, the cache holds K and V, each of shape `[T, 8, 128]`: T tokens, 8 K/V heads, 128 numbers per head.
-
-For Qwen3-8B, per token:
-
-```
-36 layers × 2 (K and V) × 8 heads × 128 numbers × 2 bytes ≈ 144 KB
-```
-
-At 32K tokens, that is about **4.5 GB**. This is a lot of work to rebuild from scratch, which is exactly what happens every time you switch models.
+The key point for this post: **the output of prefill is the KV cache.**
 
 ---
 
@@ -113,7 +91,7 @@ At 32K tokens, that is about **4.5 GB**. This is a lot of work to rebuild from s
 
 ### The Problem RoPE Solves
 
-Attention compares a query with a key using a dot product, which roughly asks "how much do these two vectors point the same way?" On its own, that comparison has no idea where the words are. "Dog bites man" and "man bites dog" contain the same words, so without position information they would look the same. The model needs to know where each token sits.
+Attention compares a query with a key using a dot product, which asks "how much do these two vectors point the same way?" On its own, that comparison has no idea where the words are. "Dog bites man" and "man bites dog" contain the same words, so without position information they would look the same. The model needs to know where each token sits.
 
 ### The Trick: Spin by Position
 
@@ -127,29 +105,9 @@ Picture each key and query as a clock hand. Before the comparison, every vector 
 | 3 | three times as much |
 | ... | and so on |
 
-Say one hand turns 10° per position. A token at position 3 gets spun 30°. Since both the query and the key are spun, what matters when they are compared is **how far apart** they are, not where they sit in absolute terms.
-
 ### Pairs of Dimensions
 
-A key isn't one clock hand. It's 128 numbers. RoPE treats them as **64 separate clock hands** (the numbers grouped in pairs) and spins each one at a different speed. Some spin fast and some spin very slowly, a bit like the second, minute and hour hands on a clock. Together they encode position at both fine and coarse scales.
-
-### The Path a Key Takes in Qwen3
-
-```
-token's hidden state x
-  → k_proj    multiply by a weight matrix   → raw key (content)
-  → k_norm    resize to a standard scale    → normalized key (content)
-  → RoPE      spin by position              → rotated key
-  → stored in KV cache
-```
-
-The `k_norm` step is a Qwen3 detail called **QK-norm**. Qwen3 applies a small RMSNorm to each head's q and k before RoPE. If some keys or queries get huge, their dot products blow up and one token grabs all the attention. Normalizing first keeps everything on a similar scale. Each head gets its own normalization, which is why it's called "per-head".
-
-So in Hugging Face transformers, the cached key is:
-
-```
-RoPE(k_norm(k_proj(x)))
-```
+A key isn't one clock hand. It's 128 numbers. RoPE treats them as **64 separate clock hands** (the numbers grouped in pairs) and spins each one at a different speed. Some spin fast and some spin very slowly, a bit like the second, minute and hour hands on a clock. Ultimately, they workt to encode position.
 
 ### Why the Paper Strips RoPE
 
@@ -160,13 +118,13 @@ The cache stores keys **after** they've been spun. So a cached key mixes two thi
 
 The paper wants to learn a rule that turns one model's content into the other model's content, and it doesn't want position getting in the way. So it:
 
-1. **un-spins** each source key (turns it backward by its position). This is "stripping RoPE". In our example, the token at position 3 is turned back 30°.
+1. **un-spins** each source key (turns it backward by its position). This is "stripping RoPE".
 2. **maps** the pure content to the target model
 3. **re-spins** the result by the same position before handing it to the target
 
 When you strip RoPE from a Qwen3 key, what's left is the normalized content key, `k_norm(k_proj(x))`.
 
-> **Note:** Values are never spun. They are never compared with anything. They are the payload that gets mixed together once attention has decided where to look. So values skip the un-spin and re-spin steps.
+> **Note:** Values are never spun. They are never compared with anything. They are what gets mixed together once attention has decided where to look.
 
 ---
 
@@ -178,7 +136,7 @@ Real systems often switch between model sizes within one family:
 - **Switching mid-conversation:** a chat moves to a different model partway through.
 - **Routers:** each request is sent to whichever model fits best.
 
-Every switch makes the receiving model prefill the whole context again. In long agent sessions, that context can be very large. Prefix caching doesn't help, because it only works within one model.
+Every switch makes the receiving model prefill the whole context again. Prefix caching doesn't help, because it only works within one model.
 
 ### The Reframe
 
@@ -192,7 +150,7 @@ The method needs the two models to have the **same number of K/V heads** and the
 
 ---
 
-## Is the Link Simple? A Straight-Line Test
+## Is the Link Simple? A Linear Test
 
 Before building anything, the authors asked: is the relationship between the two caches simple?
 
@@ -206,9 +164,9 @@ Say you have pairs of numbers, an input and an output, and you suspect the outpu
 output ≈ slope × input + intercept
 ```
 
-Many lines could pass near the points. OLS picks the one that makes the **squared gaps** (the errors) as small as possible in total. Squaring keeps negative gaps from cancelling positive ones, and punishes big misses more.
+Many lines could pass near the points. OLS picks the one that makes the **squared errors** as small as possible in total.
 
-In this paper, the pairs are: "when the small model's key looked like this, the big model's key looked like that." At this size, "straight line" means each of the big model's 128 output numbers is a weighted sum of the small model's input numbers. All those weights together form a table called **W**. There's a direct formula for the best W, so no training loop is needed.
+In this paper, the pairs are: "when the small model's key looked like this, the big model's key looked like that." In this case, "straight line" means each of the big model's 128 output numbers is a weighted sum of the small model's input numbers. All those weights together form the **weight matrix W**. There's a direct formula for the best W, so no training loop is needed.
 
 ### The Score: R²
 
@@ -226,8 +184,8 @@ They fed the same text through both models. Then, for every pairing of a small-m
 
 What the grid showed:
 
-- **A bright diagonal.** A small-model layer about 40% of the way in best predicts the big-model layer about 40% of the way in. Both models process text in the same order of stages.
-- **The scores are high.** The best squares reach R² ≈ 0.8, so a straight line captures most of the information.
+- **A bright diagonal.** A small-model layer about 40% of the way in best predicts the big-model layer about 40% of the way in.
+- **The scores are high.** The best squares reach R² = 0.8, so a straight line captures most of the information.
 - **Un-spinning the keys first makes the diagonal sharper.** Position was getting in the way of matching meaning.
 - **Keys are easier to predict than values**, by about 0.2 R².
 - **Several layers beat one layer.** For Qwen3 14B→32B:
@@ -237,17 +195,17 @@ What the grid showed:
 | best single layer | 0.56 | 0.32 |
 | best 8 layers combined | 0.79 | 0.65 |
 
-So a straight-line translator is plausible, and it should read from several source layers at once.
+So a linear mapper is possible, and it should read several source layers at once.
 
 ---
 
-## The Translator
+## The Mapper
 
-The translator is not one big thing. It's many small ones: **one for every K/V head in every layer of the target model.** For 8B→32B, the target has 64 layers × 8 heads = 512 small translators for K, plus another 512 for V.
+The mapper is not one big thing. It's many small linear maps: **one for every K/V head in every layer of the target model.** For 8B→32B, the target has 64 layers × 8 heads = 512 small maps for K, plus another 512 for V.
 
 Each one does this:
 
-![The four steps of one translator](/assets/images/diagram_crosskv_translator.svg)
+![The four steps of one map](/assets/images/diagram_crosskv_mapper.svg)
 
 In more detail:
 
@@ -257,16 +215,16 @@ For target layer L, head H, and every token:
 1. PICK       choose the k source layers that best predict layer L (from the heatmap)
               glue together ALL 8 heads from each   →  k × 8 × 128 input numbers
 2. UN-SPIN    remove RoPE from the source keys      →  pure meaning, no position
-3. MULTIPLY   by the table W, add a bias b          →  128 output numbers
+3. MULTIPLY   by the matrix W, add a bias b         →  128 output numbers
 4. RE-SPIN    apply the target's RoPE for this token's position
               → this is the big model's key for (layer L, head H)
 
 Values: same, but skip steps 2 and 4 (they were never spun).
 ```
 
-Notice step 1 takes **all 8 heads** from each chosen source layer, not just the matching head. Head 3 in the small model doesn't have to line up with head 3 in the big model. The table W can pull from any of them.
+Notice step 1 takes **all 8 heads** from each chosen source layer, not just the matching head. Head 3 in the small model doesn't have to line up with head 3 in the big model. W can pull from any of them.
 
-The number of layers to combine, **k**, is chosen per model pair by trying every value from 1 up to "all" and keeping whichever scores best.
+The number of layers to combine, **k**, is chosen per model pair by trying every value from 1 up to all and keeping whichever scores best.
 
 ---
 
@@ -284,17 +242,13 @@ You want to predict a room's temperature from two thermometers, A and B, sitting
 | 2 | 25.0 | 24.9 | 25.0 |
 | 3 | 18.0 | 18.0 | 18.0 |
 
-**Many different rules fit these days equally well.** Because A ≈ B, any weights that add up to 1 give about the right answer:
+**Many different rules fit these days equally well.** Because A about = B, any weights that add up to 1 give about the right answer:
 
 ```
 Rule 1:    0.5 × A  +  0.5 × B    → day 1: 10.0 + 10.05 = 20.05    ✓
-Rule 2:     10 × A  -    9 × B    → day 1: 200 - 180.9  = 19.1     ✓ roughly
-Rule 3:   1000 × A  -  999 × B    → ...also roughly right
+Rule 2:     10 × A  -    9 × B    → day 1: 200 - 180.9  = 19.1     ✓
+Rule 3:   1000 × A  -  999 × B    → ...also works                  ✓
 ```
-
-On these days the data can't tell the rules apart. The only thing separating them is the tiny difference between A and B, and that's just noise.
-
-**OLS takes the noise seriously.** It hunts for the rule with the absolute smallest error, and the last little improvement comes from exploiting that noise, which needs huge weights like +1000 and −999. So OLS can end up picking a crazy rule.
 
 ### Then a New Day Arrives
 
@@ -323,12 +277,6 @@ The formula is still direct, with no training loop:
 W = (XᵀX + λI)⁻¹ XᵀY
 ```
 
-### Where This Shows Up in the Paper
-
-The translator's input glues together several neighbouring layers of the small model, say layers 10, 11 and 12. Neighbouring layers produce very similar keys, so they're the side-by-side thermometers. Except here, when k is large, there are over 12,000 input numbers instead of 2. Plain OLS would go unstable. Ridge keeps it calm.
-
-> **Note:** Ridge is still a straight-line rule. It only picks a *calmer* straight line.
-
 ---
 
 ## Calibration, Step by Step
@@ -337,7 +285,7 @@ Finding W is called **calibration**. It happens once per model pair, offline. Af
 
 ![Calibration happens once; using W happens at every handoff](/assets/images/diagram_crosskv_calibration.svg)
 
-**Step 1: Gather sample texts.** 500 passages of 1,024 tokens each from FineWeb-Edu (educational web pages). This is the Rosetta Stone: the same text, seen by both models.
+**Step 1: Gather sample texts.** 500 passages of 1,024 tokens each from FineWeb-Edu (educational web pages).
 
 **Step 2: Run both models on the same texts.** A normal prefill on each, saving the full KV cache: every layer, every K/V head, every token.
 
@@ -345,19 +293,11 @@ Finding W is called **calibration**. It happens once per model pair, offline. Af
 
 **Step 4: Keep every 4th token.** This gives about 128,000 matched pairs: for each kept token, the source's numbers and the target's numbers.
 
-**Step 5: Choose which source layers feed each target layer.** For every (source layer, target layer) pairing, fit a quick straight line and record the R². That's the heatmap. For each target layer, keep the top k source layers.
+**Step 5: Choose which source layers feed each target layer.** For every (source layer, target layer) pairing, fit a straight line and record the R². That's the heatmap. For each target layer, keep the top k source layers.
 
-**Step 6: Solve for W.** For every target layer and K/V head, separately for K and V:
+**Step 6: Solve for W.** 
 
-| Piece | What it is |
-|---|---|
-| Input X | the chosen source layers' numbers for each token, glued together |
-| Output Y | the target's 128 numbers for that head |
-| Formula | W = (XᵀX + λI)⁻¹ XᵀY, plus a bias b |
-
-**Step 7: Save W and b.** That's the finished translator: about 1 to 3 billion numbers, or 4 to 12 GB on disk.
-
-The whole thing takes about **1 hour on one GPU server**, with no training. Once it's done, you never need the sample texts again. The translator works on any new text, of any length.
+**Step 7: Save W and b.** That's the finished mapper.
 
 ---
 
@@ -366,12 +306,12 @@ The whole thing takes about **1 hour on one GPU server**, with no training. Once
 The big model answers standard test questions in two ways:
 
 - **Normally:** it reads the prompt itself.
-- **Translated:** the small model reads the prompt, the translator converts the cache, and the big model answers from it.
+- **Transferred:** the small model reads the prompt, the mapper converts the cache, and the big model answers from it.
 
 The score is **retention**:
 
 ```
-retention = translated accuracy ÷ normal accuracy
+retention = transferred accuracy ÷ normal accuracy
 ```
 
 100% means nothing was lost.
@@ -384,13 +324,13 @@ The tests:
 | HellaSwag | pick the sensible ending to a scene |
 | WinoGrande | work out what "it" or "they" refers to |
 | MMLU | broad school and professional knowledge |
-| GSM8K | multi-step maths word problems, where the model writes out its working |
+| GSM8K | multi-step math word problems, where the model writes out its working |
 
 ---
 
 ## Results
 
-| Pair (small → big) | Average retention | Maths (GSM8K) |
+| Pair (small → big) | Average retention | Math (GSM8K) |
 |---|---|---|
 | Qwen3 14B → 32B | **97.6%** | 95.6% |
 | Qwen3 8B → 32B | **87.5%** | 68.8% |
@@ -402,22 +342,12 @@ The tests:
 What this shows:
 
 - **Four pairs work (73% to 98%) and two fail badly.** Matching cache shapes helps, but it doesn't promise success.
-- **Models closer in size translate better.** 14B→32B beats 8B→32B.
-- **Multiple-choice tests hold up well; long maths answers don't.** A small error can be tolerated when picking one answer, but it adds up over many steps of written reasoning.
+- **Models closer in size transfer better.** 14B→32B beats 8B→32B.
+- **Multiple-choice tests hold up well; long math problems don't.**
+  
+> **Note:** The point of all this is speed. The paper reports that converting the cache is about 2.7 to 25 times faster than re-running prefill.
 
-> **Note:** The point of all this is speed. The paper reports that converting the cache is about 2.7 to 25 times faster than re-running prefill. For a 32K-token cache going from Qwen3 14B to 32B, the transfer took about 0.28 seconds, compared to nearly 7 seconds for a fresh prefill.
-
----
-
-## When a Straight Line Is Not Enough
-
-The authors also tried a small MLP (a tiny neural network) as the translator, instead of a straight line.
-
-**On the pairs that worked** (Qwen3, and Ministral 3B→8B), the link between the caches is already close to a straight line. Ridge fits it, and the MLP adds nothing. It was even slightly worse.
-
-**On the failing pairs** (Ministral 8B→14B and 3B→14B), the link seems to bend. Ridge's straight line, fitted on the calibration text, went badly wrong on the test text: its R² there was −3.2 and −7.8, *much worse than just guessing the average*. The MLP followed the curve better. Just as important, it pushed its leftover errors into directions that attention doesn't pay much attention to, so those errors did less harm. On HellaSwag, retention went from 59% to 96% and from 68% to 92%.
-
-So the straight line is the right tool when the two models think in similar ways, and a bent rule helps when they don't.
+> **Note:** For the two failing pairs, the link between the caches seems to bend, so a straight line can't follow it. The authors tried a small MLP (a tiny neural network) instead. On HellaSwag, it lifted retention from 59% to 96% and from 68% to 92%. On the pairs that already worked, it added nothing.
 
 ---
 
@@ -431,14 +361,14 @@ So the straight line is the right tool when the two models think in similar ways
 | **Prefill** | Reads the whole prompt once; its output is the KV cache |
 | **Decode** | Writes one token at a time, reading from the cache |
 | **RoPE** | Spins keys and queries by position, so attention knows where tokens sit |
-| **Stripping RoPE** | Un-spins keys so only meaning is left to translate |
+| **Stripping RoPE** | Un-spins keys so only meaning is left to map |
 | **OLS and R²** | A straight-line test that showed the two caches are closely linked |
 | **Top-k layers** | Each target layer reads from the source layers that predict it best |
 | **Ridge regression** | A straight-line fit that prefers small weights, so similar inputs don't cause wild results |
 | **Calibration** | One hour, once per model pair: 500 texts in, W and b out |
-| **Translator** | Pick layers, un-spin, multiply by W, re-spin: the big model skips prefill |
+| **Mapper** | Pick layers, un-spin, multiply by W, re-spin: the big model skips prefill |
 
-The big idea fits in one line: **prefill's output is the KV cache, so if you can translate the cache, you can skip the prefill.**
+The big idea fits in one line: **prefill's output is the KV cache, so if you can convert the cache, you can skip the prefill.**
 
 All credit for the method goes to Taekyung Heo and colleagues at NVIDIA. Read the [paper on arXiv](https://arxiv.org/abs/2608.03893).
 
