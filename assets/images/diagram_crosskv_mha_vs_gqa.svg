@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 300" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect width="700" height="300" fill="#FFFFFF"/>
+<text x="172" y="28" text-anchor="middle" font-size="16" font-weight="600" fill="#2C2C2A">Normal multi-head</text>
+<text x="172" y="48" text-anchor="middle" font-size="13" fill="#5F5E5A">8 queries, 8 K/V pairs</text>
+<text x="512" y="28" text-anchor="middle" font-size="16" font-weight="600" fill="#2C2C2A">Grouped-query (GQA)</text>
+<text x="512" y="48" text-anchor="middle" font-size="13" fill="#5F5E5A">8 queries, 2 shared K/V pairs</text>
+<line x1="50" y1="100" x2="50" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="50" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="50" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="37" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="85" y1="100" x2="85" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="85" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="85" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="72" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="120" y1="100" x2="120" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="120" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="120" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="107" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="155" y1="100" x2="155" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="155" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="155" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="142" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="190" y1="100" x2="190" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="190" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="190" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="177" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="225" y1="100" x2="225" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="225" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="225" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="212" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="260" y1="100" x2="260" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="260" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="260" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="247" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="295" y1="100" x2="295" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="295" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="295" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="282" y="168" width="26" height="28" rx="4" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<line x1="390" y1="100" x2="442.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="425" y1="100" x2="442.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="460" y1="100" x2="442.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="495" y1="100" x2="442.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="390" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="390" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="425" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="425" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="460" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="460" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="495" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="495" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="384.5" y="168" width="116" height="32" rx="5" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.3"/>
+<text x="442.5" y="189" text-anchor="middle" font-size="14" font-weight="600" fill="#085041">K/V</text>
+<line x1="530" y1="100" x2="582.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="565" y1="100" x2="582.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="600" y1="100" x2="582.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<line x1="635" y1="100" x2="582.5" y2="168" stroke="#B4B2A9" stroke-width="1"/>
+<circle cx="530" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="530" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="565" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="565" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="600" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="600" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<circle cx="635" cy="88" r="12" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="635" y="93" text-anchor="middle" font-size="12" fill="#3C3489">Q</text>
+<rect x="524.5" y="168" width="116" height="32" rx="5" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.3"/>
+<text x="582.5" y="189" text-anchor="middle" font-size="14" font-weight="600" fill="#085041">K/V</text>
+<text x="172" y="235" text-anchor="middle" font-size="13" fill="#444441">Cache stores 8 K/V per token</text>
+<text x="512" y="235" text-anchor="middle" font-size="13" fill="#444441">Cache stores 2 K/V per token (4× smaller)</text>
+<circle cx="200" cy="272" r="6" fill="#EEEDFE" stroke="#534AB7" stroke-width="1.3"/>
+<text x="212" y="277" font-size="13" fill="#5F5E5A">Query heads (not cached)</text>
+<rect x="382" y="266" width="12" height="12" rx="2" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1.2"/>
+<text x="400" y="277" font-size="13" fill="#5F5E5A">Key/value heads (cached)</text>
+</svg>
