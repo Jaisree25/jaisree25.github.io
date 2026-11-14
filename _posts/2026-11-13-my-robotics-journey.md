@@ -138,3 +138,7 @@ This project taught me a lot, but above all it taught me why **sim-to-real trans
 I haven't stopped. Most recently, at the SF Tech Week AI Hackathon hosted at UC Santa Cruz, my team won **1st place in Physical AI** with [FollowMe](https://devpost.com/software/followme-amd-smart-phone-holder), an AMD-powered smart phone holder that tracks and follows you as you move. We built it on a LeRobot SO-101 arm. A camera feed tracks where the person is, and inverse kinematics turns that position into the joint angles that move the arm to keep the phone pointed at them.
 
 I'm still learning something new about this field every day, and it's moving faster than ever. Next, I plan to keep running experiments and doing research in robotics, and to keep asking the same question that got me started with a little car on a track: *how does this actually work?*
+
+---
+
+*All images and diagrams in this post were made with the help of [Claude](https://claude.ai).*
