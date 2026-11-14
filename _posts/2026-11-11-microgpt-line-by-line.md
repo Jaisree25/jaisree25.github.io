@@ -761,3 +761,7 @@ None of these change the core loop: predict the next token, measure the surprise
 | **Adam** | Uses smoothed gradients to nudge every parameter |
 
 All credit for microgpt goes to Andrej Karpathy. Read his [original post](https://karpathy.github.io/2026/02/12/microgpt/) and the [full source](https://gist.github.com/karpathy/8627fe009c40f57531cb18360106ce95).
+
+---
+
+*All images and diagrams in this post were made with the help of [Claude](https://claude.ai).*
